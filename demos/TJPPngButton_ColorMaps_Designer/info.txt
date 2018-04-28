@@ -1,0 +1,4 @@
+﻿
+
+*.colors files can be opened using the "Colors" application available at program http://www.pazera-software.com/products/colors/
+
