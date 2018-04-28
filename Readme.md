@@ -14,6 +14,11 @@ Many of my components, unfortunately, I can not share, because they are modified
 
 I am no expert on writing VCL components and helped myself by analyzing the source codes (and using fragments) of various free Delphi components, especially **Cindy Components** (https://sourceforge.net/projects/tcycomponents/) and **PngComponents** (https://bitbucket.org/uweraabe/pngcomponents).
 
+Some of the functions and procedures related to graphics processing were taken from the *Cindy Components* package. The gradient related routines were almost entirely taken from this package (`VCL.cyGraphics.pas` file).
+
+The author of the *Cindy Component*s is Júlio Maurício Antunes Piao. The sources are available at https://sourceforge.net/projects/tcycomponents/  
+In the source files in which I use functions written by Júlio, I have added relevant information with a link to his page.
+
 
 ## Components
 
