@@ -59,7 +59,7 @@ The number of all colors for all button states is really big, so I decided to ma
 
 I have created 36 different color schemes for `TJppPngButton`. To change the active color scheme, select one of the schemes available in the `ColorMapType` property in the *Object Inspector*. Of course, you can also change the color scheme in the code at runtime.
 
-Over half of the color schemes I have prepared are schemes that mimic the **VCL styles** available from the **XE2** version of the Delphi environment. All such schemes begin with the prefix `cmtVcl`. Of course, these *VCL color schemes* work even if you do not enable VCL support in your program at all. You can also, for example, turn on the `Charcoal Dark Slate` VCL style for the application, and `cmtVclCarbon` for the `TJppPngButtons`. There is absolutely no problem.
+Over half of the color schemes I have prepared are schemes that mimic the **VCL styles** available from the **XE2** version of the Delphi environment. All such schemes begin with the prefix `cmtVcl`. Of course, these *VCL color schemes* work even if you do not enable VCL styles support in your program at all. You can also, for example, turn on the `Charcoal Dark Slate` VCL style for the application, and `cmtVclCarbon` for the `TJppPngButtons`. There is absolutely no problem.
 
 #### TJppPngButton Color Maps Designer
 All color schemes I have prepared in the `TJppPngButton Color Maps Designer` program, which is located in the repository in the `demos` directory.
@@ -95,7 +95,7 @@ Processing of PNG files/images is implemented mainly by 4 units:
 The original author of the *PngComponents* package is Martijn Saly. The project is currently maintained by [Uwe Raabe](http://www.uweraabe.de/Blog/). Sources are available at https://bitbucket.org/uweraabe/pngcomponents
 
 `TJppPngButton` uses all of the units listed above. However, I did not want to force potential users to install the full *PngComponents* package (although I recommend doing it), that's why I extracted only those three files from the *PngComponents* project that were necessary for the proper functioning of my button.
-To prevent any name conflicts, I added the prefix `PNGC.` to the name of each file (and unit). If you prefer to use these 
+To prevent any name conflicts, I added the prefix `PNGC.` to the name of each file (and unit). 
 
 In the folder [PngComponents_Docs_License](PngComponents_Docs_License) you can find *PngComponents* package license, changelog and documentation.
 
