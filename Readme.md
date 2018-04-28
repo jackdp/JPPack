@@ -109,7 +109,48 @@ In the folder [PngComponents_Docs_License](PngComponents_Docs_License) you can f
 This button is very similar to `TJppPngButton`, but it is based on `TGraphicControl`, so it does not take the focus (it has no *focused* state). Color schemes support is not implemented yet.
 
 
+### TJppColorComboBox
+
+ComboBox displaying a list of user-defined colors.
+
+<p align="center">
+<img src="JppColorComboBox_1.png">
+<br><br>
+<img src="JppColorComboBox_2.png">
+<br><br>
+<img src="JppColorComboBox_3.png">
+</p>
+
+The current color can be read and set using property `Selected`: `TColor`.
+
+To add a color to the list, add any number of entries to `Items` in the form:
+```
+color_name=R,G,B
+```
+where `R`, `G` and `B` denote the intensity of red, green and blue colors. E.g:
+```
+Aquamarine=51,204,204
+Purple=128,0,128
+Pink=255,0,255
+Plum=153,51,102
+```
+The `TJppColorComboBox` has a built-in label, `BoundLabel` property,  so there is no need to add a separate label describing the component's function, which is common practice.
+
+In addition, the component has three built-in auxiliary buttons:
+1. `ButtonChangeColor` - After clicking it, the system color selection window (TColorDialog) is displayed. If the user selects a color and presses OK, it will be stored in the `Selected` property.
+1. `ButtonCopyColor` - After the user clicks, the currently selected color is copied to the system clipboard.
+1. `ButtonPasteColor` - After clicking, the current color is set to the one from the clipboard (if it is correct).
+
+All of these buttons are inherited from the `TJppBasicSpeedButton` class, so you can freely set background colors, borders, fonts, for all available button states: *normal*, *hot*, *down* and *disabled*.
+
+The `ButtonSpacing` property specifies the space between these buttons.
+
 ## Installation
 
 
+
+
+#### ToDo
+
+JPP.ColorComboBox.pas: "TJpPJpPJppColorComboParams" replace with "TJppColorComboParams"
 
