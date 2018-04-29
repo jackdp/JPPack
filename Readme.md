@@ -130,6 +130,8 @@ A ComboBox displaying a list of user-defined colors.
 <p align="center">
 <img src="JppColorComboBox_1.png">
 <br><br>
+<img src="JppColorComboBox_4.png">
+<br><br>
 <img src="JppColorComboBox_2.png">
 <br><br>
 <img src="JppColorComboBox_3.png">
@@ -150,7 +152,7 @@ In addition, the component has three built-in auxiliary buttons:
 1. `ButtonCopyColor` - After the user clicks, the currently selected color is copied to the system clipboard.
 1. `ButtonPasteColor` - After clicking, the current color is set to the one from the clipboard (if it is correct).
 
-All of these buttons are inherited from the `TJppBasicSpeedButton` class, so you can freely set background colors, borders, fonts, for all available button states: *normal*, *hot*, *down* and *disabled*.
+All of these buttons are inherited from the `TJppBasicSpeedButton` class, so you can freely set PNG icons and background colors, borders, fonts, for all available button states: *normal*, *hot*, *down* and *disabled*.
 
 The `ButtonSpacing` property specifies the space between these buttons.
 
@@ -179,11 +181,11 @@ Plum=153,51,102
 ```
 The last two colors have no names.
 
-In the second method, you must call the `AddColors` method and pass the color name and color value, eg:
+In the second way, you must call the `AddColors` method and pass the color name and color value, eg:
 ```delphi
 JppColorComboBox.AddColor('Red', clRed);
 JppColorComboBox.AddColor('Bright Yellow', RGB(252, 249, 225));
-JppColorComboBox.AddColor('', RGB(75, 150, 225); // <-- color wihout name
+JppColorComboBox.AddColor('', RGB(75, 150, 225)); // <-- color wihout name
 ```
 
 #### Additional information
