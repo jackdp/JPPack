@@ -1,12 +1,21 @@
 # JPPack - A small collection of VCL components for Delphi
 
-<p align="center">
-<img src="JPPack.png">
-</p>
+- [Overview](#overview)
+- [Components](#components)
+  * [TJppPanel](#tjpppanel)
+  * [TJppPngButton](#tjpppngbutton)
+  * [TJppBasicSpeedButton](#tjppbasicspeedbutton)
+  * [TJppColorComboBox](#tjppcolorcombobox)
+- [Installation](#installation)
+
 
 ## Overview
 
 **JPPack** is a small collection of VCL components for Delphi.
+
+<p align="center">
+<img src="JPPack.png">
+</p>
 
 These components were created within a few years, they were repeatedly modified, improved, and expanded with the functions needed in the implementation of specific projects. Generally, there is a small chaos, but I think everything works OK (I hope!).
 
@@ -35,15 +44,14 @@ In the folder [PngComponents_Docs_License](PngComponents_Docs_License) you can f
 
 ### TJppPanel
 
-A highly customizable panel with several additions. `TCustomPanel` descendant. It was written on the basis of one of the panels included in the *Cindy Components* package (but I do not remember exactly which one).  
+A highly customizable panel. `TCustomPanel` descendant.  
+It was written on the basis of one of the panels included in the *Cindy Components* package (but I do not remember exactly which one).  
 
 <p align="center">
 <img src="JppPanel.png">
 </p>
 
 #### Upper and lower part
-
-The upper and bottom parts of the panel can be filled with a gradient (or solid color).
 
 The panel is divided into two parts - upper and lower. For each of them you can define colors separately. The size of the upper part (relative to the lower) can also be modified (property `Appearance.UpperGradientPercent`). For example, you can set the upper gradient size to 30%, then the bottom will automatically take up the rest of the panel surface (70%). You can also completely eliminate the bottom gradient by setting the `UpperGradientPercent` property to `100`.
 
@@ -86,7 +94,7 @@ The number of all colors for all button states is really big, so I decided to ma
 
 I have created 36 different color schemes for `TJppPngButton`. To change the active color scheme, select one of the schemes available in the `ColorMapType` property in the *Object Inspector*. Of course, you can also change the color scheme in the code at runtime.
 
-Over half of the color schemes I have prepared are schemes that mimic the **VCL styles** available from the **XE2** version of the Delphi environment. All such schemes begin with the prefix `cmtVcl`. Of course, these *VCL color schemes* work even if you do not enable VCL styles support in your program at all. You can also, for example, turn on the `Charcoal Dark Slate` VCL style for the application, and `cmtVclCarbon` for the `TJppPngButtons`. There is absolutely no problem.
+Over half of the color schemes I have prepared are schemes that mimic the **VCL styles** available from the **XE2** version of the Delphi environment. All such schemes begin with the prefix `cmtVcl`. These *VCL color schemes* work even if you do not enable VCL styles support in your program at all. You can also, for example, turn on the `Charcoal Dark Slate` VCL style for the application, and `cmtVclCarbon` for the `TJppPngButtons`. There is absolutely no problem.
 
 #### TJppPngButton Color Maps Designer
 All color schemes I have prepared in the `TJppPngButton Color Maps Designer` program, which is located in the repository in the `demos` directory.
@@ -107,7 +115,7 @@ JppPngButton.LoadColorMapFromIniFile(
 );
 ```
 
-In the folder with the `TJppPngButton Color Maps Designer` program you will find all my color schemes stored in INI files, as well as files with the `*.colors` extension. These are color palettes that you can view and edit in my (not yet completed but fully functioning) [Colors](http://www.pazera-software.com/products/colors/) program.
+In the folder with the `TJppPngButton Color Maps Designer` program you will find all my color schemes stored in INI files, as well as files with the `*.colors` extension. These are color palettes that you can view and edit in my (not yet finished but fully functioning) [Colors](http://www.pazera-software.com/products/colors/) program.
 
 `TJppPngButton Color Maps Designer` can also be treated as a demonstration program of one of my other components: `TJppColorComboBox`.
 
@@ -117,7 +125,7 @@ This button is very similar to `TJppPngButton`, but it is based on `TGraphicCont
 
 ### TJppColorComboBox
 
-ComboBox displaying a list of user-defined colors.
+A ComboBox displaying a list of user-defined colors.
 
 <p align="center">
 <img src="JppColorComboBox_1.png">
@@ -129,27 +137,105 @@ ComboBox displaying a list of user-defined colors.
 
 The current color can be read and set using property `Selected`: `TColor`.
 
-To add a color to the list, add any number of entries to `Items` in the form:
-```
-color_name=R,G,B
-```
-where `R`, `G` and `B` denote the intensity of red, green and blue colors. E.g:
-```
-Aquamarine=51,204,204
-Purple=128,0,128
-Pink=255,0,255
-Plum=153,51,102
-```
-The `TJppColorComboBox` has a built-in label, `BoundLabel` property,  so there is no need to add a separate label describing the component's function, which is common practice.
+The width of the colored rectangles displayed in the list can be changed using the `Param_ColorRectWidth` property.
+
+If you do not want to display the RGB value of the colors, set `Param_ShowRGB` property to `False`.
+
+#### Internal controls
+
+The `TJppColorComboBox` has a built-in label (`BoundLabel`) so there is no need to add a separate label describing the component's function, which is common practice.
 
 In addition, the component has three built-in auxiliary buttons:
-1. `ButtonChangeColor` - After clicking it, the system color selection window (TColorDialog) is displayed. If the user selects a color and presses OK, it will be stored in the `Selected` property.
+1. `ButtonChangeColor` - After clicking it, the system color selection window (`TColorDialog`) is displayed. If the user selects a color and presses OK, it will be stored in the `Selected` property.
 1. `ButtonCopyColor` - After the user clicks, the currently selected color is copied to the system clipboard.
 1. `ButtonPasteColor` - After clicking, the current color is set to the one from the clipboard (if it is correct).
 
 All of these buttons are inherited from the `TJppBasicSpeedButton` class, so you can freely set background colors, borders, fonts, for all available button states: *normal*, *hot*, *down* and *disabled*.
 
 The `ButtonSpacing` property specifies the space between these buttons.
+
+#### History
+
+Any color selected by the user, but not yet in the color list, is automatically added to the end of the list. Thanks to this the user of your application has access to the *history* of previously selected colors.
+
+#### Adding colors
+You can add colors to the list in two ways: using the `Items` property or `AddColor` procedure.
+
+In the first method, you must add the appropriate entries to `Items`. Each entry should have the form:
+```
+color_name=R,G,B
+```
+where `R`, `G` and `B` denote the intensity of red, green and blue colors.  
+The color name is optional. You can add color without a name using: `=R,G,B`.
+
+Example:
+```
+Aquamarine=51,204,204
+Purple=128,0,128
+Pink=255,0,255
+Plum=153,51,102
+=50,100,150
+=100,150,200
+```
+The last two colors have no names.
+
+In the second method, you must call the `AddColors` method and pass the color name and color value, eg:
+```delphi
+JppColorComboBox.AddColor('Red', clRed);
+JppColorComboBox.AddColor('Bright Yellow', RGB(252, 249, 225));
+JppColorComboBox.AddColor('', RGB(75, 150, 225); // <-- color wihout name
+```
+
+#### Additional information
+
+If you want to remove all default colors from the list and use only your own colors, you need to know about one thing: after selecting the **first element** of the list by the user, a dialog box for choosing a color is displayed. Therefore, the first element of the list should be `Select color...`, `Choose color...` or something similar.
+
+The items with text `-` (one dash) are treated as **separators**. This allows you to create several separated color groups.
+
+Example:
+
+```delphi
+  JppColorComboBox.Items.BeginUpdate;
+  try
+    JppColorComboBox.Clear;
+
+    JppColorComboBox.Items.Add('Select color...'); // The first item
+    JppColorComboBox.Items.Add('-'); // Separator
+
+    // Blue colors
+    JppColorComboBox.AddColor('Light Blue', RGB(173,216,230));
+    JppColorComboBox.AddColor('Sky Blue', RGB(135,206,235));
+    JppColorComboBox.AddColor('Deep Sky Blue', RGB(000,191,255));
+    JppColorComboBox.AddColor('Dodger Sky Blue', RGB(030,144,255));
+    JppColorComboBox.AddColor('Steel Blue', RGB(070,130,180));
+
+    JppColorComboBox.Items.Add('-'); // Separator
+
+    // Red colors
+    JppColorComboBox.AddColor('Light Salmon', RGB(255,160,122));
+    JppColorComboBox.AddColor('Salmon', RGB(250,128,114));
+    JppColorComboBox.AddColor('Crimson', RGB(205,092,092));
+    JppColorComboBox.AddColor('Red', RGB(255,000,000));
+
+    JppColorComboBox.Items.Add('-'); // Separator
+
+    // Gray colors
+    JppColorComboBox.AddColor('Gainsboro', RGB(220,220,220));
+    JppColorComboBox.AddColor('Silver', RGB(192,192,192));
+    JppColorComboBox.AddColor('Gray', RGB(128,128,128));
+
+  finally
+    JppColorComboBox.Items.EndUpdate;
+  end;
+
+  JppColorComboBox.ItemIndex := 2;
+```
+
+Result:
+
+<p align="center">
+<img src="JppColorComboBox_ColorGroups.png">
+</p>
 
 ## Installation
 
