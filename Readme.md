@@ -6,6 +6,7 @@
   * [TJppPngButton](#tjpppngbutton)
   * [TJppBasicSpeedButton](#tjppbasicspeedbutton)
   * [TJppColorComboBox](#tjppcolorcombobox)
+  * [TJppLinkLabel](#tjpplinklabel)
 - [Installation](#installation)
 
 
@@ -152,9 +153,13 @@ In addition, the component has three built-in auxiliary buttons:
 1. `ButtonCopyColor` - After the user clicks, the currently selected color is copied to the system clipboard.
 1. `ButtonPasteColor` - After clicking, the current color is set to the one from the clipboard (if it is correct).
 
-All of these buttons are inherited from the `TJppBasicSpeedButton` class, so you can freely set PNG icons and background colors, borders, fonts, for all available button states: *normal*, *hot*, *down* and *disabled*.
+All of these buttons are inherited from the `TJppBasicSpeedButton` class, so you can freely set PNG icons and background colors, borders, fonts, for all available button states: *normal*, *hot*, *down* and *disabled*.  
+Moreover, these buttons support actions (`Action` property) and here you can set any action registered in the `TActionList` which is to be executed after clicking the button. But with one caveat, you must do this **at runtime**, eg:
+```delphi
+JppColorComboBox.ButtonChangeColor.Action := actMyAction; // actMyAction: Vcl.ActnList.TAction
+```
 
-The `ButtonSpacing` property specifies the space between these buttons.
+The `ButtonSpacing` property specifies the space between these internal buttons.
 
 #### History
 
