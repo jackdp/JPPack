@@ -7,6 +7,7 @@
   * [TJppBasicSpeedButton](#tjppbasicspeedbutton)
   * [TJppColorComboBox](#tjppcolorcombobox)
   * [TJppLinkLabel](#tjpplinklabel)
+  * [TJppStorageCtrl](#tjppstoragectrl)
 - [Installation](#installation)
 
 
@@ -154,7 +155,7 @@ In addition, the component has three built-in auxiliary buttons:
 1. `ButtonPasteColor` - After clicking, the current color is set to the one from the clipboard (if it is correct).
 
 All of these buttons are inherited from the `TJppBasicSpeedButton` class, so you can freely set PNG icons and background colors, borders, fonts, for all available button states: *normal*, *hot*, *down* and *disabled*.  
-Moreover, these buttons support actions (`Action` property) and here you can set any action registered in the `TActionList` which is to be executed after clicking the button. But with one caveat, you must do this **at runtime**, eg:
+Moreover, these buttons have built-in support for the actions. In the `Action` property of each button you can set any action registered in the `TActionList` which is to be executed after clicking the button. But with one caveat, you must do this **at runtime**, eg:
 ```delphi
 JppColorComboBox.ButtonChangeColor.Action := actMyAction; // actMyAction: Vcl.ActnList.TAction
 ```
@@ -163,7 +164,7 @@ The `ButtonSpacing` property specifies the space between these internal buttons.
 
 #### History
 
-Any color selected by the user, but not yet in the color list, is automatically added to the end of the list. Thanks to this the user of your application has access to the *history* of previously selected colors.
+Each color selected by the user, but not yet in the color list, is automatically added to the end of the list. Thanks to this the user of your application has access to the *history* of previously selected colors.
 
 #### Adding colors
 You can add colors to the list in two ways: using the `Items` property or `AddColor` procedure.
@@ -273,6 +274,35 @@ procedure SetJppLinkLabelColors(lbl: TJppLinkLabel; clNormal, clHot, clDisabled,
 procedure SetJppLinkLabelColors(lbl: TJppLinkLabel; Color: TColor); overload;
 ```
 These procedures allow you to quickly change the color of all fonts. In the first version, you must pass color values for all label states. In the second version of this procedure, you pass only one color, which will be set for all fonts.
+
+### TJppStorageCtrl
+
+`TJppStorageCtrl` is a non-visual component that allows you to store information of different types in the collection. Each item of the collection stores the following data:
+- 4 String values,
+- 2 Integer values,
+- 2 Int64 values,
+- 2 float values (Double),
+- 2 Boolean values,
+- 2 TColor values,
+- 2 Byte values,
+- 2 Pointer values.
+
+Items are accesible from the *Object Inspector* using `StorageCollection` property.
+The values of each item of the collection, except pointers, can also be set in the *Object Inspector*. Pointer values can only be set in the code and they are initialized by default to `nil`.
+
+To acces the collection items in the code you can use the `Items` property, eg:
+```delphi
+JppStorageCtrl.Items[0].IntValue1 := 1;
+JppStorageCtrl.Items[0].PointerValue1 := SomePointer;
+```
+But, since `Items` is set as the **default** property, you can write it simply:
+```delphi
+JppStorageCtrl[0].IntValue1 := 1;
+JppStorageCtrl[0].PointerValue1 := SomePointer;
+```
+This component can be useful if you want to have access to some global data, and you do not want to create global variables.
+
+I sometimes use this component in the early stages of writing applications. In later stages, a definitely better way to store and manage data is to design specialized records, classes, generic/pointer containers, etc.
 
 ## Installation
 
