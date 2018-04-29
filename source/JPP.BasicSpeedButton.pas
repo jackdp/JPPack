@@ -164,7 +164,7 @@ type
     property ParentShowHint;
     property PopupMenu;
     property ShowHint;
-    property StyleElements;
+    {$IF RTLVersion > 23} property StyleElements; {$IFEND}
     property Visible;
 
     property OnClick;

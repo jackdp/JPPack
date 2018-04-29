@@ -126,7 +126,7 @@ end;
 
 procedure TJppMemIniFile.WriteInt64(const Section, Ident: string; const Value: Int64);
 begin
-  WriteString(Section, Ident, Value.ToString);
+  WriteString(Section, Ident, IntToStr(Value));
 end;
 
 function TJppMemIniFile.ReadInt64(const Section, Ident: string; const Default: Int64): Int64;

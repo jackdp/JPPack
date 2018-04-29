@@ -170,7 +170,7 @@ type
     property OnStartDock;
     property OnStartDrag;
 
-    property StyleElements;
+    {$IF RTLVersion > 23} property StyleElements; {$IFEND}
 
   end;
 

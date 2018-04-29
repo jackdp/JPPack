@@ -285,18 +285,18 @@ end;
 function RectToStr(Rect: TRect; ShowWidthHeight: Boolean = True; Separator: string = '   '): string;
 begin
   Result :=
-    'Left = ' + Rect.Left.ToString + Separator +
-    'Top = ' + Rect.Top.ToString + Separator +
-    'Right = ' + Rect.Right.ToString + Separator +
-    'Bottom = ' + Rect.Bottom.ToString;
-  if ShowWidthHeight then Result := Result + Separator + 'Width = ' + Rect.Width.ToString + Separator + 'Height = ' + Rect.Height.ToString;
+    'Left = ' + IntToStr(Rect.Left) + Separator +
+    'Top = ' + IntToStr(Rect.Top) + Separator +
+    'Right = ' + IntToStr(Rect.Right) + Separator +
+    'Bottom = ' + IntToStr(Rect.Bottom);
+  if ShowWidthHeight then Result := Result + Separator + 'Width = ' + IntToStr(Rect.Width) + Separator + 'Height = ' + IntToStr(Rect.Height);
 end;
 
 function PointToStr(Point: TPoint; Separator: string = '   '): string;
 begin
   Result :=
-    'X = ' + Point.X.ToString + Separator +
-    'Y = ' + Point.Y.ToString;
+    'X = ' + IntToStr(Point.X) + Separator +
+    'Y = ' + IntToStr(Point.Y);
 end;
 
 function AddBounds(const s: string; LeftBound, RightBound: Char): string;

@@ -102,14 +102,14 @@ begin
 
   if (StyleName = '') or (StyleName = 'WINDOWS') then
   begin
-    Button.StyleElements := [seFont, seClient, seBorder];
+    {$IF RTLVersion > 23} Button.StyleElements := [seFont, seClient, seBorder]; {$IFEND}
     Button.Appearance.DefaultDrawing := True;
   end
 
   else
 
   begin
-    Button.StyleElements := [];
+    {$IF RTLVersion > 23} Button.StyleElements := []; {$IFEND}
     Button.Appearance.DefaultDrawing := False;
 
     if AnsiStartsText('AQUALIGHT', StyleName) then Button.ColorMapType := cmtVclAquaLightSlate

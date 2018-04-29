@@ -537,7 +537,9 @@ type
     property OnDragDropFiles;
     property Appearance;
     property TagExt;
+    {$IF RTLVersion > 23}
     property StyleElements;
+    {$IFEND}
     property Touch;
     property DoubleBuffered;
   end;
@@ -848,8 +850,11 @@ begin
   BaseTopColor := clBtnHighlight;
   BaseBottomColor := clBtnShadow;
 
-
+  {$IF RTLVersion > 23}
   if LStyle.Enabled and (seClient in StyleElements) then
+  {$ELSE}
+  if LStyle.Enabled then
+  {$IFEND}
   begin
 
     LDetails := LStyle.GetElementDetails(tpPanelBackground);
@@ -883,7 +888,7 @@ begin
   with Canvas do
   begin
 
-    if not LStyle.Enabled or not ParentBackground or not (seClient in StyleElements) then
+    if not LStyle.Enabled or not ParentBackground {$IF RTLVersion > 23} or not (seClient in StyleElements) {$IFEND} then
     begin
       Brush.Color := BaseColor;
       FillRect(Rect);
@@ -938,7 +943,7 @@ var
 begin
   bVclStyle := Assigned(TStyleManager.ActiveStyle) and (TStyleManager.ActiveStyle.Name <> 'Windows');
 
-  if (not bVclStyle) or (bVclStyle and (not (seClient in StyleElements))) then
+  if (not bVclStyle) {$IF RTLVersion > 23} or (bVclStyle and (not (seClient in StyleElements))) {$IFEND} then
   begin
 
     Canvas.Brush.Style := bsClear;
@@ -1002,7 +1007,7 @@ begin
     BaseTopColor := clBtnHighlight;
     BaseBottomColor := clBtnShadow;
 
-    if LStyle.Enabled and (seClient in StyleElements) then
+    if LStyle.Enabled {$IF RTLVersion > 23} and (seClient in StyleElements) {$IFEND} then
     begin
 
       LDetails := LStyle.GetElementDetails(tpPanelBackground);
@@ -1034,7 +1039,7 @@ begin
 
     with Canvas do
     begin
-      if not LStyle.Enabled or not ParentBackground or not (seClient in StyleElements) then
+      if not LStyle.Enabled or not ParentBackground {$IF RTLVersion > 23} or not (seClient in StyleElements) {$IFEND} then
       begin
         Brush.Color := BaseColor;
         FillRect(Rect);
