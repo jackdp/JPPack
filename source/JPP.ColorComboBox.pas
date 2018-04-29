@@ -20,8 +20,8 @@ type
 
   //TColorNamesLang = (cnPL, cnEN);
 
-  PJpPJpPJppColorComboParams = ^TJpPJpPJppColorComboParams;
-  TJpPJpPJppColorComboParams = record
+  PJppColorComboParams = ^TJppColorComboParams;
+  TJppColorComboParams = record
     ColorRectWidth: integer;
     LeftMargin: integer;
     ColorToDescDistance: integer;
@@ -104,7 +104,7 @@ type
   TJppColorComboBox = class(TComboBox)
   private
     FSelected: TColor;
-    FParams: TJpPJpPJppColorComboParams;
+    FParams: TJppColorComboParams;
     FBoundLabel: TJppComboBoundLabel;
     FBoundLabelPosition: TLabelPosition;
     FBoundLabelSpacing: Integer;
@@ -116,7 +116,7 @@ type
     procedure SetColorToDescDistance(const Value: integer);
     procedure SetColorRectWidth(const Value: integer);
     procedure SetLeftMargin(const Value: integer);
-    procedure SetParams(const Value: TJpPJpPJppColorComboParams);
+    procedure SetParams(const Value: TJppColorComboParams);
     procedure ButtonCopyColorClick(Sender: TObject);
     procedure ButtonPasteColorClick(Sender: TObject);
     procedure ButtonChangeColorClick(Sender: TObject);
@@ -153,7 +153,7 @@ type
     procedure SetButtonsPosition;
   published
     property Selected: TColor read FSelected write SetActiveColor;
-    property Params: TJpPJpPJppColorComboParams read FParams write SetParams;
+    property Params: TJppColorComboParams read FParams write SetParams;
     property Param_ColorRectWidth: integer read FParams.ColorRectWidth write SetColorRectWidth default 24;
     property Param_LeftMargin: integer read FParams.LeftMargin write SetLeftMargin default 4;
     property Param_ColorToDescDistance: integer read FParams.ColorToDescDistance write SetColorToDescDistance default 0;
@@ -642,7 +642,7 @@ begin
   Invalidate;
 end;
 
-procedure TJppColorComboBox.SetParams(const Value: TJpPJpPJppColorComboParams);
+procedure TJppColorComboBox.SetParams(const Value: TJppColorComboParams);
 begin
   FParams := Value;
   Invalidate;
