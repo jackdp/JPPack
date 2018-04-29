@@ -806,7 +806,7 @@ begin
       if Copy(sName, Length(sName) - 2, 3) = ' - ' then Delete(sName, Length(sName) - 2, 2);
     end;
 
-    if sName = '' then
+    if (sName = '') and (Param_ShowRGB) then
       sName :=
         Pad(IntToStr(r), 3, pc) + ',' +
         Pad(IntToStr(g), 3, pc) + ',' +
@@ -815,7 +815,7 @@ begin
     x := 1 * FParams.LeftMargin + FParams.ColorRectWidth + FParams.ColorToDescDistance;
 
     Brush.Color := clBg;
-    y := R2.Top + ((R2.Bottom - R2.Top) div 2) - TextHeight(sName) div 2;
+    y := R2.Top + ((R2.Bottom - R2.Top) div 2) - TextHeight('l') div 2;
 
     if Index > 0 then TextOut(x, y, sName)
     else TextOut(6, y, Items[0]);
