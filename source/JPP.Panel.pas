@@ -1,5 +1,9 @@
 unit JPP.Panel;
 
+{$IFDEF VER200}
+  {$DEFINE DELPHI2009_OR_ABOVE}
+{$ENDIF}
+
 interface
 
 uses
