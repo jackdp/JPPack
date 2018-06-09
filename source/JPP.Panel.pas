@@ -7,14 +7,17 @@ unit JPP.Panel;
 interface
 
 uses
-  Winapi.Messages, Winapi.Windows, System.SysUtils, System.Classes, System.Types, Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Graphics, Vcl.StdCtrls,
-  Vcl.GraphUtil, Vcl.Themes, Vcl.ExtCtrls, System.UITypes, Vcl.Dialogs,
+  Winapi.Messages, Winapi.Windows,
+  System.SysUtils, System.Classes, System.Types, System.UITypes,
+  Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Graphics, Vcl.StdCtrls, Vcl.GraphUtil, Vcl.Themes, Vcl.ExtCtrls, Vcl.Dialogs,
+
+  JPL.Colors,
   JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs;
 
 
 type
 
-  TJppPanelTagExt = class(TJppTagExt);
+  //TJppPanelTagExt = class(TJppTagExt);
 
   TJppVerticalLinePosition = (vlpFromLeft, vlpCenter, vlpFromRight);
   TJppHorizontalLinePosition = (hlpFromTop, hlpCenter, hlpFromBottom);
@@ -285,6 +288,7 @@ type
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
+    procedure Assign(Border: TJppPanelBorder); reintroduce;
   protected
     procedure PropsChanged(Sender: TObject);
   published
@@ -311,6 +315,7 @@ type
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
+    procedure Assign(Borders: TJppPanelBorders); reintroduce;
   protected
     procedure PropsChanged(Sender: TObject);
   published
@@ -351,7 +356,7 @@ type
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
-    //procedure Assign(Source: TJppPanelAppearance); reintroduce;
+    procedure Assign(Source: TJppPanelAppearance); reintroduce;
   published
     property UpperGradient: TJppGradientEx read FUpperGradient write SetUpperGradient;
     property BottomGradient: TJppGradientEx read FBottomGradient write SetBottomGradient;
@@ -417,14 +422,14 @@ type
   private
     FOnGradientChange: TNotifyEvent;
     FAppearance: TJppPanelAppearance;
-    FTagExt: TJppPanelTagExt;
+    FTagExt: TJppTagExt;
     FVerticalLines: TJppPanelVerticalLines;
     FHorizontalLines: TJppPanelHorizontalLines;
     FCaptions: TJppPanelCaptions;
     FHorizontalBars: TJppPanelHorizontalBars;
     procedure SetOnGradientChange(const Value: TNotifyEvent);
     procedure SetAppearance(const Value: TJppPanelAppearance);
-    procedure SetTagExt(const Value: TJppPanelTagExt);
+    procedure SetTagExt(const Value: TJppTagExt);
     procedure SetVerticalLines(const Value: TJppPanelVerticalLines);
     procedure SetHorizontalLines(const Value: TJppPanelHorizontalLines);
     procedure SetCaptions(const Value: TJppPanelCaptions);
@@ -450,7 +455,7 @@ type
     destructor Destroy; override;
     property Canvas;
     property DockManager;
-    property TagExt: TJppPanelTagExt read FTagExt write SetTagExt;
+    property TagExt: TJppTagExt read FTagExt write SetTagExt;
 
   published
     property VerticalLines: TJppPanelVerticalLines read FVerticalLines write SetVerticalLines;
@@ -558,16 +563,13 @@ type
 {$IFEND}
 
 
-procedure Register;
+
 
 
 implementation
 
 
-procedure Register;
-begin
-  RegisterComponents(JPPackPageName, [TJppPanel]);
-end;
+
 
 
 {$region ' ---------------------------------------- TJppBasePanel ----------------------------------------------------- '}
@@ -575,7 +577,7 @@ constructor TJppBasePanel.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   //BevelInner := bvNone;
-  //BevelOuter := bvNone;
+  BevelOuter := bvNone;
   FLayout := tlCenter;
   FWordWrap := False;
 end;
@@ -714,7 +716,7 @@ begin
   inherited Create(AOwner);
   ParentBackground := False;  // TJvGifAnimator needs this!
 
-  FTagExt := TJppPanelTagExt.Create(Self);
+  FTagExt := TJppTagExt.Create(Self);
   FAppearance := TJppPanelAppearance.Create(Self);
   FAppearance.OnChange := PropsChanged;
 
@@ -805,7 +807,7 @@ begin
 end;
 
 
-procedure TJppCustomPanel.SetTagExt(const Value: TJppPanelTagExt);
+procedure TJppCustomPanel.SetTagExt(const Value: TJppTagExt);
 begin
   FTagExt := Value;
 end;
@@ -815,6 +817,7 @@ begin
   FVerticalLines := Value;
   Invalidate;
 end;
+
 procedure TJppCustomPanel.AdjustClientRect(var Rect: TRect);
 begin
   inherited AdjustClientRect(Rect);
@@ -945,6 +948,17 @@ var
   end;
 
 begin
+
+  if ParentBackground then
+  begin
+    DrawHorizontalBars(ARect);
+    DrawVerticalLines(ARect);
+    DrawHorizontalLines(ARect);
+    DrawCaptions(ARect);
+    DrawBorders(ARect);
+    Exit;
+  end;
+
   bVclStyle := Assigned(TStyleManager.ActiveStyle) and (TStyleManager.ActiveStyle.Name <> 'Windows');
 
   if (not bVclStyle) {$IF RTLVersion > 23} or (bVclStyle and (not (seClient in StyleElements))) {$IFEND} then
@@ -1300,6 +1314,20 @@ begin
   inherited;
 end;
 
+
+procedure TJppPanelAppearance.Assign(Source: TJppPanelAppearance);
+begin
+  FUpperGradient.Assign(Source.UpperGradient);
+  FBottomGradient.Assign(Source.BottomGradient);
+  FUpperGradientPercent := Source.UpperGradientPercent;
+  FBorders.Assign(Source.Borders);
+  FBorderToGradientMargin := Source.BorderToGradientMargin;
+  FBackgroundColor := Source.BackgroundColor;
+  FDrawGradient := Source.DrawGradient;
+  FDrawBorder := Source.DrawBorder;
+  PropsChanged(Self);
+end;
+
 procedure TJppPanelAppearance.PropsChanged(Sender: TObject);
 begin
   if Assigned(OnChange) then OnChange(Self);
@@ -1378,6 +1406,14 @@ begin
   inherited;
 end;
 
+procedure TJppPanelBorder.Assign(Border: TJppPanelBorder);
+begin
+  FPen.Assign(Border.Pen);
+  FPen.OnChange := PropsChanged;
+  FVisible := Border.Visible;
+  FBorder3D := Border.Border3D;
+end;
+
 procedure TJppPanelBorder.PropsChanged(Sender: TObject);
 begin
   if Assigned(OnChange) then OnChange(Self);
@@ -1435,6 +1471,14 @@ begin
   FTop.Free;
   FBottom.Free;
   inherited;
+end;
+
+procedure TJppPanelBorders.Assign(Borders: TJppPanelBorders);
+begin
+  FLeft.Assign(Borders.Left);
+  FRight.Assign(Borders.Right);
+  FTop.Assign(Borders.Top);
+  FBottom.Assign(Borders.Bottom);
 end;
 
 procedure TJppPanelBorders.PropsChanged(Sender: TObject);
