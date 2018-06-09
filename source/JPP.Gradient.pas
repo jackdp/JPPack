@@ -9,7 +9,9 @@ unit JPP.Gradient;
 interface
 
 uses
-  Winapi.Windows, System.SysUtils, System.Classes, Vcl.Graphics, System.UITypes;
+  Winapi.Windows,
+  System.SysUtils, System.Classes, System.UITypes,
+  Vcl.Graphics;
 
 const
   GRADIENT_BALANCE = 50;
@@ -19,7 +21,9 @@ type
   TJppGradientType = (gtVertical, gtHorizontal, gtDiagonal, gtDiagonal2, gtVerticalBar, gtHorizontalBar, gtDiagonalBar, gtDiagonalBar2, gtRadial, gtTopBar,
     gtBottomBar);
 
-procedure JppGradientFill(Canvas: TCanvas; StartColor, EndColor: TColor; GradientType: TJppGradientType; Steps: Byte = 255);
+procedure JppGradientFill(Canvas: TCanvas; StartColor, EndColor: TColor; GradientType: TJppGradientType; Steps: Byte = 255); overload;
+procedure JppGradientFill(Canvas: TCanvas; Rect: TRect; StartColor, EndColor: TColor; GradientType: TJppGradientType; Steps: Byte = 255); overload;
+
 
 {$REGION ' --------------- CINDY CODE ---------------------- '}
 type
@@ -49,7 +53,7 @@ begin
 end;
 
 {$REGION ' --------------------- JppGradientFill ------------------------- '}
-procedure JppGradientFill(Canvas: TCanvas; StartColor, EndColor: TColor; GradientType: TJppGradientType; Steps: Byte);
+procedure JppGradientFill(Canvas: TCanvas; Rect: TRect; StartColor, EndColor: TColor; GradientType: TJppGradientType; Steps: Byte); overload;
 var
   Orientation: TDgradOrientation;
   balanceMode: TDgradBalanceMode;
@@ -83,15 +87,19 @@ begin
   begin
     Canvas.Brush.Style := bsSolid;
     Canvas.Brush.Color := StartColor;
-    Canvas.FillRect(Canvas.ClipRect);
+    Canvas.FillRect(Rect);
   end
-  else cyGradientFill(Canvas, Canvas.ClipRect, StartColor, EndColor, Orientation, Balance, Angle, balanceMode, Steps, GRADIENT_SPEED_PERCENT);
+  else cyGradientFill(Canvas, Rect, StartColor, EndColor, Orientation, Balance, Angle, balanceMode, Steps, GRADIENT_SPEED_PERCENT);
+end;
+
+procedure JppGradientFill(Canvas: TCanvas; StartColor, EndColor: TColor; GradientType: TJppGradientType; Steps: Byte); overload;
+begin
+  JppGradientFill(Canvas, Canvas.ClipRect, StartColor, EndColor, GradientType, Steps);
 end;
 {$ENDREGION JppGradientFill}
 
+
 {$REGION ' ------------- CINDY CODE -------------------- '}
-
-
 
   {$REGION ' --------------------------------------- CINDY - cyGradientFill - MAIN PROCEDURE ---------------------------------------- '}
 
