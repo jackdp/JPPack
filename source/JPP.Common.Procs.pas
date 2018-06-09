@@ -3,7 +3,9 @@ unit JPP.Common.Procs;
 interface
 
 uses
-  Winapi.Windows, System.SysUtils, System.Classes, System.UITypes, Vcl.Controls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs;
+  Winapi.Windows,
+  System.SysUtils, System.Classes, System.UITypes,
+  Vcl.Controls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs;
 
 
 
@@ -27,7 +29,25 @@ procedure DrawRightBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean 
 
 function GetPercentValue(PercentX, Percent100: integer): integer;
 
+function GetMiddlePosY(const R: TRect; const TextHeight: integer): integer;
+procedure DrawRectTopBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWidth: integer; PenStyle: TPenStyle = psSolid; ExtraSpace: integer = 0);
+procedure DrawRectBottomBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWidth: integer; PenStyle: TPenStyle = psSolid; ExtraSpace: integer = 0);
+procedure DrawRectLeftBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWidth: integer; PenStyle: TPenStyle = psSolid; ExtraSpace: integer = 0);
+procedure DrawRectRightBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWidth: integer; PenStyle: TPenStyle = psSolid; ExtraSpace: integer = 0);
+
+procedure DrawCenteredText(Canvas: TCanvas; Rect: TRect; const Text: string; DeltaX: integer = 0; DeltaY: integer = 0);
+
+
+
 implementation
+
+
+
+
+function GetMiddlePosY(const R: TRect; const TextHeight: integer): integer;
+begin
+  Result := R.Top + (R.Height div 2) - (TextHeight div 2);
+end;
 
 function GetPercentValue(PercentX, Percent100: integer): integer;
 begin
@@ -35,10 +55,135 @@ begin
 end;
 
 {$region '              Drawing procs                 '}
+
+procedure DrawCenteredText(Canvas: TCanvas; Rect: TRect; const Text: string; DeltaX: integer = 0; DeltaY: integer = 0);
+var
+  x, y: integer;
+begin
+  with Canvas do
+  begin
+    x := Rect.Left + (Rect.Width div 2) - (TextWidth(Text) div 2) + DeltaX;
+    y := Rect.Top + (Rect.Height div 2) - (TextHeight(Text) div 2) + DeltaY;
+    TextOut(x, y, Text);
+  end;
+end;
+
+
+procedure DrawRectTopBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWidth: integer; PenStyle: TPenStyle = psSolid; ExtraSpace: integer = 0);
+var
+  OldPenWidth, i: integer;
+  OldColor: TColor;
+  OldPenStyle: TPenStyle;
+begin
+  OldPenWidth := Canvas.Pen.Width;
+  OldColor := Canvas.Pen.Color;
+  OldPenStyle := Canvas.Pen.Style;
+
+  with Canvas do
+  begin
+    Pen.Width := 1;
+    Pen.Color := Color;
+    Pen.Style := PenStyle;
+    for i := 0 to PenWidth - 1 do
+    begin
+      MoveTo(Rect.Left, Rect.Top + i + ExtraSpace);
+      LineTo(Rect.Right, Rect.Top + i + ExtraSpace);
+    end;
+  end;
+
+  Canvas.Pen.Width := OldPenWidth;
+  Canvas.Pen.Color := OldColor;
+  Canvas.Pen.Style := OldPenStyle;
+end;
+
+procedure DrawRectBottomBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWidth: integer; PenStyle: TPenStyle = psSolid; ExtraSpace: integer = 0);
+var
+  OldPenWidth, i: integer;
+  OldColor: TColor;
+  OldPenStyle: TPenStyle;
+begin
+  OldPenWidth := Canvas.Pen.Width;
+  OldColor := Canvas.Pen.Color;
+  OldPenStyle := Canvas.Pen.Style;
+
+  with Canvas do
+  begin
+    Pen.Width := 1;
+    Pen.Color := Color;
+    Pen.Style := PenStyle;
+    for i := 0 to PenWidth - 1 do
+    begin
+      MoveTo(Rect.Left, Rect.Bottom - i - ExtraSpace);
+      LineTo(Rect.Right, Rect.Bottom - i - ExtraSpace);
+    end;
+  end;
+
+  Canvas.Pen.Width := OldPenWidth;
+  Canvas.Pen.Color := OldColor;
+  Canvas.Pen.Style := OldPenStyle;
+end;
+
+procedure DrawRectLeftBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWidth: integer; PenStyle: TPenStyle = psSolid; ExtraSpace: integer = 0);
+var
+  OldPenWidth, i: integer;
+  OldColor: TColor;
+  OldPenStyle: TPenStyle;
+begin
+  OldPenWidth := Canvas.Pen.Width;
+  OldColor := Canvas.Pen.Color;
+  OldPenStyle := Canvas.Pen.Style;
+
+  with Canvas do
+  begin
+    Pen.Width := 1;
+    Pen.Color := Color;
+    Pen.Style := PenStyle;
+    for i := 0 to PenWidth - 1 do
+    begin
+      MoveTo(Rect.Left + i + ExtraSpace, Rect.Top);
+      LineTo(Rect.Left + i + ExtraSpace, Rect.Bottom);
+    end;
+  end;
+
+  Canvas.Pen.Width := OldPenWidth;
+  Canvas.Pen.Color := OldColor;
+  Canvas.Pen.Style := OldPenStyle;
+end;
+
+procedure DrawRectRightBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWidth: integer; PenStyle: TPenStyle = psSolid; ExtraSpace: integer = 0);
+var
+  OldPenWidth, i: integer;
+  OldColor: TColor;
+  OldPenStyle: TPenStyle;
+begin
+  OldPenWidth := Canvas.Pen.Width;
+  OldColor := Canvas.Pen.Color;
+  OldPenStyle := Canvas.Pen.Style;
+
+  with Canvas do
+  begin
+    Pen.Width := 1;
+    Pen.Color := Color;
+    Pen.Style := PenStyle;
+    for i := 0 to PenWidth - 1 do
+    begin
+      MoveTo(Rect.Right - i - ExtraSpace, Rect.Top);
+      LineTo(Rect.Right - i - ExtraSpace, Rect.Bottom);
+    end;
+  end;
+
+  Canvas.Pen.Width := OldPenWidth;
+  Canvas.Pen.Color := OldColor;
+  Canvas.Pen.Style := OldPenStyle;
+end;
+
+
+
 procedure DrawTopBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = True);
 var
-  Width: integer;
+  OldWidth, Width: integer;
 begin
+  OldWidth := Canvas.Pen.Width;
   Canvas.Pen.Width := 1;
   Width := Pen.Width;
 
@@ -55,12 +200,14 @@ begin
     else Inc(Rect.Top);
   end;
 
+  Canvas.Pen.Width := OldWidth;
 end;
 
 procedure DrawRightBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = True);
 var
-  Width: integer;
+  OldWidth, Width: integer;
 begin
+  OldWidth := Canvas.Pen.Width;
   Canvas.Pen.Width := 1;
   Width := Pen.Width;
   Dec(Rect.Right);
@@ -78,12 +225,15 @@ begin
     else Dec(Rect.Right);
   end;
 
+  Canvas.Pen.Width := OldWidth;
+
 end;
 
 procedure DrawBottomBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = True);
 var
-  Width: integer;
+  OldWidth, Width: integer;
 begin
+  OldWidth := Canvas.Pen.Width;
   Canvas.Pen.Width := 1;
   Width := Pen.Width;
   Dec(Rect.Bottom);
@@ -103,12 +253,14 @@ begin
     else Dec(Rect.Bottom);
   end;
 
+  Canvas.Pen.Width := OldWidth;
 end;
 
 procedure DrawLeftBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = True);
 var
-  Width: integer;
+  OldWidth, Width: integer;
 begin
+  OldWidth := Canvas.Pen.Width;
   Canvas.Pen.Width := 1;
   Width := Pen.Width;
   Dec(Rect.Top);
@@ -127,6 +279,7 @@ begin
     else Inc(Rect.Left);
   end;
 
+  Canvas.Pen.Width := OldWidth;
 end;
 
 procedure JppFrame3D(Canvas: TCanvas; var Rect: TRect; LeftColor, RightColor, TopColor, BottomColor: TColor; Width: Integer);
@@ -171,7 +324,7 @@ procedure JppFrame3D(Canvas: TCanvas; var Rect: TRect; Color: TColor; Width: int
 begin
   JppFrame3D(Canvas, Rect, Color, Color, Color, Color, Width);
 end;
-{$endregion}
+{$endregion Drawing procs}
 
 procedure SaveStringToFile(s: string; fName: string);
 var
