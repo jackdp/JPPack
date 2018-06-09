@@ -1,12 +1,19 @@
 unit JPP.FormIniStorage;
 
+{
+  DEPRECATED
+  DO NOT USE!
+}
+
 interface
 
-{$region ' ------------------------------------------------- INTERFACE ------------------------------------------------------------- '}
+
 uses
-  Winapi.Windows, System.SysUtils, System.Classes, System.IniFiles, Vcl.Controls, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Forms, Vcl.Dialogs,
-  Vcl.Graphics, System.AnsiStrings, System.UITypes, RTTI, JPP.MemIniFile, JPP.Strings, {Xml.XmlIniFile,}
-  JPP.Types;
+  Winapi.Windows,
+  System.SysUtils, System.Classes, System.IniFiles, System.AnsiStrings, System.UITypes, System.RTTI,
+  Vcl.Controls, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Forms, Vcl.Dialogs, Vcl.Graphics,
+
+  JPP.Types, JPP.MemIniFile, JPL.Strings;
 
 
 const
@@ -289,9 +296,6 @@ type
   end;
 
 
-  {$region ' --- temp --- '}
-  {$endregion}
-
   {$region ' ------------------------ INT - TJppFormIniStorage -------------------------------- '}
   TJppFormIniStorage = class(TComponent)
   private
@@ -355,19 +359,8 @@ type
 
 
 
-
-procedure Register;
-
-{$endregion INTERFACE}
-
 implementation
 
-{$region ' ------------------------------------------------- IMPLEMENTATION ----------------------------------------------------------- '}
-
-procedure Register;
-begin
-  RegisterComponents(JPPackPageName, [TJppFormIniStorage]);
-end;
 
 
 {$region ' ------------------ helpers ------------------ '}
@@ -409,8 +402,6 @@ end;
 
 
 {$region ' ---------------------------------------------------- IMP - TJppFormIniStorage ------------------------------------------------------------ '}
-{ TJppFormIniStorage }
-
 
 constructor TJppFormIniStorage.Create(AOwner: TComponent);
 begin
@@ -1050,7 +1041,6 @@ end;
 
 
 {$region ' ---------------------------------- IMP - TJPControlBasicParams ------------------------------------------- '}
-{ TJPControlBasicParams }
 
 constructor TJppControlBasicStorageParams.Create(AOwner: TComponent);
 begin
@@ -1140,7 +1130,6 @@ end;
 
 
 {$region ' -------------------------------- IMP - TJPFormParams -------------------------------------- '}
-{ TJPFormParams }
 
 constructor TJppFormStorageParams.Create(AOwner: TComponent);
 begin
@@ -1201,7 +1190,6 @@ end;
 
 
 {$region ' ------------------------- IMP - TJppFontStorageParams ------------------------------ '}
-{ TJppFontStorageParams }
 
 constructor TJppFontStorageParams.Create(AOwner: TComponent);
 begin
@@ -1240,7 +1228,6 @@ end;
 
 
 {$region ' -------------------------------- IMP - TJPStorageParams ---------------------------------------------- '}
-{ TJPStorageParams }
 
 constructor TJPStorageParams.Create(AOwner: TComponent);
 begin
@@ -1297,7 +1284,6 @@ end;
 
 
 {$region ' ---------------------------- IMP - TJppCheckBoxStorageParams ---------------------------------- '}
-{ TJppCheckBoxStorageParams }
 
 constructor TJppCheckBoxStorageParams.Create(AOwner: TComponent);
 begin
@@ -1445,7 +1431,6 @@ end;
 {$endregion}
 
 {$region ' ---------------------------- IMP - TJppComboBoxStorageParams -------------------------------------- '}
-{ TJppComboBoxStorageParams }
 
 constructor TJppComboBoxStorageParams.Create(AOwner: TComponent);
 begin
@@ -1515,8 +1500,6 @@ end;
 {$endregion}
 
 
-
-
 {$region ' ---------------------------- IMP - TJppMemoStorageParams -------------------------------------- '}
 
 constructor TJppMemoStorageParams.Create(AOwner: TComponent);
@@ -1567,10 +1550,6 @@ begin
 end;
 
 {$endregion}
-
-
-
-{$endregion IMPLEMENTATION}
 
 
 end.
