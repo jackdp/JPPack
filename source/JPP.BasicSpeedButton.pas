@@ -3,11 +3,12 @@ unit JPP.BasicSpeedButton;
 interface
 
 uses
-  Winapi.Windows, System.SysUtils, System.Classes, Vcl.Controls, Vcl.Graphics, Winapi.Messages, Vcl.StdCtrls, Vcl.Buttons, Vcl.GraphUtil,
-  Vcl.ActnList,
-  Vcl.Imaging.pngimage, 
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.Classes,
+  Vcl.Controls, Vcl.Graphics,  Vcl.StdCtrls, Vcl.Buttons, Vcl.GraphUtil, Vcl.ActnList, Vcl.Imaging.pngimage,
   
-  PNGC.PngFunctions, PNGC.PngButtonFunctions, PNGC.PngImageList,
+  PngFunctions, PngButtonFunctions, PngImageList,
+  JPL.Colors,
   JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs
   ;
 
@@ -93,7 +94,7 @@ type
   end;
   {$endregion}
 
-  {$region ' ----------- TJppBasicSpeedButton -------------- '}
+  {$region ' ----------------- TJppBasicSpeedButton ----------------- '}
   TJppBasicSpeedButton = class(TGraphicControl)
   private
     FTagExt: TJppTagExt;
@@ -178,16 +179,8 @@ type
   {$endregion}
 
 
-procedure Register;
-
 
 implementation
-
-
-procedure Register;
-begin
-  RegisterComponents(JPPackPageName, [TJppBasicSpeedButton]);
-end;
 
 
 
@@ -628,7 +621,6 @@ begin
 end;
 
 {$endregion TJppBasicSpeedButtonStateParams}
-
 
 
 {$region ' ---------------------- TJppBasicSpeedButtonAppearance ------------------------ '}
