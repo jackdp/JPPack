@@ -13,8 +13,9 @@ unit JPP.Graphics;
 interface
 
 uses
-  Winapi.Windows, Winapi.ShellAPI, System.SysUtils, System.Classes, Winapi.Messages,
-  Vcl.Graphics, System.Math, Vcl.Imaging.pngimage
+  Winapi.Windows, Winapi.ShellAPI, Winapi.Messages,
+  System.SysUtils, System.Classes, System.Math,
+  Vcl.Graphics, Vcl.Imaging.pngimage
   ;
 
 
@@ -58,28 +59,17 @@ function SetPngBrightness(Value: TBrightInt; Png: TPngImage): Boolean;
 function SetPngContrast(Value: Single; Png: TPngImage): Boolean;
 {$endregion}
 
-{$region '   INT - Functions from VCL.cyGraphics.pas (http://sourceforge.net/projects/tcycomponents/)'}
-function ColorSetPercentBrightness(Color: TColor; PercentLight: Integer): TColor;
-function ColorModify(Color: TColor; incR, incG, incB: Integer): TColor;
-function ColorSetPercentContrast(Color: TColor; IncPercent: Integer): TColor;
-function ColorSetPercentPale(Color: TColor; IncPercent: integer): TColor;
-function MediumColor(Color1, Color2: TColor): TColor;
-{$endregion}
 
-function GetSimilarColor(cl: TColor; Percent: integer; Lighter: Boolean = True): TColor;
-function GetSimilarColor2(Color: TColor; IncPercent: integer): TColor; // ColorSetPercentPale
 function PointInRect(Point: TPoint; Rect: TRect): Boolean;
-function InvertColor(Color: TColor): TColor;
-function FadeToGray(Color: TColor): TColor;
 
 function GetIconCount(const FileName: string): Integer;
-function ColorToDelphiHex(Color: TColor; Prefix: string = '$'): string;
-function RGB3(bt: Byte): TColor;
 function RectHeight(R: TRect): integer;
 function RectWidth(R: TRect): integer;
 
 
+
 implementation
+
 
 function RectWidth(R: TRect): integer;
 begin
@@ -91,38 +81,10 @@ begin
   Result := R.Bottom - R.Top;
 end;
 
-function RGB3(bt: Byte): TColor;
-begin
-  Result := RGB(bt,bt,bt);
-end;
-
-function ColorToDelphiHex(Color: TColor; Prefix: string = '$'): string;
-var
-  r, g, b: Byte;
-begin
-  r := GetRValue(Color);
-  g := GetGValue(Color);
-  b := GetBValue(Color);
-  Result := Prefix + '00' + IntToHex(b, 2) + IntToHex(g, 2) + IntToHex(r, 2);
-end;
 
 function GetIconCount(const FileName: string): Integer;
 begin
   Result := ExtractIcon(hInstance, PChar(FileName), DWORD(-1));
-end;
-
-function FadeToGray(Color: TColor): TColor;
-var
-  LBytGray: byte;
-begin
-  Color := ColorToRGB(Color);
-  LBytGray := HiByte(GetRValue(Color) * 74 + GetGValue(Color) * 146 + GetBValue(Color) * 36);
-  Result := RGB(LBytGray, LBytGray, LBytGray);
-end;
-
-function InvertColor(Color: TColor): TColor;
-begin
-  Result := ColorToRGB(Color) xor $00FFFFFF;
 end;
 
 function PointInRect(Point: TPoint; Rect: TRect): Boolean;
@@ -130,164 +92,7 @@ begin
   Result := (Point.X >= Rect.Left) and (Point.X <= Rect.Width) and (Point.Y >= Rect.Top) and (Point.Y <= Rect.Bottom);
 end;
 
-function GetSimilarColor2(Color: TColor; IncPercent: integer): TColor; // ColorSetPercentPale from JPP.Graphics
-var
-  r, g, b: Integer;
-begin
-  r := GetRValue(Color);
-  g := GetGValue(Color);
-  b := GetBValue(Color);
 
-  r := r + Round((255 - r) * IncPercent / 100);
-  g := g + Round((255 - g) * IncPercent / 100);
-  b := b + Round((255 - b) * IncPercent / 100);
-
-  if r < 0 then r := 0; if r > 255 then r := 255;
-  if g < 0 then g := 0; if g > 255 then g := 255;
-  if b < 0 then b := 0; if b > 255 then b := 255;
-
-  Result := RGB(r,g,b);
-end;
-
-function GetSimilarColor(cl: TColor; Percent: integer; Lighter: Boolean = True): TColor;
-var
-  r, g, b: integer;
-  x: integer;
-begin
-  cl := ColorToRgb(cl);
-  r := GetRValue(cl);
-  g := GetGValue(cl);
-  b := GetBValue(cl);
-
-  x := r * Percent div 100;
-  if Lighter then r := r + x
-  else r := r - x;
-  if r > 255 then r := 255;
-  if r < 0 then r := 0;
-
-  x := g * Percent div 100;
-  if Lighter then g := g + x
-  else g := g - x;
-  if g > 255 then g := 255;
-  if g < 0 then g := 0;
-
-  x := b * Percent div 100;
-  if Lighter then b := b + x
-  else b := b - x;
-  if b > 255 then b := 255;
-  if b < 0 then b := 0;
-
-  Result := RGB(r, g, b);
-end;
-
-
-{$region ' Functions from VCL.cyGraphics.pas (http://sourceforge.net/projects/tcycomponents/)'}
-function ColorSetPercentBrightness(Color: TColor; PercentLight: Integer): TColor;
-var
-  r, g, b, incValue: Integer;
-begin
-  incValue := MulDiv(255, PercentLight, 100);
-  Color:= ColorToRGB(Color);
-
-  r := GetRValue(Color);
-  g := GetGValue(Color);
-  b := GetBValue(Color);
-
-  r := r + incValue;
-  g := g + incValue;
-  b := b + incValue;
-
-  if r < 0 then r := 0; if r > 255 then r := 255;
-  if g < 0 then g := 0; if g > 255 then g := 255;
-  if b < 0 then b := 0; if b > 255 then b := 255;
-
-  RESULT := RGB(r,g,b);
-end;
-
-function ColorModify(Color: TColor; incR, incG, incB: Integer): TColor;
-var r,g,b: Integer;
-begin
-  Color:= ColorToRGB(Color);
-
-  r:= GetRValue(Color);
-  g:= GetGValue(Color);
-  b:= GetBValue(Color);
-
-  r := r + incR;
-  g := g + incG;
-  b := b + incB;
-
-  if r < 0 then r := 0; if r > 255 then r := 255;
-  if g < 0 then g := 0; if g > 255 then g := 255;
-  if b < 0 then b := 0; if b > 255 then b := 255;
-
-  Result := RGB(r,g,b);
-end;
-
-function ColorSetPercentContrast(Color: TColor; IncPercent: Integer): TColor;
-var
-  r, g, b, Media: Integer;
-begin
-  if IncPercent > 100 then IncPercent := 100;
-  if IncPercent < -100 then IncPercent := -100;
-
-  Color:= ColorToRGB(Color);
-
-  r := GetRValue(Color);
-  g := GetGValue(Color);
-  b := GetBValue(Color);
-
-  Media := (r+g+b) Div 3;
-
-  r := r + Round(  (r - Media) * (IncPercent / 100)  );
-  g := g + Round(  (g - Media) * (IncPercent / 100)  );
-  b := b + Round(  (b - Media) * (IncPercent / 100)  );
-
-  if r < 0 then r := 0; if r > 255 then r := 255;
-  if g < 0 then g := 0; if g > 255 then g := 255;
-  if b < 0 then b := 0; if b > 255 then b := 255;
-
-  RESULT := RGB(r,g,b);
-end;
-
-function ColorSetPercentPale(Color: TColor; IncPercent: integer): TColor;
-var
-  r, g, b: Integer;
-begin
-  r := GetRValue(Color);
-  g := GetGValue(Color);
-  b := GetBValue(Color);
-
-  r := r + Round((255 - r) * IncPercent / 100);
-  g := g + Round((255 - g) * IncPercent / 100);
-  b := b + Round((255 - b) * IncPercent / 100);
-
-  if r < 0 then r := 0; if r > 255 then r := 255;
-  if g < 0 then g := 0; if g > 255 then g := 255;
-  if b < 0 then b := 0; if b > 255 then b := 255;
-
-  RESULT := RGB(r,g,b);
-end;
-
-function MediumColor(Color1, Color2: TColor): TColor;
-var
-  r,g,b: Integer;
-begin
-  if Color1 <> Color2 then
-  begin
-    Color1 := ColorToRGB(Color1);
-    Color2 := ColorToRGB(Color2);
-
-    r := ( GetRValue(Color1) + GetRValue(Color2) ) div 2;
-    g := ( GetGValue(Color1) + GetGValue(Color2) ) div 2;
-    b := ( GetBValue(Color1) + GetBValue(Color2) ) div 2;
-//    RESULT := TColor( RGB(r, g, b) );
-    RESULT := RGB(r, g, b);
-  end
-  else
-    RESULT := Color1;
-end;
-{$endregion}
 
 {$region '            PNG Procs                '}
 procedure SetPNGAlpha(PNG: TPNGImage; Alpha: Byte);
@@ -449,6 +254,7 @@ begin
   Result := True;
 end;
 {$endregion PNG Procs}
+
 
 {$region '             Bitmap Procs                  '}
 function RotateBitmap180(Bmp: TBitmap): Boolean;
