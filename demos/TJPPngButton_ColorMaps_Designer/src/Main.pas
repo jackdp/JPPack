@@ -159,6 +159,8 @@ type
     procedure btnCopyDisabledClick(Sender: TObject);
     procedure btnPasteDisabledClick(Sender: TObject);
     procedure EnableColorCombosHints;
+    procedure SetCombosParams;
+    procedure PrepareControls;
   end;
 
 const
@@ -175,26 +177,13 @@ implementation
 
 
 
-
-procedure TFormMain.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  SaveParamsToIni(LastIni);
-  btnTest1.SaveColorMapToIniFile(LastIni);
-end;
-
 procedure TFormMain.FormCreate(Sender: TObject);
 begin
   Caption := AppName;
   Application.Title := AppName;
   LastIni := ExtractFileDir(ParamStr(0)) + '\___Last.ini';
 
-  pnTestButtons.BevelOuter := bvNone;
-  pnTestButtons.Align := alClient;
-
-  cpg.ExpandAll;
-  cpg.VertScrollBar.Position := 0;
-
-  ccbBackground.AddColor('clBtnFace', ColorToRGB(clBtnFace));
+  PrepareControls;
 
   if not FileExists(LastIni) then
   begin
@@ -203,18 +192,51 @@ begin
   end;
   LoadParamsFromIni(LastIni);
   PerformOpen(LastIni);
-  //ccbBackground.Selected := ColorToRgb(pnTestButtons.Color);
 
   actGetColors.Execute;
 
   chShowGradient.Checked := True;
   chShowFocusRect.Checked := False;
 
+  if (ParamCount > 0) and (FileExists(ParamStr(1))) then PerformOpen(ParamStr(1));
+end;
+
+procedure TFormMain.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+  SaveParamsToIni(LastIni);
+  btnTest1.SaveColorMapToIniFile(LastIni);
+end;
+
+procedure TFormMain.PrepareControls;
+begin
+  pnTestButtons.BevelOuter := bvNone;
+  pnTestButtons.Align := alClient;
+
+  cpg.ExpandAll;
+  cpg.VertScrollBar.Position := 0;
+
+  ccbBackground.AddColor('clBtnFace', ColorToRGB(clBtnFace));
+
+  SetCombosParams;
   EnableColorCombosHints;
 
-  //ccbBackground.Selected := clRed;
+  Panel1.Align := alClient;
+end;
 
-  if (ParamCount > 0) and (FileExists(ParamStr(1))) then PerformOpen(ParamStr(1));
+procedure TFormMain.SetCombosParams;
+var
+  i: integer;
+  ccb, ccbT: TJppColorComboBox;
+begin
+  ccbT := ccbBorderWhenDefaultColor;
+
+  for i := 0 to ComponentCount - 1 do
+    if Components[i] is TJppColorComboBox then
+    begin
+      ccb := Components[i] as TJppColorComboBox;
+      if ccb = ccbT then Continue;
+      ccb.AssignParams(ccbT);
+    end;
 end;
 
 procedure TFormMain.tmStartTimer(Sender: TObject);
@@ -246,48 +268,48 @@ var
 begin
   GetJppPngButtonColorMap(btnTest1, ColorMap);
 
-  ccbBorderWhenDefaultColor.Selected := ColorMap.BorderWhenDefaultColor;
-  ccbFocusRectColor.Selected := ColorMap.FocusRectColor;
+  ccbBorderWhenDefaultColor.SelectedColor := ColorMap.BorderWhenDefaultColor;
+  ccbFocusRectColor.SelectedColor := ColorMap.FocusRectColor;
 
-  ccbNormal_BorderColor.Selected := ColorMap.Normal.BorderColor;
-  ccbNormal_FontColor.Selected := ColorMap.Normal.FontColor;
-  ccbNormal_Color.Selected := ColorMap.Normal.Color;
-  ccbNormal_UpperGradientColorFrom.Selected := ColorMap.Normal.UpperGradientColorFrom;
-  ccbNormal_UpperGradientColorTo.Selected := ColorMap.Normal.UpperGradientColorTo;
-  ccbNormal_BottomGradientColorFrom.Selected := ColorMap.Normal.BottomGradientColorFrom;
-  ccbNormal_BottomGradientColorTo.Selected := ColorMap.Normal.BottomGradientColorTo;
+  ccbNormal_BorderColor.SelectedColor := ColorMap.Normal.BorderColor;
+  ccbNormal_FontColor.SelectedColor := ColorMap.Normal.FontColor;
+  ccbNormal_Color.SelectedColor := ColorMap.Normal.Color;
+  ccbNormal_UpperGradientColorFrom.SelectedColor := ColorMap.Normal.UpperGradientColorFrom;
+  ccbNormal_UpperGradientColorTo.SelectedColor := ColorMap.Normal.UpperGradientColorTo;
+  ccbNormal_BottomGradientColorFrom.SelectedColor := ColorMap.Normal.BottomGradientColorFrom;
+  ccbNormal_BottomGradientColorTo.SelectedColor := ColorMap.Normal.BottomGradientColorTo;
 
-  ccbHot_BorderColor.Selected := ColorMap.Hot.BorderColor;
-  ccbHot_FontColor.Selected := ColorMap.Hot.FontColor;
-  ccbHot_Color.Selected := ColorMap.Hot.Color;
-  ccbHot_UpperGradientColorFrom.Selected := ColorMap.Hot.UpperGradientColorFrom;
-  ccbHot_UpperGradientColorTo.Selected := ColorMap.Hot.UpperGradientColorTo;
-  ccbHot_BottomGradientColorFrom.Selected := ColorMap.Hot.BottomGradientColorFrom;
-  ccbHot_BottomGradientColorTo.Selected := ColorMap.Hot.BottomGradientColorTo;
+  ccbHot_BorderColor.SelectedColor := ColorMap.Hot.BorderColor;
+  ccbHot_FontColor.SelectedColor := ColorMap.Hot.FontColor;
+  ccbHot_Color.SelectedColor := ColorMap.Hot.Color;
+  ccbHot_UpperGradientColorFrom.SelectedColor := ColorMap.Hot.UpperGradientColorFrom;
+  ccbHot_UpperGradientColorTo.SelectedColor := ColorMap.Hot.UpperGradientColorTo;
+  ccbHot_BottomGradientColorFrom.SelectedColor := ColorMap.Hot.BottomGradientColorFrom;
+  ccbHot_BottomGradientColorTo.SelectedColor := ColorMap.Hot.BottomGradientColorTo;
 
-  ccbDown_BorderColor.Selected := ColorMap.Down.BorderColor;
-  ccbDown_FontColor.Selected := ColorMap.Down.FontColor;
-  ccbDown_Color.Selected := ColorMap.Down.Color;
-  ccbDown_UpperGradientColorFrom.Selected := ColorMap.Down.UpperGradientColorFrom;
-  ccbDown_UpperGradientColorTo.Selected := ColorMap.Down.UpperGradientColorTo;
-  ccbDown_BottomGradientColorFrom.Selected := ColorMap.Down.BottomGradientColorFrom;
-  ccbDown_BottomGradientColorTo.Selected := ColorMap.Down.BottomGradientColorTo;
+  ccbDown_BorderColor.SelectedColor := ColorMap.Down.BorderColor;
+  ccbDown_FontColor.SelectedColor := ColorMap.Down.FontColor;
+  ccbDown_Color.SelectedColor := ColorMap.Down.Color;
+  ccbDown_UpperGradientColorFrom.SelectedColor := ColorMap.Down.UpperGradientColorFrom;
+  ccbDown_UpperGradientColorTo.SelectedColor := ColorMap.Down.UpperGradientColorTo;
+  ccbDown_BottomGradientColorFrom.SelectedColor := ColorMap.Down.BottomGradientColorFrom;
+  ccbDown_BottomGradientColorTo.SelectedColor := ColorMap.Down.BottomGradientColorTo;
 
-  ccbFocused_BorderColor.Selected := ColorMap.Focused.BorderColor;
-  ccbFocused_FontColor.Selected := ColorMap.Focused.FontColor;
-  ccbFocused_Color.Selected := ColorMap.Focused.Color;
-  ccbFocused_UpperGradientColorFrom.Selected := ColorMap.Focused.UpperGradientColorFrom;
-  ccbFocused_UpperGradientColorTo.Selected := ColorMap.Focused.UpperGradientColorTo;
-  ccbFocused_BottomGradientColorFrom.Selected := ColorMap.Focused.BottomGradientColorFrom;
-  ccbFocused_BottomGradientColorTo.Selected := ColorMap.Focused.BottomGradientColorTo;
+  ccbFocused_BorderColor.SelectedColor := ColorMap.Focused.BorderColor;
+  ccbFocused_FontColor.SelectedColor := ColorMap.Focused.FontColor;
+  ccbFocused_Color.SelectedColor := ColorMap.Focused.Color;
+  ccbFocused_UpperGradientColorFrom.SelectedColor := ColorMap.Focused.UpperGradientColorFrom;
+  ccbFocused_UpperGradientColorTo.SelectedColor := ColorMap.Focused.UpperGradientColorTo;
+  ccbFocused_BottomGradientColorFrom.SelectedColor := ColorMap.Focused.BottomGradientColorFrom;
+  ccbFocused_BottomGradientColorTo.SelectedColor := ColorMap.Focused.BottomGradientColorTo;
 
-  ccbDisabled_BorderColor.Selected := ColorMap.Disabled.BorderColor;
-  ccbDisabled_FontColor.Selected := ColorMap.Disabled.FontColor;
-  ccbDisabled_Color.Selected := ColorMap.Disabled.Color;
-  ccbDisabled_UpperGradientColorFrom.Selected := ColorMap.Disabled.UpperGradientColorFrom;
-  ccbDisabled_UpperGradientColorTo.Selected := ColorMap.Disabled.UpperGradientColorTo;
-  ccbDisabled_BottomGradientColorFrom.Selected := ColorMap.Disabled.BottomGradientColorFrom;
-  ccbDisabled_BottomGradientColorTo.Selected := ColorMap.Disabled.BottomGradientColorTo;
+  ccbDisabled_BorderColor.SelectedColor := ColorMap.Disabled.BorderColor;
+  ccbDisabled_FontColor.SelectedColor := ColorMap.Disabled.FontColor;
+  ccbDisabled_Color.SelectedColor := ColorMap.Disabled.Color;
+  ccbDisabled_UpperGradientColorFrom.SelectedColor := ColorMap.Disabled.UpperGradientColorFrom;
+  ccbDisabled_UpperGradientColorTo.SelectedColor := ColorMap.Disabled.UpperGradientColorTo;
+  ccbDisabled_BottomGradientColorFrom.SelectedColor := ColorMap.Disabled.BottomGradientColorFrom;
+  ccbDisabled_BottomGradientColorTo.SelectedColor := ColorMap.Disabled.BottomGradientColorTo;
 end;
 
 procedure TFormMain.actApplyColorsExecute(Sender: TObject);
@@ -296,48 +318,48 @@ var
   i: integer;
   Button: TJppPngButton;
 begin
-  ColorMap.BorderWhenDefaultColor := ccbBorderWhenDefaultColor.Selected;
-  ColorMap.FocusRectColor := ccbFocusRectColor.Selected;
+  ColorMap.BorderWhenDefaultColor := ccbBorderWhenDefaultColor.SelectedColor;
+  ColorMap.FocusRectColor := ccbFocusRectColor.SelectedColor;
 
-  ColorMap.Normal.BorderColor := ccbNormal_BorderColor.Selected;
-  ColorMap.Normal.FontColor := ccbNormal_FontColor.Selected;
-  ColorMap.Normal.Color := ccbNormal_Color.Selected;
-  ColorMap.Normal.UpperGradientColorFrom := ccbNormal_UpperGradientColorFrom.Selected;
-  ColorMap.Normal.UpperGradientColorTo := ccbNormal_UpperGradientColorTo.Selected;
-  ColorMap.Normal.BottomGradientColorFrom := ccbNormal_BottomGradientColorFrom.Selected;
-  ColorMap.Normal.BottomGradientColorTo := ccbNormal_BottomGradientColorTo.Selected;
+  ColorMap.Normal.BorderColor := ccbNormal_BorderColor.SelectedColor;
+  ColorMap.Normal.FontColor := ccbNormal_FontColor.SelectedColor;
+  ColorMap.Normal.Color := ccbNormal_Color.SelectedColor;
+  ColorMap.Normal.UpperGradientColorFrom := ccbNormal_UpperGradientColorFrom.SelectedColor;
+  ColorMap.Normal.UpperGradientColorTo := ccbNormal_UpperGradientColorTo.SelectedColor;
+  ColorMap.Normal.BottomGradientColorFrom := ccbNormal_BottomGradientColorFrom.SelectedColor;
+  ColorMap.Normal.BottomGradientColorTo := ccbNormal_BottomGradientColorTo.SelectedColor;
 
-  ColorMap.Hot.BorderColor := ccbHot_BorderColor.Selected;
-  ColorMap.Hot.FontColor := ccbHot_FontColor.Selected;
-  ColorMap.Hot.Color := ccbHot_Color.Selected;
-  ColorMap.Hot.UpperGradientColorFrom := ccbHot_UpperGradientColorFrom.Selected;
-  ColorMap.Hot.UpperGradientColorTo := ccbHot_UpperGradientColorTo.Selected;
-  ColorMap.Hot.BottomGradientColorFrom := ccbHot_BottomGradientColorFrom.Selected;
-  ColorMap.Hot.BottomGradientColorTo := ccbHot_BottomGradientColorTo.Selected;
+  ColorMap.Hot.BorderColor := ccbHot_BorderColor.SelectedColor;
+  ColorMap.Hot.FontColor := ccbHot_FontColor.SelectedColor;
+  ColorMap.Hot.Color := ccbHot_Color.SelectedColor;
+  ColorMap.Hot.UpperGradientColorFrom := ccbHot_UpperGradientColorFrom.SelectedColor;
+  ColorMap.Hot.UpperGradientColorTo := ccbHot_UpperGradientColorTo.SelectedColor;
+  ColorMap.Hot.BottomGradientColorFrom := ccbHot_BottomGradientColorFrom.SelectedColor;
+  ColorMap.Hot.BottomGradientColorTo := ccbHot_BottomGradientColorTo.SelectedColor;
 
-  ColorMap.Down.BorderColor := ccbDown_BorderColor.Selected;
-  ColorMap.Down.FontColor := ccbDown_FontColor.Selected;
-  ColorMap.Down.Color := ccbDown_Color.Selected;
-  ColorMap.Down.UpperGradientColorFrom := ccbDown_UpperGradientColorFrom.Selected;
-  ColorMap.Down.UpperGradientColorTo := ccbDown_UpperGradientColorTo.Selected;
-  ColorMap.Down.BottomGradientColorFrom := ccbDown_BottomGradientColorFrom.Selected;
-  ColorMap.Down.BottomGradientColorTo := ccbDown_BottomGradientColorTo.Selected;
+  ColorMap.Down.BorderColor := ccbDown_BorderColor.SelectedColor;
+  ColorMap.Down.FontColor := ccbDown_FontColor.SelectedColor;
+  ColorMap.Down.Color := ccbDown_Color.SelectedColor;
+  ColorMap.Down.UpperGradientColorFrom := ccbDown_UpperGradientColorFrom.SelectedColor;
+  ColorMap.Down.UpperGradientColorTo := ccbDown_UpperGradientColorTo.SelectedColor;
+  ColorMap.Down.BottomGradientColorFrom := ccbDown_BottomGradientColorFrom.SelectedColor;
+  ColorMap.Down.BottomGradientColorTo := ccbDown_BottomGradientColorTo.SelectedColor;
 
-  ColorMap.Focused.BorderColor := ccbFocused_BorderColor.Selected;
-  ColorMap.Focused.FontColor := ccbFocused_FontColor.Selected;
-  ColorMap.Focused.Color := ccbFocused_Color.Selected;
-  ColorMap.Focused.UpperGradientColorFrom := ccbFocused_UpperGradientColorFrom.Selected;
-  ColorMap.Focused.UpperGradientColorTo := ccbFocused_UpperGradientColorTo.Selected;
-  ColorMap.Focused.BottomGradientColorFrom := ccbFocused_BottomGradientColorFrom.Selected;
-  ColorMap.Focused.BottomGradientColorTo := ccbFocused_BottomGradientColorTo.Selected;
+  ColorMap.Focused.BorderColor := ccbFocused_BorderColor.SelectedColor;
+  ColorMap.Focused.FontColor := ccbFocused_FontColor.SelectedColor;
+  ColorMap.Focused.Color := ccbFocused_Color.SelectedColor;
+  ColorMap.Focused.UpperGradientColorFrom := ccbFocused_UpperGradientColorFrom.SelectedColor;
+  ColorMap.Focused.UpperGradientColorTo := ccbFocused_UpperGradientColorTo.SelectedColor;
+  ColorMap.Focused.BottomGradientColorFrom := ccbFocused_BottomGradientColorFrom.SelectedColor;
+  ColorMap.Focused.BottomGradientColorTo := ccbFocused_BottomGradientColorTo.SelectedColor;
 
-  ColorMap.Disabled.BorderColor := ccbDisabled_BorderColor.Selected;
-  ColorMap.Disabled.FontColor := ccbDisabled_FontColor.Selected;
-  ColorMap.Disabled.Color := ccbDisabled_Color.Selected;
-  ColorMap.Disabled.UpperGradientColorFrom := ccbDisabled_UpperGradientColorFrom.Selected;
-  ColorMap.Disabled.UpperGradientColorTo := ccbDisabled_UpperGradientColorTo.Selected;
-  ColorMap.Disabled.BottomGradientColorFrom := ccbDisabled_BottomGradientColorFrom.Selected;
-  ColorMap.Disabled.BottomGradientColorTo := ccbDisabled_BottomGradientColorTo.Selected;
+  ColorMap.Disabled.BorderColor := ccbDisabled_BorderColor.SelectedColor;
+  ColorMap.Disabled.FontColor := ccbDisabled_FontColor.SelectedColor;
+  ColorMap.Disabled.Color := ccbDisabled_Color.SelectedColor;
+  ColorMap.Disabled.UpperGradientColorFrom := ccbDisabled_UpperGradientColorFrom.SelectedColor;
+  ColorMap.Disabled.UpperGradientColorTo := ccbDisabled_UpperGradientColorTo.SelectedColor;
+  ColorMap.Disabled.BottomGradientColorFrom := ccbDisabled_BottomGradientColorFrom.SelectedColor;
+  ColorMap.Disabled.BottomGradientColorTo := ccbDisabled_BottomGradientColorTo.SelectedColor;
 
   for i := 0 to ComponentCount - 1 do
     if Components[i] is TJppPngButton then
@@ -370,7 +392,7 @@ begin
       Button.ColorMapType := cmtAero;
     end;
   actGetColors.Execute;
-  ccbBackground.Selected := ColorToRGB(clBtnFace);
+  ccbBackground.SelectedColor := ColorToRGB(clBtnFace);
   ccbBackground.OnChange(Self);
 end;
 
@@ -403,6 +425,7 @@ begin
   end;
 end;
 
+
 procedure TFormMain.LoadParamsFromIni(FileName: string);
 var
   Ini: TIniFile;
@@ -410,7 +433,7 @@ begin
   Ini := TIniFile.Create(FileName);
   try
     pnTestButtons.Color := Ini.ReadInteger('MAIN', 'BackgroundColor', pnTestButtons.Color);
-    ccbBackground.Selected := pnTestButtons.Color;
+    ccbBackground.SelectedColor := pnTestButtons.Color;
   finally
     Ini.Free;
   end;
@@ -466,7 +489,7 @@ end;
 
 procedure TFormMain.ccbBackgroundChange(Sender: TObject);
 begin
-  pnTestButtons.Color := ccbBackground.Selected;
+  pnTestButtons.Color := ccbBackground.SelectedColor;
 end;
 
 procedure TFormMain.chShowFocusRectClick(Sender: TObject);
@@ -521,13 +544,13 @@ procedure TFormMain.btnCopyDisabledClick(Sender: TObject);
 begin
   with brec do
   begin
-    BorderColor := ccbDisabled_BorderColor.Selected;
-    FontColor := ccbDisabled_FontColor.Selected;
-    Color := ccbDisabled_Color.Selected;
-    BottomGradientColorFrom := ccbDisabled_BottomGradientColorFrom.Selected;
-    BottomGradientColorTo := ccbDisabled_BottomGradientColorTo.Selected;
-    UpperGradientColorFrom := ccbDisabled_UpperGradientColorFrom.Selected;
-    UpperGradientColorTo := ccbDisabled_UpperGradientColorTo.Selected;
+    BorderColor := ccbDisabled_BorderColor.SelectedColor;
+    FontColor := ccbDisabled_FontColor.SelectedColor;
+    Color := ccbDisabled_Color.SelectedColor;
+    BottomGradientColorFrom := ccbDisabled_BottomGradientColorFrom.SelectedColor;
+    BottomGradientColorTo := ccbDisabled_BottomGradientColorTo.SelectedColor;
+    UpperGradientColorFrom := ccbDisabled_UpperGradientColorFrom.SelectedColor;
+    UpperGradientColorTo := ccbDisabled_UpperGradientColorTo.SelectedColor;
   end;
 end;
 
@@ -535,13 +558,13 @@ procedure TFormMain.btnCopyDownClick(Sender: TObject);
 begin
   with brec do
   begin
-    BorderColor := ccbDown_BorderColor.Selected;
-    FontColor := ccbDown_FontColor.Selected;
-    Color := ccbDown_Color.Selected;
-    BottomGradientColorFrom := ccbDown_BottomGradientColorFrom.Selected;
-    BottomGradientColorTo := ccbDown_BottomGradientColorTo.Selected;
-    UpperGradientColorFrom := ccbDown_UpperGradientColorFrom.Selected;
-    UpperGradientColorTo := ccbDown_UpperGradientColorTo.Selected;
+    BorderColor := ccbDown_BorderColor.SelectedColor;
+    FontColor := ccbDown_FontColor.SelectedColor;
+    Color := ccbDown_Color.SelectedColor;
+    BottomGradientColorFrom := ccbDown_BottomGradientColorFrom.SelectedColor;
+    BottomGradientColorTo := ccbDown_BottomGradientColorTo.SelectedColor;
+    UpperGradientColorFrom := ccbDown_UpperGradientColorFrom.SelectedColor;
+    UpperGradientColorTo := ccbDown_UpperGradientColorTo.SelectedColor;
   end;
 end;
 
@@ -549,13 +572,13 @@ procedure TFormMain.btnCopyFocusedClick(Sender: TObject);
 begin
   with brec do
   begin
-    BorderColor := ccbFocused_BorderColor.Selected;
-    FontColor := ccbFocused_FontColor.Selected;
-    Color := ccbFocused_Color.Selected;
-    BottomGradientColorFrom := ccbFocused_BottomGradientColorFrom.Selected;
-    BottomGradientColorTo := ccbFocused_BottomGradientColorTo.Selected;
-    UpperGradientColorFrom := ccbFocused_UpperGradientColorFrom.Selected;
-    UpperGradientColorTo := ccbFocused_UpperGradientColorTo.Selected;
+    BorderColor := ccbFocused_BorderColor.SelectedColor;
+    FontColor := ccbFocused_FontColor.SelectedColor;
+    Color := ccbFocused_Color.SelectedColor;
+    BottomGradientColorFrom := ccbFocused_BottomGradientColorFrom.SelectedColor;
+    BottomGradientColorTo := ccbFocused_BottomGradientColorTo.SelectedColor;
+    UpperGradientColorFrom := ccbFocused_UpperGradientColorFrom.SelectedColor;
+    UpperGradientColorTo := ccbFocused_UpperGradientColorTo.SelectedColor;
   end;
 end;
 
@@ -563,13 +586,13 @@ procedure TFormMain.btnCopyHotClick(Sender: TObject);
 begin
   with brec do
   begin
-    BorderColor := ccbHot_BorderColor.Selected;
-    FontColor := ccbHot_FontColor.Selected;
-    Color := ccbHot_Color.Selected;
-    BottomGradientColorFrom := ccbHot_BottomGradientColorFrom.Selected;
-    BottomGradientColorTo := ccbHot_BottomGradientColorTo.Selected;
-    UpperGradientColorFrom := ccbHot_UpperGradientColorFrom.Selected;
-    UpperGradientColorTo := ccbHot_UpperGradientColorTo.Selected;
+    BorderColor := ccbHot_BorderColor.SelectedColor;
+    FontColor := ccbHot_FontColor.SelectedColor;
+    Color := ccbHot_Color.SelectedColor;
+    BottomGradientColorFrom := ccbHot_BottomGradientColorFrom.SelectedColor;
+    BottomGradientColorTo := ccbHot_BottomGradientColorTo.SelectedColor;
+    UpperGradientColorFrom := ccbHot_UpperGradientColorFrom.SelectedColor;
+    UpperGradientColorTo := ccbHot_UpperGradientColorTo.SelectedColor;
   end;
 end;
 
@@ -577,73 +600,73 @@ procedure TFormMain.btnCopyNormalClick(Sender: TObject);
 begin
   with brec do
   begin
-    BorderColor := ccbNormal_BorderColor.Selected;
-    FontColor := ccbNormal_FontColor.Selected;
-    Color := ccbNormal_Color.Selected;
-    BottomGradientColorFrom := ccbNormal_BottomGradientColorFrom.Selected;
-    BottomGradientColorTo := ccbNormal_BottomGradientColorTo.Selected;
-    UpperGradientColorFrom := ccbNormal_UpperGradientColorFrom.Selected;
-    UpperGradientColorTo := ccbNormal_UpperGradientColorTo.Selected;
+    BorderColor := ccbNormal_BorderColor.SelectedColor;
+    FontColor := ccbNormal_FontColor.SelectedColor;
+    Color := ccbNormal_Color.SelectedColor;
+    BottomGradientColorFrom := ccbNormal_BottomGradientColorFrom.SelectedColor;
+    BottomGradientColorTo := ccbNormal_BottomGradientColorTo.SelectedColor;
+    UpperGradientColorFrom := ccbNormal_UpperGradientColorFrom.SelectedColor;
+    UpperGradientColorTo := ccbNormal_UpperGradientColorTo.SelectedColor;
   end;
 end;
 
 procedure TFormMain.btnPasteDisabledClick(Sender: TObject);
 begin
-  ccbDisabled_BorderColor.Selected := brec.BorderColor;
-  ccbDisabled_FontColor.Selected := brec.FontColor;
-  ccbDisabled_Color.Selected := brec.Color;
-  ccbDisabled_BottomGradientColorFrom.Selected := brec.BottomGradientColorFrom;
-  ccbDisabled_BottomGradientColorTo.Selected := brec.BottomGradientColorTo;
-  ccbDisabled_UpperGradientColorFrom.Selected := brec.UpperGradientColorFrom;
-  ccbDisabled_UpperGradientColorTo.Selected := brec.UpperGradientColorTo;
+  ccbDisabled_BorderColor.SelectedColor := brec.BorderColor;
+  ccbDisabled_FontColor.SelectedColor := brec.FontColor;
+  ccbDisabled_Color.SelectedColor := brec.Color;
+  ccbDisabled_BottomGradientColorFrom.SelectedColor := brec.BottomGradientColorFrom;
+  ccbDisabled_BottomGradientColorTo.SelectedColor := brec.BottomGradientColorTo;
+  ccbDisabled_UpperGradientColorFrom.SelectedColor := brec.UpperGradientColorFrom;
+  ccbDisabled_UpperGradientColorTo.SelectedColor := brec.UpperGradientColorTo;
   actApplyColors.Execute;
 end;
 
 procedure TFormMain.btnPasteDownClick(Sender: TObject);
 begin
-  ccbDown_BorderColor.Selected := brec.BorderColor;
-  ccbDown_FontColor.Selected := brec.FontColor;
-  ccbDown_Color.Selected := brec.Color;
-  ccbDown_BottomGradientColorFrom.Selected := brec.BottomGradientColorFrom;
-  ccbDown_BottomGradientColorTo.Selected := brec.BottomGradientColorTo;
-  ccbDown_UpperGradientColorFrom.Selected := brec.UpperGradientColorFrom;
-  ccbDown_UpperGradientColorTo.Selected := brec.UpperGradientColorTo;
+  ccbDown_BorderColor.SelectedColor := brec.BorderColor;
+  ccbDown_FontColor.SelectedColor := brec.FontColor;
+  ccbDown_Color.SelectedColor := brec.Color;
+  ccbDown_BottomGradientColorFrom.SelectedColor := brec.BottomGradientColorFrom;
+  ccbDown_BottomGradientColorTo.SelectedColor := brec.BottomGradientColorTo;
+  ccbDown_UpperGradientColorFrom.SelectedColor := brec.UpperGradientColorFrom;
+  ccbDown_UpperGradientColorTo.SelectedColor := brec.UpperGradientColorTo;
   actApplyColors.Execute;
 end;
 
 procedure TFormMain.btnPasteFocusedClick(Sender: TObject);
 begin
-  ccbFocused_BorderColor.Selected := brec.BorderColor;
-  ccbFocused_FontColor.Selected := brec.FontColor;
-  ccbFocused_Color.Selected := brec.Color;
-  ccbFocused_BottomGradientColorFrom.Selected := brec.BottomGradientColorFrom;
-  ccbFocused_BottomGradientColorTo.Selected := brec.BottomGradientColorTo;
-  ccbFocused_UpperGradientColorFrom.Selected := brec.UpperGradientColorFrom;
-  ccbFocused_UpperGradientColorTo.Selected := brec.UpperGradientColorTo;
+  ccbFocused_BorderColor.SelectedColor := brec.BorderColor;
+  ccbFocused_FontColor.SelectedColor := brec.FontColor;
+  ccbFocused_Color.SelectedColor := brec.Color;
+  ccbFocused_BottomGradientColorFrom.SelectedColor := brec.BottomGradientColorFrom;
+  ccbFocused_BottomGradientColorTo.SelectedColor := brec.BottomGradientColorTo;
+  ccbFocused_UpperGradientColorFrom.SelectedColor := brec.UpperGradientColorFrom;
+  ccbFocused_UpperGradientColorTo.SelectedColor := brec.UpperGradientColorTo;
   actApplyColors.Execute;
 end;
 
 procedure TFormMain.btnPasteHotClick(Sender: TObject);
 begin
-  ccbHot_BorderColor.Selected := brec.BorderColor;
-  ccbHot_FontColor.Selected := brec.FontColor;
-  ccbHot_Color.Selected := brec.Color;
-  ccbHot_BottomGradientColorFrom.Selected := brec.BottomGradientColorFrom;
-  ccbHot_BottomGradientColorTo.Selected := brec.BottomGradientColorTo;
-  ccbHot_UpperGradientColorFrom.Selected := brec.UpperGradientColorFrom;
-  ccbHot_UpperGradientColorTo.Selected := brec.UpperGradientColorTo;
+  ccbHot_BorderColor.SelectedColor := brec.BorderColor;
+  ccbHot_FontColor.SelectedColor := brec.FontColor;
+  ccbHot_Color.SelectedColor := brec.Color;
+  ccbHot_BottomGradientColorFrom.SelectedColor := brec.BottomGradientColorFrom;
+  ccbHot_BottomGradientColorTo.SelectedColor := brec.BottomGradientColorTo;
+  ccbHot_UpperGradientColorFrom.SelectedColor := brec.UpperGradientColorFrom;
+  ccbHot_UpperGradientColorTo.SelectedColor := brec.UpperGradientColorTo;
   actApplyColors.Execute;
 end;
 
 procedure TFormMain.btnPasteNormalClick(Sender: TObject);
 begin
-  ccbNormal_BorderColor.Selected := brec.BorderColor;
-  ccbNormal_FontColor.Selected := brec.FontColor;
-  ccbNormal_Color.Selected := brec.Color;
-  ccbNormal_BottomGradientColorFrom.Selected := brec.BottomGradientColorFrom;
-  ccbNormal_BottomGradientColorTo.Selected := brec.BottomGradientColorTo;
-  ccbNormal_UpperGradientColorFrom.Selected := brec.UpperGradientColorFrom;
-  ccbNormal_UpperGradientColorTo.Selected := brec.UpperGradientColorTo;
+  ccbNormal_BorderColor.SelectedColor := brec.BorderColor;
+  ccbNormal_FontColor.SelectedColor := brec.FontColor;
+  ccbNormal_Color.SelectedColor := brec.Color;
+  ccbNormal_BottomGradientColorFrom.SelectedColor := brec.BottomGradientColorFrom;
+  ccbNormal_BottomGradientColorTo.SelectedColor := brec.BottomGradientColorTo;
+  ccbNormal_UpperGradientColorFrom.SelectedColor := brec.UpperGradientColorFrom;
+  ccbNormal_UpperGradientColorTo.SelectedColor := brec.UpperGradientColorTo;
   actApplyColors.Execute;
 end;
 
