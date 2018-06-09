@@ -3,7 +3,9 @@ unit JPP.PngButton.ColorMaps;
 interface
 
 uses
-  Winapi.Windows, System.SysUtils, Vcl.Graphics, IniFiles;
+  Winapi.Windows,
+  System.SysUtils, System.IniFiles,
+  Vcl.Graphics;
 
 const
   COLORMAP_DEFAULT_INI_SECTION = 'JppPngButton_ColorMap';
@@ -210,6 +212,7 @@ begin
 end;
 {$endregion}
 
+
 {$region ' ---------------- TJppPngButtonColorMap.LoadFromIniFile --------------- '}
 procedure TJppPngButtonColorMap.LoadFromIniFile(FileName, Section: string; Format: TJppPngButtonIniColorFormat);
 var
@@ -332,6 +335,7 @@ begin
   end;
 end;
 {$endregion TJppPngButtonColorMap.LoadFromIniFile}
+
 
 {$region ' ---------------- TJppPngButtonColorMap.SaveToIniFile ----------------- '}
 procedure TJppPngButtonColorMap.SaveToIniFile(FileName: string; Section: string; Format: TJppPngButtonIniColorFormat);
