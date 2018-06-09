@@ -12,8 +12,11 @@ uses
   // VCL
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ExtCtrls, Vcl.StdCtrls, System.Actions, Vcl.ActnList, Vcl.Buttons, Vcl.Dialogs,
 
+  // JPLib
+  JPL.Colors,
+
   // JPPack units
-  JPP.BasicSpeedButton, JPP.ColorComboBox, JPP.Panel, JPP.LinkLabel, JPP.PngButton, JPP.PngButton.ColorMaps;
+  JPP.BasicSpeedButton, JPP.ColorComboBox, JPP.Panel, JPP.LinkLabel, JPP.PngButton, JPP.PngButton.ColorMaps, JPP.ColorListBox, JPP.BasicPanel;
 
 
 
@@ -21,8 +24,7 @@ type
   TFormMain = class(TForm)
     JppPanel1: TJppPanel;
     ActionList1: TActionList;
-    btnAero: TJppPngButton;
-    ccbBgColor: TJppColorComboBox;
+    ccb: TJppColorComboBox;
     btnDelphi: TJppPngButton;
     pnToolbar: TJppPanel;
     btnToolbarColor: TJppBasicSpeedButton;
@@ -30,6 +32,14 @@ type
     btnToolbarSave: TJppBasicSpeedButton;
     actEsc: TAction;
     lblFugueIcons: TJppLinkLabel;
+    dlgOpen: TOpenDialog;
+    lblLoadColorMap: TJppLinkLabel;
+    actLoadColorMap: TAction;
+    lbl2: TLabel;
+    pnButtons: TJppBasicPanel;
+    lbl1: TLabel;
+    lblPngComponents: TJppLinkLabel;
+    btnAero: TJppPngButton;
     btnAeroMod1: TJppPngButton;
     btnBlack: TJppPngButton;
     btnBlue: TJppPngButton;
@@ -65,18 +75,18 @@ type
     btnVclMetropolisUIBlue: TJppPngButton;
     btnVclMetropolisUIDark: TJppPngButton;
     btnVclMetropolisUIGreen: TJppPngButton;
-    lbl1: TLabel;
-    lblPngComponents: TJppLinkLabel;
-    dlgOpen: TOpenDialog;
-    lblLoadColorMap: TJppLinkLabel;
-    actLoadColorMap: TAction;
-    lbl2: TLabel;
+    pnRight: TJppBasicPanel;
+    clb: TJppColorListBox;
+    lbl3: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure ButtonClick(Sender: TObject);
-    procedure ccbBgColorChange(Sender: TObject);
     procedure actEscExecute(Sender: TObject);
     procedure SetJppPngButtonsFont;
     procedure actLoadColorMapExecute(Sender: TObject);
+    procedure ccbColorChanged(Sender: TObject);
+    procedure clbColorChanged(Sender: TObject);
+    procedure clbMeasureItem(Control: TWinControl; Index: Integer; var Height: Integer);
+    procedure SetActiveColor(const cl: TColor);
   end;
 
 
@@ -99,12 +109,15 @@ begin
   Application.Title := APP_NAME;
   Application.HintHidePause := 10000;
 
+  clb.Align := alClient;
+  pnRight.Appearance.DrawBorder := False;
+
   SetJppPngButtonFonts(btnDelphi, 'Segoe UI', 14);
 
   btnToolbarSave.Appearance.Assign(btnToolbarOpen.Appearance);
 
-  ccbBgColor.ButtonCopyColor.Appearance.Assign(ccbBgColor.ButtonChangeColor.Appearance);
-  ccbBgColor.ButtonPasteColor.Appearance.Assign(ccbBgColor.ButtonChangeColor.Appearance);
+  ccb.ButtonCopyColor.Appearance.Assign(ccb.ButtonChangeColor.Appearance);
+  ccb.ButtonPasteColor.Appearance.Assign(ccb.ButtonChangeColor.Appearance);
 
   SetJppLinkLabelFonts(lblFugueIcons, 'Segoe UI', 12);
   SetJppLinkLabelFonts(lblPngComponents, 'Segoe UI', 10);
@@ -115,12 +128,28 @@ begin
   SetJppLinkLabelColors(lblLoadColorMap, lblLoadColorMap.FontNormal.Color);
 
 
-  Color := ccbBgColor.Selected;
+  SetActiveColor(ccb.SelectedColor);
 
   SetJppPngButtonsFont;
 
 end;
 
+
+procedure TFormMain.SetActiveColor(const cl: TColor);
+var
+  cl2: TColor;
+begin
+  Color := cl;
+  cl2 := GetSimilarColor(cl, 20, False);
+
+  pnButtons.Appearance.Borders.Left.Pen.Color := cl2;
+  pnButtons.Appearance.Borders.Right.Pen.Color := cl2;
+
+  cl2 := cl; //GetSimilarColor(cl, 20, True);
+  pnButtons.Appearance.UpperGradient.ColorFrom := cl2;
+  cl2 := GetSimilarColor(cl, 10, True);
+  pnButtons.Appearance.UpperGradient.ColorTo := cl2;
+end;
 
 procedure TFormMain.SetJppPngButtonsFont;
 var
@@ -133,11 +162,6 @@ begin
       btn := Controls[i] as TJppPngButton;
       SetJppPngButtonFonts(btn, Self.Font.Name, btn.Appearance.Normal.Font.Size);
     end;
-end;
-
-procedure TFormMain.ccbBgColorChange(Sender: TObject);
-begin
-  Color := ccbBgColor.Selected;
 end;
 
 procedure TFormMain.actEscExecute(Sender: TObject);
@@ -154,6 +178,21 @@ end;
 procedure TFormMain.ButtonClick(Sender: TObject);
 begin
   with Sender as TControl do ShowMessage(Name + ': ' + ClassName);
+end;
+
+procedure TFormMain.ccbColorChanged(Sender: TObject);
+begin
+  SetActiveColor(ccb.SelectedColor);
+end;
+
+procedure TFormMain.clbColorChanged(Sender: TObject);
+begin
+  SetActiveColor(clb.SelectedColor);
+end;
+
+procedure TFormMain.clbMeasureItem(Control: TWinControl; Index: Integer; var Height: Integer);
+begin
+  if clb.IsSeparatorItem(Index) then Height := 19;
 end;
 
 end.
