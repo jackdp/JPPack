@@ -3,8 +3,10 @@ unit JPP.StorageCtrl;
 interface
 
 uses
-  Winapi.Messages, Winapi.Windows, System.SysUtils, System.Classes, System.Types,
-  System.UITypes, Vcl.Graphics,
+  Winapi.Messages, Winapi.Windows,
+  System.SysUtils, System.Classes, System.Types, System.UITypes,
+  Vcl.Graphics,
+
   JPP.Types, JPP.Common;
 
 
@@ -102,8 +104,6 @@ type
   {$endregion}
 
 
-
-
   {$region ' --------- TJppCustomStorageCtrl ----------- '}
   TJppCustomStorageCtrl = class(TComponent)
   private
@@ -121,8 +121,8 @@ type
     procedure Clear;
     function AddItem: TJppStorageCtrlItem;
     function Count: integer;
+
     property Items[Index: Integer]: TJppStorageCtrlItem read GetItem write SetItem; default;
-  published
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
     property StorageCollection: TJppStorageCtrlCollection read FStorageCollection write SetHorizontalBars;
   end;
@@ -133,67 +133,21 @@ type
   TJppStorageCtrl = class(TJppCustomStorageCtrl)
   published
     property TagExt;
+    property StorageCollection;
   end;
   {$endregion}
 
 
 
 
-procedure Register;
-
 
 implementation
 
 
-procedure Register;
-begin
-  RegisterComponents(JPPackPageName, [TJppStorageCtrl]);
-end;
+
 
 
 {$region ' ------------------- TJppCustomStorageCtrl ---------------------------- '}
-
-
-function TJppCustomStorageCtrl.AsText: string;
-var
-  i: integer;
-  si: TJppStorageCtrlItem;
-  s, Sep: string;
-  function btos(b: Boolean): string;
-  begin
-    if b then Result := 'True' else Result := 'False';
-  end;
-begin
-  s := '';
-  Sep := '  ';
-  for i := 0 to StorageCollection.Count - 1 do
-  begin
-    si := StorageCollection[i];
-    s := s + 'Item ' + IntToStr(i) + ENDL;
-    s := s + Sep + 'Name: ' + si.ItemName + ENDL;
-    s := s + Sep + 'Tag: ' + IntToStr(si.Tag) + ENDL;
-    s := s + Sep + 'StrValue1: ' + si.StrValue1 + ENDL;
-    s := s + Sep + 'StrValue2: ' + si.StrValue2 + ENDL;
-    s := s + Sep + 'StrValue3: ' + si.StrValue3 + ENDL;
-    s := s + Sep + 'StrValue4: ' + si.StrValue4 + ENDL;
-    s := s + Sep + 'IntValue1: ' + IntToStr(si.IntValue1) + ENDL;
-    s := s + Sep + 'IntValue2: ' + IntToStr(si.IntValue2) + ENDL;
-    s := s + Sep + 'Int64Value1: ' + IntToStr(si.Int64Value1) + ENDL;
-    s := s + Sep + 'Int64Value2: ' + IntToStr(si.Int64Value2) + ENDL;
-    s := s + Sep + 'FloatValue1: ' + FormatFloat('0.00', si.FloatValue1) + ENDL;
-    s := s + Sep + 'FloatValue2: ' + FormatFloat('0.00', si.FloatValue2) + ENDL;
-    s := s + Sep + 'BoolValue1: ' + btos(si.BoolValue1) + ENDL;
-    s := s + Sep + 'BoolValue2: ' + btos(si.BoolValue2) + ENDL;
-    s := s + Sep + 'ColorValue1: ' + ColorToString(si.ColorValue1) + ENDL;
-    s := s + Sep + 'ColorValue2: ' + ColorToString(si.ColorValue2) + ENDL;
-    s := s + Sep + 'ByteValue1: ' + IntToStr(si.ByteValue1) + ENDL;
-    s := s + Sep + 'ByteValue2: ' + IntToStr(si.ByteValue2) + ENDL;
-    s := s + Sep + 'PointerValue1: ' + IntToStr(integer(si.PointerValue1)) + ENDL;
-    s := s + Sep + 'PointerValue2: ' + IntToStr(integer(si.PointerValue2)) + ENDL;
-  end;
-  Result := s;
-end;
-
 
 constructor TJppCustomStorageCtrl.Create(AOwner: TComponent);
 begin
@@ -242,6 +196,46 @@ end;
 procedure TJppCustomStorageCtrl.SetTagExt(const Value: TJppTagExt);
 begin
   FTagExt := Value;
+end;
+
+function TJppCustomStorageCtrl.AsText: string;
+var
+  i: integer;
+  si: TJppStorageCtrlItem;
+  s, Sep: string;
+  function btos(b: Boolean): string;
+  begin
+    if b then Result := 'True' else Result := 'False';
+  end;
+begin
+  s := '';
+  Sep := '  ';
+  for i := 0 to StorageCollection.Count - 1 do
+  begin
+    si := StorageCollection[i];
+    s := s + 'Item ' + IntToStr(i) + ENDL;
+    s := s + Sep + 'Name: ' + si.ItemName + ENDL;
+    s := s + Sep + 'Tag: ' + IntToStr(si.Tag) + ENDL;
+    s := s + Sep + 'StrValue1: ' + si.StrValue1 + ENDL;
+    s := s + Sep + 'StrValue2: ' + si.StrValue2 + ENDL;
+    s := s + Sep + 'StrValue3: ' + si.StrValue3 + ENDL;
+    s := s + Sep + 'StrValue4: ' + si.StrValue4 + ENDL;
+    s := s + Sep + 'IntValue1: ' + IntToStr(si.IntValue1) + ENDL;
+    s := s + Sep + 'IntValue2: ' + IntToStr(si.IntValue2) + ENDL;
+    s := s + Sep + 'Int64Value1: ' + IntToStr(si.Int64Value1) + ENDL;
+    s := s + Sep + 'Int64Value2: ' + IntToStr(si.Int64Value2) + ENDL;
+    s := s + Sep + 'FloatValue1: ' + FormatFloat('0.00', si.FloatValue1) + ENDL;
+    s := s + Sep + 'FloatValue2: ' + FormatFloat('0.00', si.FloatValue2) + ENDL;
+    s := s + Sep + 'BoolValue1: ' + btos(si.BoolValue1) + ENDL;
+    s := s + Sep + 'BoolValue2: ' + btos(si.BoolValue2) + ENDL;
+    s := s + Sep + 'ColorValue1: ' + ColorToString(si.ColorValue1) + ENDL;
+    s := s + Sep + 'ColorValue2: ' + ColorToString(si.ColorValue2) + ENDL;
+    s := s + Sep + 'ByteValue1: ' + IntToStr(si.ByteValue1) + ENDL;
+    s := s + Sep + 'ByteValue2: ' + IntToStr(si.ByteValue2) + ENDL;
+    s := s + Sep + 'PointerValue1: ' + IntToStr(integer(si.PointerValue1)) + ENDL;
+    s := s + Sep + 'PointerValue2: ' + IntToStr(integer(si.PointerValue2)) + ENDL;
+  end;
+  Result := s;
 end;
 
 {$endregion TJppCustomStorageCtrl}
@@ -397,7 +391,6 @@ begin
   inherited Create(TJppStorageCtrlItem);
   FOwner := AOwner;
 end;
-
 
 procedure TJppStorageCtrlCollection.Delete(Index: Integer);
 begin
