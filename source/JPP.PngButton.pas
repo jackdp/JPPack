@@ -3,25 +3,128 @@ unit JPP.PngButton;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.Classes, System.SysUtils, Vcl.Graphics, Vcl.Controls, Vcl.Buttons, Vcl.GraphUtil, Vcl.Dialogs, System.UITypes,
-  System.StrUtils,
+  Winapi.Windows, Winapi.Messages,
+  System.Classes, System.SysUtils, System.UITypes, System.StrUtils,
+  Vcl.Graphics, Vcl.Controls, Vcl.Buttons, Vcl.GraphUtil, Vcl.Dialogs, Vcl.Imaging.pngimage,
 
-  Vcl.Imaging.pngimage, PNGC.PngFunctions, PNGC.PngImageList,
-
-  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.Gradient, JPP.Graphics, JPP.PngButton.ColorMaps, JPP.Strings
+  PngFunctions,
+  JPL.Colors, JPL.Strings,
+  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.Gradient, JPP.Graphics, JPP.PngButton.ColorMaps
   ;
 
 type
 
-  {$region ' --------- Types ---------- '}
-  TJppPngButtonTagExt = class(TJppTagExt);
 
+  {$region ' -------------- TJppItemStateParams --------------------- '}
+  TJppItemStateParams = class(TPersistent)
+  private
+    FColor: TColor;
+    FFont: TFont;
+    FBorder: TPen;
+    FGradientEnabled: Boolean;
+    FUpperGradient: TJppGradientEx;
+    FBottomGradient: TJppGradientEx;
+    FUpperGradientPercent: Byte;
+    FBorderToGradientMargin: integer;
+    FTransparentBackground: Boolean;
+    FTransparentFrame: Boolean;
+    FOnChange: TNotifyEvent;
+    procedure SetColor(const Value: TColor);
+    procedure SetFont(const Value: TFont);
+    procedure SetBorder(const Value: TPen);
+    procedure SetGradientEnabled(const Value: Boolean);
+    procedure SetUpperGradient(const Value: TJppGradientEx);
+    procedure SetBottomGradient(const Value: TJppGradientEx);
+    procedure SetUpperGradientPercent(const Value: Byte);
+    procedure SetBorderToGradientMargin(const Value: integer);
+    procedure SetTransparentBackground(const Value: Boolean);
+    procedure SetTransparentFrame(const Value: Boolean);
+    procedure SetOnChange(const Value: TNotifyEvent);
+  public
+    constructor Create(AOwner: TComponent);
+    destructor Destroy; override;
+  protected
+    procedure PropsChanged(Sender: TObject);
+  published
+    property Border: TPen read FBorder write SetBorder;
+    property Color: TColor read FColor write SetColor;
+    property Font: TFont read FFont write SetFont;
+    property UpperGradient: TJppGradientEx read FUpperGradient write SetUpperGradient;
+    property BottomGradient: TJppGradientEx read FBottomGradient write SetBottomGradient;
+    property GradientEnabled: Boolean read FGradientEnabled write SetGradientEnabled default True;
+    property UpperGradientPercent: Byte read FUpperGradientPercent write SetUpperGradientPercent;
+    property BorderToGradientMargin: integer read FBorderToGradientMargin write SetBorderToGradientMargin default 2;
+    property TransparentBackground: Boolean read FTransparentBackground write SetTransparentBackground default False;
+    property TransparentFrame: Boolean read FTransparentFrame write SetTransparentFrame default False;
+    property OnChange: TNotifyEvent read FOnChange write SetOnChange;
+  end;
+  {$endregion}
+
+
+  {$region ' ----------- TJppButtonAppearance ---------- '}
+  TJppButtonAppearance = class(TPersistent)
+  private
+    FNormal: TJppItemStateParams;
+    FHot: TJppItemStateParams;
+    FDefaultDrawing: Boolean;
+    FFocusRect: TJppFocusRectParams;
+    FBorderWhenDefault: TPen;
+    FDown: TJppItemStateParams;
+    FDisabled: TJppItemStateParams;
+    FGlyphDisabledGrayscaleFactor: Byte;
+    FGlyphDisabledBlendFactor: Byte;
+    FMoveWhenDown: Boolean;
+    FGlyphHotGammaFactor: Byte;
+    FOnChange: TNotifyEvent;
+    FFocused: TJppItemStateParams;
+    FShowCaption: Boolean;
+    procedure SetNormal(const Value: TJppItemStateParams);
+    procedure SetHot(const Value: TJppItemStateParams);
+    procedure SetDefaultDrawing(const Value: Boolean);
+    procedure SetFocusRect(const Value: TJppFocusRectParams);
+    procedure SetBorderWhenDefault(const Value: TPen);
+    procedure SetDown(const Value: TJppItemStateParams);
+    procedure SetDisabled(const Value: TJppItemStateParams);
+    procedure SetGlyphDisabledGrayscaleFactor(const Value: Byte);
+    procedure SetGlyphDisabledBlendFactor(const Value: Byte);
+    procedure SetMoveWhenDown(const Value: Boolean);
+    procedure SetGlyphHotGammaFactor(const Value: Byte);
+    procedure SetOnChange(const Value: TNotifyEvent);
+    procedure SetFocused(const Value: TJppItemStateParams);
+    procedure SetShowCaption(const Value: Boolean);
+  public
+    constructor Create(AOwner: TComponent);
+    destructor Destroy; override;
+    procedure Assign(Source: TJppButtonAppearance); reintroduce;
+    procedure PropsChanged(Sender: TObject);
+  published
+    property DefaultDrawing: Boolean read FDefaultDrawing write SetDefaultDrawing default False;
+    property Normal: TJppItemStateParams read FNormal write SetNormal;
+    property Hot: TJppItemStateParams read FHot write SetHot;
+    property Down: TJppItemStateParams read FDown write SetDown;
+    property Disabled: TJppItemStateParams read FDisabled write SetDisabled;
+    property Focused: TJppItemStateParams read FFocused write SetFocused;
+    property FocusRect: TJppFocusRectParams read FFocusRect write SetFocusRect;
+    property BorderWhenDefault: TPen read FBorderWhenDefault write SetBorderWhenDefault;
+    property GlyphDisabledGrayscaleFactor: Byte read FGlyphDisabledGrayscaleFactor write SetGlyphDisabledGrayscaleFactor default 255;
+    property GlyphDisabledBlendFactor: Byte read FGlyphDisabledBlendFactor write SetGlyphDisabledBlendFactor default 127;
+    property GlyphHotGammaFactor: Byte read FGlyphHotGammaFactor write SetGlyphHotGammaFactor default 130;
+    property MoveWhenDown: Boolean read FMoveWhenDown write SetMoveWhenDown default False;
+    property OnChange: TNotifyEvent read FOnChange write SetOnChange;
+    property ShowCaption: Boolean read FShowCaption write SetShowCaption default True;
+  end;
+  {$endregion}
+
+
+  //TJppPngButtonTagExt = class(TJppTagExt);
+
+  {$region ' ----------------- TJppPngButton ------------------- '}
   TJppPngButton = class(TBitBtn)
-{$IF RTLVersion >= 24.0 }
+  {$IF RTLVersion >= 24.0 }
   strict private
     class constructor Create;
     class destructor Destroy;
-{$IFEND}
+  {$IFEND}
   private
     bOver: Boolean;
     FPngImage: TPngImage;
@@ -68,14 +171,15 @@ type
     property Appearance: TJppButtonAppearance read FAppearance write SetAppearance;
     property ColorMapType: TJppPngButtonColorMapType read FColorMapType write SetColorMapType default cmtCustom;
   end;
+  {$endregion TJppPngButton}
 
-{$IF RTLVersion >= 24.0 }
-  TPngBitBtnStyleHook = class(TBitBtnStyleHook)
+
+  {$IF RTLVersion >= 24.0 }
+  TJppPngButtonStyleHook = class(TBitBtnStyleHook)
   strict protected
     procedure DrawButton(ACanvas: TCanvas; AMouseInControl: Boolean); override;
   end;
-{$IFEND}
-  {$endregion}
+  {$IFEND}
 
 
 
@@ -83,14 +187,14 @@ procedure SetJppPngButtonColorMap(Button: TJppPngButton; ColorMap: TJppPngButton
 procedure GetJppPngButtonColorMap(Button: TJppPngButton; var ColorMap: TJppPngButtonColorMap);
 procedure SetJppPngButtonFonts(Button: TJppPngButton; FontName: string = 'Segoe UI'; FontSize: integer = 8);
 procedure SetJppPngButtonVclStyle(Button: TJppPngButton; StyleName: string);
-procedure Register;
 
 
 implementation
 
 
 uses
-  ActnList, Themes, PNGC.PngButtonFunctions;
+  Vcl.ActnList, Vcl.Themes, PngButtonFunctions, PngImageList;
+
 
 
 {$region ' -------------- helpers ------------ '}
@@ -236,6 +340,7 @@ begin
 end;
 {$endregion}
 
+
 {$region ' ---------------- Themes ------------------------- '}
 {$IF RTLVersion < 23.0 }
 type
@@ -270,17 +375,385 @@ end;
 
 class constructor TJppPngButton.Create;
 begin
-  TCustomStyleEngine.RegisterStyleHook(TJppPngButton, TPngBitBtnStyleHook);
+  TCustomStyleEngine.RegisterStyleHook(TJppPngButton, TJppPngButtonStyleHook);
 end;
 
 class destructor TJppPngButton.Destroy;
 begin
-  TCustomStyleEngine.UnRegisterStyleHook(TJppPngButton, TPngBitBtnStyleHook);
+  TCustomStyleEngine.UnRegisterStyleHook(TJppPngButton, TJppPngButtonStyleHook);
 end;
 {$IFEND}
 {$endregion Themes}
 
-{$region ' ---------------------- Cretae & Destroy ----------------------------- '}
+
+
+{$region ' -------------------- TJppItemStateParams ------------------------ '}
+constructor TJppItemStateParams.Create(AOwner: TComponent);
+begin
+  inherited Create;
+  //FGradient := TJppGradient.Create(AOwner);
+  FUpperGradient := TJppGradientEx.Create(AOwner);
+  FBottomGradient := TJppGradientEx.Create(AOwner);
+  FGradientEnabled := True;
+  FBorderToGradientMargin := 2;
+  FFont := TFont.Create;
+  FBorder := TPen.Create;
+  FTransparentBackground := False;
+  FTransparentFrame := False;
+
+  FUpperGradient.OnChange := PropsChanged;
+  FBottomGradient.OnChange := PropsChanged;
+  FFont.OnChange := PropsChanged;
+  FBorder.OnChange := PropsChanged;
+end;
+
+destructor TJppItemStateParams.Destroy;
+begin
+  //FGradient.Free;
+  FUpperGradient.Free;
+  FBottomGradient.Free;
+  FFont.Free;
+  FBorder.Free;
+  inherited;
+end;
+
+procedure TJppItemStateParams.PropsChanged(Sender: TObject);
+begin
+  if Assigned(OnChange) then OnChange(Self);
+end;
+
+procedure TJppItemStateParams.SetBorder(const Value: TPen);
+begin
+  FBorder := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppItemStateParams.SetBorderToGradientMargin(const Value: integer);
+begin
+  FBorderToGradientMargin := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppItemStateParams.SetBottomGradient(const Value: TJppGradientEx);
+begin
+  FBottomGradient := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppItemStateParams.SetColor(const Value: TColor);
+begin
+  FColor := Value;
+  PropsChanged(Self);
+end;
+
+
+procedure TJppItemStateParams.SetFont(const Value: TFont);
+begin
+  FFont := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppItemStateParams.SetGradientEnabled(const Value: Boolean);
+begin
+  FGradientEnabled := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppItemStateParams.SetOnChange(const Value: TNotifyEvent);
+begin
+  FOnChange := Value;
+end;
+
+procedure TJppItemStateParams.SetTransparentBackground(const Value: Boolean);
+begin
+  FTransparentBackground := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppItemStateParams.SetTransparentFrame(const Value: Boolean);
+begin
+  FTransparentFrame := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppItemStateParams.SetUpperGradient(const Value: TJppGradientEx);
+begin
+  FUpperGradient := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppItemStateParams.SetUpperGradientPercent(const Value: Byte);
+begin
+  FUpperGradientPercent := Value;
+  PropsChanged(Self);
+end;
+
+{$endregion}
+
+
+
+{$region ' -------------------- TJppButtonAppearance --------------------- '}
+constructor TJppButtonAppearance.Create(AOwner: TComponent);
+begin
+  inherited Create;
+
+  FNormal := TJppItemStateParams.Create(AOwner);
+  FNormal.Color := $00F3F3F3;
+  FNormal.UpperGradient.ColorFrom := $00F1F1F1;
+  FNormal.UpperGradient.ColorTo := $00EBEBEB;
+  FNormal.BottomGradient.ColorFrom := $00DDDDDD;
+  FNormal.BottomGradient.ColorTo := $00CFCFCF;
+  FNormal.Border.Color := $00707070;
+  FNormal.UpperGradientPercent := 46;
+  FNormal.Font.Color := 0;
+
+  FHot := TJppItemStateParams.Create(AOwner);
+  FHot.Color := $00FCF5E8;
+  FHot.UpperGradient.ColorFrom := $00FDF6EA;
+  FHot.UpperGradient.ColorTo := $00FCF0D9;
+  FHot.BottomGradient.ColorFrom := $00FDE6BE;
+  FHot.BottomGradient.ColorTo := $00F5D9A7;
+  FHot.Border.Color := $00B17F3C;
+  FHot.UpperGradientPercent := FNormal.UpperGradientPercent;
+  FHot.Font.Color := 0;
+
+  FFocused := TJppItemStateParams.Create(AOwner);
+  FFocused.Color := FNormal.Color;
+  FFocused.UpperGradient.ColorFrom := FNormal.UpperGradient.ColorFrom;
+  FFocused.UpperGradient.ColorTo := FNormal.UpperGradient.ColorTo;
+  FFocused.BottomGradient.ColorFrom := FNormal.BottomGradient.ColorFrom;
+  FFocused.BottomGradient.ColorTo := FNormal.BottomGradient.ColorTo;
+  FFocused.Border.Color := $00D0AA24;
+  FFocused.UpperGradientPercent := FNormal.UpperGradientPercent;
+  FFocused.Font.Color := FNormal.Font.Color;
+
+  FDown := TJppItemStateParams.Create(AOwner);
+  FDown.Color := $00F1E2C5;
+  FDown.UpperGradient.ColorFrom := $00FCF4E5;
+  FDown.UpperGradient.ColorTo := $00F6E5C4;
+  FDown.BottomGradient.ColorFrom := $00EFD198;
+  FDown.BottomGradient.ColorTo := $00DFB972;
+  FDown.Border.Color := GetSimilarColor(FHot.Border.Color , 50, False);
+  FDown.UpperGradientPercent := 52;
+  //FDown.BorderToGradientMargin := 0;
+  FDown.Font.Color := 0;
+
+  FDisabled := TJppItemStateParams.Create(AOwner);
+  FDisabled.Color := $00F4F4F4; //$00FCFCFC;
+  FDisabled.UpperGradient.ColorFrom := $00F4F4F4;
+  FDisabled.UpperGradient.ColorTo := $00F4F4F4;
+  FDisabled.BottomGradient.ColorFrom := $00F4F4F4;
+  FDisabled.BottomGradient.ColorTo := $00F4F4F4;
+  FDisabled.Border.Color := $00B5B2AD;
+  FDisabled.UpperGradientPercent := FNormal.UpperGradientPercent;
+  FDisabled.Font.Color := RGB(160,160,160); // clBtnShadow - 3x160; //clGrayText;
+
+  FFocusRect := TJppFocusRectParams.Create(AOwner);
+  FFocusRect.Pen.Color := $00D0AA24;
+
+  FBorderWhenDefault := TPen.Create;
+  //FBorderWhenDefault.Width := 3;
+  FBorderWhenDefault.Color := $00D0AA24; // FNormal.Border.Color;
+
+  FGlyphDisabledGrayscaleFactor := 255;
+  FGlyphDisabledBlendFactor := 127;
+  FGlyphHotGammaFactor := 130;
+
+
+  FNormal.OnChange := PropsChanged;
+  FHot.OnChange := PropsChanged;
+  FFocused.OnChange := PropsChanged;
+  FDown.OnChange := PropsChanged;
+  FDisabled.OnChange := PropsChanged;
+  FFocusRect.OnChange := PropsChanged;
+
+  FShowCaption := True;
+
+end;
+
+destructor TJppButtonAppearance.Destroy;
+begin
+  FNormal.Free;
+  FHot.Free;
+  FFocused.Free;
+  FDefaultDrawing := False;
+  FDown.Free;
+  FDisabled.Free;
+  FFocusRect.Free;
+  FBorderWhenDefault.Free;
+  inherited;
+end;
+
+procedure TJppButtonAppearance.PropsChanged(Sender: TObject);
+begin
+  if Assigned(OnChange) then OnChange(Self);
+end;
+
+procedure TJppButtonAppearance.Assign(Source: TJppButtonAppearance);
+begin
+
+  DefaultDrawing := Source.DefaultDrawing;
+  GlyphDisabledGrayscaleFactor := Source.GlyphDisabledGrayscaleFactor;
+  GlyphDisabledBlendFactor := Source.GlyphDisabledBlendFactor;
+  GlyphHotGammaFactor := Source.GlyphHotGammaFactor;
+  MoveWhenDown := Source.MoveWhenDown;
+  BorderWhenDefault.Assign(Source.BorderWhenDefault);
+
+  FocusRect.FocusType := Source.FocusRect.FocusType;
+  FocusRect.Spacing := Source.FocusRect.Spacing;
+  FocusRect.Pen.Assign(Source.FocusRect.Pen);
+
+  ShowCaption := Source.ShowCaption;
+
+
+  Normal.Font.Assign(Source.Normal.Font);
+  Normal.Border.Assign(Source.Normal.Border);
+  Normal.Color := Source.Normal.Color;
+  Normal.GradientEnabled := Source.Normal.GradientEnabled;
+  Normal.UpperGradient.Assign(Source.Normal.UpperGradient);
+  Normal.BottomGradient.Assign(Source.Normal.BottomGradient);
+  Normal.UpperGradientPercent := Source.Normal.UpperGradientPercent;
+  Normal.BorderToGradientMargin := Source.Normal.BorderToGradientMargin;
+  Normal.TransparentBackground := Source.Normal.TransparentBackground;
+  Normal.TransparentFrame := Source.Normal.TransparentFrame;
+
+  Hot.Font.Assign(Source.Hot.Font);
+  Hot.Border.Assign(Source.Hot.Border);
+  Hot.Color := Source.Hot.Color;
+  Hot.GradientEnabled := Source.Hot.GradientEnabled;
+  Hot.UpperGradient.Assign(Source.Hot.UpperGradient);
+  Hot.BottomGradient.Assign(Source.Hot.BottomGradient);
+  Hot.UpperGradientPercent := Source.Hot.UpperGradientPercent;
+  Hot.BorderToGradientMargin := Source.Hot.BorderToGradientMargin;
+  Hot.TransparentBackground := Source.Hot.TransparentBackground;
+  Hot.TransparentFrame := Source.Hot.TransparentFrame;
+
+  Down.Font.Assign(Source.Down.Font);
+  Down.Border.Assign(Source.Down.Border);
+  Down.Color := Source.Down.Color;
+  Down.GradientEnabled := Source.Down.GradientEnabled;
+  Down.UpperGradient.Assign(Source.Down.UpperGradient);
+  Down.BottomGradient.Assign(Source.Down.BottomGradient);
+  Down.UpperGradientPercent := Source.Down.UpperGradientPercent;
+  Down.BorderToGradientMargin := Source.Down.BorderToGradientMargin;
+  Down.TransparentBackground := Source.Down.TransparentBackground;
+  Down.TransparentFrame := Source.Down.TransparentFrame;
+
+  Focused.Font.Assign(Source.Focused.Font);
+  Focused.Border.Assign(Source.Focused.Border);
+  Focused.Color := Source.Focused.Color;
+  Focused.GradientEnabled := Source.Focused.GradientEnabled;
+  Focused.UpperGradient.Assign(Source.Focused.UpperGradient);
+  Focused.BottomGradient.Assign(Source.Focused.BottomGradient);
+  Focused.UpperGradientPercent := Source.Focused.UpperGradientPercent;
+  Focused.BorderToGradientMargin := Source.Focused.BorderToGradientMargin;
+  Focused.TransparentBackground := Source.Focused.TransparentBackground;
+  Focused.TransparentFrame := Source.Focused.TransparentFrame;
+
+  Disabled.Font.Assign(Source.Disabled.Font);
+  Disabled.Border.Assign(Source.Disabled.Border);
+  Disabled.Color := Source.Disabled.Color;
+  Disabled.GradientEnabled := Source.Disabled.GradientEnabled;
+  Disabled.UpperGradient.Assign(Source.Disabled.UpperGradient);
+  Disabled.BottomGradient.Assign(Source.Disabled.BottomGradient);
+  Disabled.UpperGradientPercent := Source.Disabled.UpperGradientPercent;
+  Disabled.BorderToGradientMargin := Source.Disabled.BorderToGradientMargin;
+  Disabled.TransparentBackground := Source.Disabled.TransparentBackground;
+  Disabled.TransparentFrame := Source.Disabled.TransparentFrame;
+
+end;
+
+procedure TJppButtonAppearance.SetBorderWhenDefault(const Value: TPen);
+begin
+  FBorderWhenDefault := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetDefaultDrawing(const Value: Boolean);
+begin
+  FDefaultDrawing := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetDisabled(const Value: TJppItemStateParams);
+begin
+  FDisabled := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetGlyphDisabledBlendFactor(const Value: Byte);
+begin
+  FGlyphDisabledBlendFactor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetGlyphDisabledGrayscaleFactor(const Value: Byte);
+begin
+  FGlyphDisabledGrayscaleFactor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetDown(const Value: TJppItemStateParams);
+begin
+  FDown := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetFocusRect(const Value: TJppFocusRectParams);
+begin
+  FFocusRect := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetFocused(const Value: TJppItemStateParams);
+begin
+  FFocused := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetHot(const Value: TJppItemStateParams);
+begin
+  FHot := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetGlyphHotGammaFactor(const Value: Byte);
+begin
+  FGlyphHotGammaFactor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetMoveWhenDown(const Value: Boolean);
+begin
+  FMoveWhenDown := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetNormal(const Value: TJppItemStateParams);
+begin
+  FNormal := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetOnChange(const Value: TNotifyEvent);
+begin
+  FOnChange := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppButtonAppearance.SetShowCaption(const Value: Boolean);
+begin
+  FShowCaption := Value;
+  PropsChanged(Self);
+end;
+
+{$endregion}
+
+
+
+{$region ' ------------------------------- TJppPngButton ------------------------------------- '}
+
+  {$region ' ---------------------- Cretae & Destroy ----------------------------- '}
 constructor TJppPngButton.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -289,7 +762,7 @@ begin
   FCanvas := TCanvas.Create;
   FLastKind := bkCustom;
   FImageFromAction := False;
-  FTagExt := TJppPngButtonTagExt.Create(Self);
+  FTagExt := TJppTagExt.Create(Self);
   FAppearance := TJppButtonAppearance.Create(Self);
   FAppearance.OnChange := PropsChanged;
   FColorMapType := cmtCustom;
@@ -305,9 +778,10 @@ begin
   FAppearance.Free;
   inherited Destroy;
 end;
-{$endregion Create & Destroy}
+  {$endregion Create & Destroy}
 
-{$region ' ---------------------- Color Maps -------------------------- '}
+
+  {$region ' ---------------------- Color Maps -------------------------- '}
 
 procedure TJppPngButton.SetColorMapType(const Value: TJppPngButtonColorMapType);
 var
@@ -341,9 +815,10 @@ procedure TJppPngButton.ApplyColorMap(ColorMap: TJppPngButtonColorMap);
 begin
   SetJppPngButtonColorMap(Self, ColorMap);
 end;
-{$endregion}
+  {$endregion}
 
-{$region ' --------------------------------- misc ------------------------------------ '}
+
+  {$region ' --------------------------------- misc ------------------------------------ '}
 procedure TJppPngButton.ActionChange(Sender: TObject; CheckDefaults: Boolean);
 begin
   inherited ActionChange(Sender, CheckDefaults);
@@ -422,9 +897,9 @@ procedure TJppPngButton.SetTagExt(const Value: TJppTagExt);
 begin
   FTagExt := Value;
 end;
-{$endregion misc}
+  {$endregion misc}
 
-{$region ' -------------------------------------------------------- CNDrawItem ------------------------------------------------------------ '}
+  {$region ' -------------------------------------- CNDrawItem --------------------------------------- '}
 procedure TJppPngButton.CNDrawItem(var Message: TWMDrawItem);
 
 type
@@ -917,9 +1392,10 @@ begin
 
   end;
 end;
-{$endregion CNDrawItem}
+  {$endregion CNDrawItem}
 
-{$region ' ---------------------- Mouse Enter & Leave --------------------------- '}
+
+  {$region ' ---------------------- Mouse Enter & Leave --------------------------- '}
 procedure TJppPngButton.SetOnMouseEnter(const Value: TNotifyEvent);
 begin
   FOnMouseEnter := Value;
@@ -963,11 +1439,15 @@ begin
     Repaint;
   end;
 end;
-{$endregion}
+  {$endregion}
+
+
+{$endregion TJppPngButton}
+
 
 {$region ' ------------------------- StyleHook -------------------------- '}
 {$IF RTLVersion >= 24.0 }
-procedure TPngBitBtnStyleHook.DrawButton(ACanvas: TCanvas; AMouseInControl: Boolean);
+procedure TJppPngButtonStyleHook.DrawButton(ACanvas: TCanvas; AMouseInControl: Boolean);
 const
   WordBreakFlag: array [Boolean] of Integer = (0, DT_WORDBREAK);
 var
@@ -1037,12 +1517,6 @@ end;
 {$IFEND}
 {$endregion}
 
-
-
-procedure Register;
-begin
-  RegisterComponents(JPPackPageName, [TJppPngButton]);
-end;
 
 
 end.
