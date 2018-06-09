@@ -1,10 +1,10 @@
 ﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
-			<ProjectGuid>{70A48D55-993B-420B-81FD-2ECD6E7D4100}</ProjectGuid>
-			<MainSource>JPPack2.dpk</MainSource>
+			<ProjectGuid>{EAFF4D2E-C596-44CB-A518-6A5B85AACD00}</ProjectGuid>
+			<MainSource>JPPackVCL.dpk</MainSource>
 			<Base>True</Base>
 			<Config Condition="'$(Config)'==''">Release</Config>
-			<TargetedPlatforms>3</TargetedPlatforms>
+			<TargetedPlatforms>1</TargetedPlatforms>
 			<AppType>Package</AppType>
 			<FrameworkType>VCL</FrameworkType>
 			<ProjectVersion>13.4</ProjectVersion>
@@ -28,42 +28,50 @@
 			<CfgParent>Base</CfgParent>
 			<Base>true</Base>
 		</PropertyGroup>
+		<PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+			<Cfg_1_Win32>true</Cfg_1_Win32>
+			<CfgParent>Cfg_1</CfgParent>
+			<Cfg_1>true</Cfg_1>
+			<Base>true</Base>
+		</PropertyGroup>
 		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
 			<Cfg_2>true</Cfg_2>
 			<CfgParent>Base</CfgParent>
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
-			<DCC_UsePackage>rtl;$(DCC_UsePackage)</DCC_UsePackage>
 			<VerInfo_Locale>1033</VerInfo_Locale>
 			<DCC_S>false</DCC_S>
-			<DCC_F>false</DCC_F>
+			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<DCC_K>false</DCC_K>
 			<GenPackage>true</GenPackage>
-			<DCC_ImageBase>00400000</DCC_ImageBase>
-			<DCC_E>false</DCC_E>
-			<DCC_N>false</DCC_N>
-			<GenDll>true</GenDll>
+			<DCC_F>false</DCC_F>
 			<DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;$(DCC_Namespace)</DCC_Namespace>
+			<DCC_Description>JPPack VCL Components</DCC_Description>
+			<DCC_UsePackage>rtl;$(DCC_UsePackage)</DCC_UsePackage>
+			<DCC_N>false</DCC_N>
 			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+			<GenDll>true</GenDll>
+			<DCC_E>false</DCC_E>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base_Win64)'!=''">
-			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-			<DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
-			<DCC_UsePackage>vcl;vclimg;$(DCC_UsePackage)</DCC_UsePackage>
+			<DCC_UsePackage>vcl;vclimg;PngComponents;$(DCC_UsePackage)</DCC_UsePackage>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base_Win32)'!=''">
-			<DCC_UsePackage>vcl;vclimg;$(DCC_UsePackage)</DCC_UsePackage>
 			<VerInfo_Locale>1033</VerInfo_Locale>
 			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
 			<DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+			<DCC_UsePackage>vcl;vclimg;PngComponents;JPLib;$(DCC_UsePackage)</DCC_UsePackage>
+			<VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1)'!=''">
 			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
 			<DCC_DebugInformation>false</DCC_DebugInformation>
 			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
 			<DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_2)'!=''">
 			<DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
@@ -74,28 +82,39 @@
 			<DelphiCompile Include="$(MainSource)">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
-			<DCCReference Include="JppFormIniStorage.dcr"/>
+			<DCCReference Include="..\DCR\JppBasicPanel.dcr"/>
+			<DCCReference Include="..\DCR\JppBasicSpeedButton.dcr"/>
+			<DCCReference Include="..\DCR\JppColorComboBox.dcr"/>
+			<DCCReference Include="..\DCR\JppColorListBox.dcr"/>
+			<DCCReference Include="..\DCR\JppFormIniStorage.dcr"/>
+			<DCCReference Include="..\DCR\JppLinkLabel.dcr"/>
+			<DCCReference Include="..\DCR\JppPanel.dcr"/>
+			<DCCReference Include="..\DCR\JppTimer.dcr"/>
 			<DCCReference Include="vcl.dcp"/>
 			<DCCReference Include="rtl.dcp"/>
 			<DCCReference Include="vclimg.dcp"/>
+			<DCCReference Include="JPLib.dcp"/>
+			<DCCReference Include="PngComponents.dcp"/>
 			<DCCReference Include="..\..\source\JPP.Types.pas"/>
-			<DCCReference Include="..\..\source\JPP.Graphics.pas"/>
-			<DCCReference Include="..\..\source\JPP.Panel.pas"/>
 			<DCCReference Include="..\..\source\JPP.Common.pas"/>
-			<DCCReference Include="..\..\source\JPP.Gradient.pas"/>
-			<DCCReference Include="..\..\source\JPP.FormIniStorage.pas"/>
-			<DCCReference Include="..\..\source\JPP.LinkLabel.pas"/>
 			<DCCReference Include="..\..\source\JPP.Common.Procs.pas"/>
-			<DCCReference Include="..\..\source\JPP.PngButton.pas"/>
-			<DCCReference Include="..\..\source\JPP.PngButton.ColorMaps.pas"/>
-			<DCCReference Include="..\..\source\JPP.ColorComboBox.pas"/>
-			<DCCReference Include="..\..\source\JPP.BasicSpeedButton.pas"/>
-			<DCCReference Include="..\..\source\JPP.StorageCtrl.pas"/>
-			<DCCReference Include="..\..\source\JPP.Strings.pas"/>
-			<DCCReference Include="..\..\source\PNGC.PngFunctions.pas"/>
-			<DCCReference Include="..\..\source\PNGC.PngButtonFunctions.pas"/>
-			<DCCReference Include="..\..\source\PNGC.PngImageList.pas"/>
+			<DCCReference Include="..\..\source\JPP.Graphics.pas"/>
+			<DCCReference Include="..\..\source\JPP.Gradient.pas"/>
 			<DCCReference Include="..\..\source\JPP.MemIniFile.pas"/>
+			<DCCReference Include="..\..\source\JPP.ColorControls.Common.pas"/>
+			<DCCReference Include="..\..\source\JPP.Panel.pas"/>
+			<DCCReference Include="..\..\source\JPP.BasicPanel.pas"/>
+			<DCCReference Include="..\..\source\JPP.BasicPngButton.pas"/>
+			<DCCReference Include="..\..\source\JPP.PngButton.ColorMaps.pas"/>
+			<DCCReference Include="..\..\source\JPP.PngButton.pas"/>
+			<DCCReference Include="..\..\source\JPP.BasicSpeedButton.pas"/>
+			<DCCReference Include="..\..\source\JPP.ColorComboBox.pas"/>
+			<DCCReference Include="..\..\source\JPP.ColorListBox.pas"/>
+			<DCCReference Include="..\..\source\JPP.LinkLabel.pas"/>
+			<DCCReference Include="..\..\source\JPP.Timer.pas"/>
+			<DCCReference Include="..\..\source\JPP.StorageCtrl.pas"/>
+			<DCCReference Include="..\..\source\JPP.FormIniStorage.pas"/>
+			<DCCReference Include="..\..\source\JPP.Register.pas"/>
 			<BuildConfiguration Include="Debug">
 				<Key>Cfg_2</Key>
 				<CfgParent>Base</CfgParent>
@@ -114,10 +133,10 @@
 			<BorlandProject>
 				<Delphi.Personality>
 					<Source>
-						<Source Name="MainSource">JPPack2.dpk</Source>
+						<Source Name="MainSource">JPPackVCL.dpk</Source>
 					</Source>
 					<VersionInfo>
-						<VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
 						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
 						<VersionInfo Name="MajorVer">1</VersionInfo>
 						<VersionInfo Name="MinorVer">0</VersionInfo>
@@ -143,9 +162,25 @@
 						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
 						<VersionInfoKeys Name="Comments"/>
 					</VersionInfoKeys>
+					<Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\BPL\Win32\JPPack.bpl">(untitled)</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\BPL\Win32\JPPack_Dsgn.bpl">File e:\embarcadero\rad studio\9.0\BPL\Win32\JPPack_Dsgn.bpl not found</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\BPL\Win32\PngComponentsDesign160.bpl">Png Components Designtime</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\BPL\Win32\neoPack.bpl">iPack VCL</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\BPL\dcllmdplugin160.bpl">File e:\embarcadero\rad studio\9.0\BPL\dcllmdplugin160.bpl not found</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\BPL\Win32\GridViewD12.bpl">GridView components for Delphi2009</Excluded_Packages>
+						<Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\9.0\Bpl\NewCustomItem.bpl">(untitled)</Excluded_Packages>
+						<Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\9.0\Bpl\TriangleItem.bpl">(untitled)</Excluded_Packages>
+						<Excluded_Packages Name="$(BDS)\lib\jack\Components\PS.bpl">(untitled)</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dcloffice2k160.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\dclofficexp160.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="$(BDSBIN)\bcboffice2k160.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+						<Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\9.0\Bpl\jack2.bpl">(untitled)</Excluded_Packages>
+						<Excluded_Packages Name="E:\Embarcadero\Packs\TeeGrid\Compiled\Delphi16.win32\Bin\DCLVCLTeeGrid16.bpl">TeeGrid VCL Components</Excluded_Packages>
+					</Excluded_Packages>
 				</Delphi.Personality>
 				<Platforms>
-					<Platform value="Win64">True</Platform>
+					<Platform value="Win64">False</Platform>
 					<Platform value="Win32">True</Platform>
 				</Platforms>
 			</BorlandProject>

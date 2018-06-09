@@ -1,0 +1,68 @@
+package JPPackVCL;
+
+{$R *.res}
+{$R '..\DCR\JppBasicPanel.dcr'}
+{$R '..\DCR\JppBasicSpeedButton.dcr'}
+{$R '..\DCR\JppColorComboBox.dcr'}
+{$R '..\DCR\JppColorListBox.dcr'}
+{$R '..\DCR\JppFormIniStorage.dcr'}
+{$R '..\DCR\JppLinkLabel.dcr'}
+{$R '..\DCR\JppPanel.dcr'}
+{$R '..\DCR\JppTimer.dcr'}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE RELEASE}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'JPPack VCL Components'}
+{$IMPLICITBUILD ON}
+
+requires
+  vcl,
+  rtl,
+  vclimg,
+  JPLib,
+  PngComponents;
+
+contains
+  JPP.Types in '..\..\source\JPP.Types.pas',
+  JPP.Common in '..\..\source\JPP.Common.pas',
+  JPP.Common.Procs in '..\..\source\JPP.Common.Procs.pas',
+  JPP.Graphics in '..\..\source\JPP.Graphics.pas',
+  JPP.Gradient in '..\..\source\JPP.Gradient.pas',
+  JPP.MemIniFile in '..\..\source\JPP.MemIniFile.pas',
+  JPP.ColorControls.Common in '..\..\source\JPP.ColorControls.Common.pas',
+  JPP.Panel in '..\..\source\JPP.Panel.pas',
+  JPP.BasicPanel in '..\..\source\JPP.BasicPanel.pas',
+  JPP.BasicPngButton in '..\..\source\JPP.BasicPngButton.pas',
+  JPP.PngButton.ColorMaps in '..\..\source\JPP.PngButton.ColorMaps.pas',
+  JPP.PngButton in '..\..\source\JPP.PngButton.pas',
+  JPP.BasicSpeedButton in '..\..\source\JPP.BasicSpeedButton.pas',
+  JPP.ColorComboBox in '..\..\source\JPP.ColorComboBox.pas',
+  JPP.ColorListBox in '..\..\source\JPP.ColorListBox.pas',
+  JPP.LinkLabel in '..\..\source\JPP.LinkLabel.pas',
+  JPP.Timer in '..\..\source\JPP.Timer.pas',
+  JPP.StorageCtrl in '..\..\source\JPP.StorageCtrl.pas',
+  JPP.FormIniStorage in '..\..\source\JPP.FormIniStorage.pas',
+  JPP.Register in '..\..\source\JPP.Register.pas';
+
+end.
