@@ -3,8 +3,11 @@ unit JPP.MemIniFile;
 interface
 
 uses
-  Winapi.Windows, System.SysUtils, System.Classes, System.IniFiles, Vcl.Graphics, System.ZLib, Dialogs,
-  JPP.Common.Procs, JPP.Strings
+  Winapi.Windows,
+  System.SysUtils, System.Classes, System.IniFiles, System.ZLib,
+  Vcl.Graphics,  Vcl.Dialogs,
+  JPL.Strings,
+  JPP.Common.Procs
   ;
 
 
