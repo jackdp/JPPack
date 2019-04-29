@@ -356,7 +356,7 @@ type
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
-    procedure Assign(Source: TJppPanelAppearance); reintroduce;
+    procedure Assign(Source: TJppPanelAppearance; bApplyGradientParams: Boolean = True; bApplyBordersParams: Boolean = True); reintroduce;
   published
     property UpperGradient: TJppGradientEx read FUpperGradient write SetUpperGradient;
     property BottomGradient: TJppGradientEx read FBottomGradient write SetBottomGradient;
@@ -1315,16 +1315,25 @@ begin
 end;
 
 
-procedure TJppPanelAppearance.Assign(Source: TJppPanelAppearance);
+procedure TJppPanelAppearance.Assign(Source: TJppPanelAppearance; bApplyGradientParams: Boolean = True; bApplyBordersParams: Boolean = True);
 begin
-  FUpperGradient.Assign(Source.UpperGradient);
-  FBottomGradient.Assign(Source.BottomGradient);
-  FUpperGradientPercent := Source.UpperGradientPercent;
-  FBorders.Assign(Source.Borders);
+  if bApplyGradientParams then
+  begin
+    FDrawGradient := Source.DrawGradient;
+    FUpperGradient.Assign(Source.UpperGradient);
+    FBottomGradient.Assign(Source.BottomGradient);
+    FUpperGradientPercent := Source.UpperGradientPercent;
+  end;
+
   FBorderToGradientMargin := Source.BorderToGradientMargin;
   FBackgroundColor := Source.BackgroundColor;
-  FDrawGradient := Source.DrawGradient;
-  FDrawBorder := Source.DrawBorder;
+
+  if bApplyBordersParams then
+  begin
+    FBorders.Assign(Source.Borders);
+    FDrawBorder := Source.DrawBorder;
+  end;
+
   PropsChanged(Self);
 end;
 
