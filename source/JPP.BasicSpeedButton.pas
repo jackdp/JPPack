@@ -1,5 +1,14 @@
 unit JPP.BasicSpeedButton;
 
+{
+  ---------------------------------------------------------------------------------------
+  Based on PngSpeedButton from PngComponents https://bitbucket.org/uweraabe/pngcomponents
+  ---------------------------------------------------------------------------------------
+  JP
+  2019.05.21
+  [+] AutoWidth
+}
+
 interface
 
 uses
@@ -110,6 +119,8 @@ type
     FLayout: TButtonLayout;
     FMargin: Integer;
     FSpacing: Integer;
+    FAutoWidth: Boolean;
+    FAutoWidthMargin: ShortInt;
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetOnMouseEnter(const Value: TNotifyEvent);
     procedure SetOnMouseLeave(const Value: TNotifyEvent);
@@ -121,6 +132,8 @@ type
     procedure SetLayout(const Value: TButtonLayout);
     procedure SetMargin(const Value: Integer);
     procedure SetSpacing(const Value: Integer);
+    procedure SetAutoWidth(const Value: Boolean);
+    procedure SetAutoWidthMargin(const Value: ShortInt);
   protected
     procedure Paint; override;
     property ButtonState: TJppBasicSpeedButtonState read FButtonState;
@@ -149,6 +162,8 @@ type
     property Layout: TButtonLayout read FLayout write SetLayout default blGlyphLeft;
     property Margin: Integer read FMargin write SetMargin default -1;
     property Spacing: Integer read FSpacing write SetSpacing default 4;
+    property AutoWidth: Boolean read FAutoWidth write SetAutoWidth default True;
+    property AutoWidthMargin: ShortInt read FAutoWidthMargin write SetAutoWidthMargin default 6;
 
     property Action;
     property Align;
@@ -204,6 +219,9 @@ begin
 
   Width := 75;
   Height := 25;
+
+  FAutoWidth := True;
+  FAutoWidthMargin := 6;
 
   //Repaint;
 end;
@@ -334,6 +352,7 @@ var
   bOver, bDown: Boolean;
   imgDisabled, imgHot: TPngImage;
   s: string;
+  ButtonWidth: integer;
 
   procedure CopyDrawingParams(bsp: TJppBasicSpeedButtonStateParams);
   begin
@@ -347,7 +366,7 @@ var
 
 begin
   //inherited;
-
+  ButtonWidth := 0;
 
   R := ClientRect;
   with Canvas do
@@ -437,6 +456,8 @@ begin
 
     end;
 
+    if Assigned(PngImage) and (not PngImage.Empty) then Inc(ButtonWidth, PngImage.Width);
+    if FCaption <> '' then Inc(ButtonWidth, FSpacing);
 
 
     // ---------------------- TEXT ------------------------------
@@ -454,11 +475,24 @@ begin
 //      DrawText(Canvas.Handle, PChar(Caption), -1, R, DrawTextBiDiModeFlags(0) or DT_TOP or DT_LEFT or DT_SINGLELINE);
 //    end;
 
+
+
     if Appearance.ShowCaption and (Length(Caption) > 0) then
     begin
       Brush.Style := bsClear;
       Canvas.Font.Assign(Self.Font);
       Canvas.Font.Color := dp.FontColor;
+
+
+      if FAutoWidth then
+      begin
+        Inc(ButtonWidth, Canvas.TextWidth(Caption));
+        Inc(ButtonWidth, FAutoWidthMargin + FAutoWidthMargin);
+        if FMargin > 0 then Inc(ButtonWidth, FMargin);
+        if ButtonWidth < 16 then ButtonWidth := 16;
+        Self.Width := ButtonWidth;
+      end;
+
       //Canvas.Font := dp.Font; <-- to musi byæ wykonane przed obliczeniem pozycji obrazka w CalcButtonLayout
       PaintRect := Rect(TextPos.X, TextPos.Y, Width, Height);
       //Canvas.Brush.Style := bsClear;
@@ -482,6 +516,20 @@ procedure TJppBasicSpeedButton.SetAppearance(const Value: TJppBasicSpeedButtonAp
 begin
   FAppearance := Value;
   Repaint;
+end;
+
+procedure TJppBasicSpeedButton.SetAutoWidth(const Value: Boolean);
+begin
+  if FAutoWidth = Value then Exit;
+  FAutoWidth := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicSpeedButton.SetAutoWidthMargin(const Value: ShortInt);
+begin
+  if FAutoWidthMargin = Value then Exit;
+  FAutoWidthMargin := Value;
+  PropsChanged(Self);
 end;
 
 procedure TJppBasicSpeedButton.SetCaption(const Value: string);
