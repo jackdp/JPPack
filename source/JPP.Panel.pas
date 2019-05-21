@@ -434,6 +434,7 @@ type
     procedure SetHorizontalLines(const Value: TJppPanelHorizontalLines);
     procedure SetCaptions(const Value: TJppPanelCaptions);
     procedure SetHorizontalBars(const Value: TJppPanelHorizontalBars);
+    procedure WMMouseWheel(var Message: TWMMouseWheel); message WM_MOUSEWHEEL;
   protected
     procedure DrawBackground(ARect: TRect); override;
     procedure DrawBorders(ARect: TRect);
@@ -816,6 +817,17 @@ procedure TJppCustomPanel.SetVerticalLines(const Value: TJppPanelVerticalLines);
 begin
   FVerticalLines := Value;
   Invalidate;
+end;
+
+procedure TJppCustomPanel.WMMouseWheel(var Message: TWMMouseWheel);
+var
+  b: Boolean;
+  p: TPoint;
+begin
+  inherited;
+  p.X := Message.XPos;
+  p.Y := Message.YPos;
+  if Assigned(OnMouseWheel) then OnMouseWheel(Self, KeysToShiftState(Message.Keys), Message.WheelDelta, p, b);
 end;
 
 procedure TJppCustomPanel.AdjustClientRect(var Rect: TRect);
