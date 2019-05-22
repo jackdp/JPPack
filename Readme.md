@@ -20,6 +20,7 @@
   1. [TJppStringStorageCtrl](#tjppstringstoragectrl)
 - [TagExt](#tagext)
 - [Installation](#installation)
+- [License](#license)
 
 
 ## Overview
