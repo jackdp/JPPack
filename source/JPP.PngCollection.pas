@@ -5,9 +5,8 @@ interface
 uses
   Winapi.Messages, Winapi.Windows,
   System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Graphics,
-  Vcl.Imaging.PngImage;
-  //JPP.Types, JPP.Common;
+  Vcl.Graphics, Vcl.Imaging.PngImage,
+  JPP.Common;
 
 
 type
@@ -19,7 +18,9 @@ type
   TJppPngCollection = class(TComponent)
   private
     FItems: TJppPngCollectionItems;
+    FTagExt: TJppTagExt;
     procedure EnableOrDisableAll(const Enable: Boolean);
+    procedure SetTagExt(const Value: TJppTagExt);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -31,6 +32,7 @@ type
     function IsValidIndex(const Index: integer): Boolean;
   published
     property Items: TJppPngCollectionItems read FItems write FItems;
+    property TagExt: TJppTagExt read FTagExt write SetTagExt;
   end;
   {$endregion TJppPngCollection}
 
@@ -95,11 +97,13 @@ constructor TJppPngCollection.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FItems := TJppPngCollectionItems.Create(Self);
+  FTagExt := TJppTagExt.Create(Self);
 end;
 
 destructor TJppPngCollection.Destroy;
 begin
   FItems.Free;
+  FTagExt.Free;
   inherited Destroy;
 end;
 
@@ -157,6 +161,11 @@ begin
       Break;
     end;
   end;
+end;
+
+procedure TJppPngCollection.SetTagExt(const Value: TJppTagExt);
+begin
+  FTagExt := Value;
 end;
 
 {$endregion TJppPngCollection}
@@ -218,7 +227,7 @@ constructor TJppPngCollectionItem.Create(Collection: TCollection);
 begin
   inherited Create(Collection);
   FPngImage := TPngImage.Create;
-  FName := 'Png_' + Index.toString;
+  FName := 'Png_' + IntToStr(Index);
   FTag := 0;
   FEnabled := True;
 end;
