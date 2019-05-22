@@ -6,7 +6,7 @@ uses
   Winapi.Messages, Winapi.Windows,
   System.SysUtils, System.Classes, System.Types, System.UITypes,
   Vcl.Graphics, Vcl.Imaging.PngImage,
-  JPP.Common;
+  JPP.Common, JPL.Strings, JPL.Conversion, JPL.Colors;
 
 
 type
@@ -27,9 +27,14 @@ type
     procedure Clear;
     procedure EnableAll;
     procedure DisableAll;
-    function PngIndex(const PngName: string; IgnoreCase: Boolean = False): integer;
+    function PngIndex(const PngName: string; IgnoreCase: Boolean = True): integer;
     function Count: integer;
     function IsValidIndex(const Index: integer): Boolean;
+    function AddPngImageFromFile(const FileName: string): integer; // Returns the index of the added item
+    function AddPngImage(Png: TPngImage; ImageName: string = ''; Description: string = ''; Enabled: Boolean = True; Tag: integer = 0): integer; // Returns the index of the added item
+    function GetPngImage(const Index: integer): TPngImage;
+    function GetPngImageByName(const PngName: string; IgnoreCase: Boolean = True): TPngImage; // Returns the first PngImage with the given name
+    function ReportStr: string; // for debug
   published
     property Items: TJppPngCollectionItems read FItems write FItems;
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
@@ -107,6 +112,43 @@ begin
   inherited Destroy;
 end;
 
+function TJppPngCollection.AddPngImage(Png: TPngImage; ImageName, Description: string; Enabled: Boolean; Tag: integer): integer;
+var
+  pci: TJppPngCollectionItem;
+begin
+  pci := Items.Add;
+  try
+    pci.PngImage.Assign(Png);
+    Result := pci.Index;
+    if ImageName <> '' then pci.Name := ImageName;
+    pci.Description := Description;
+    pci.Enabled := Enabled;
+    pci.Tag := Tag;
+  except
+    Result := -1;
+  end;
+end;
+
+function TJppPngCollection.AddPngImageFromFile(const FileName: string): integer;
+var
+  Png: TPngImage;
+begin
+  if not FileExists(FileName) then Exit(-1);
+  Png := TPngImage.Create;
+  try
+
+    try
+      Png.LoadFromFile(FileName);
+      Result := AddPngImage(Png);
+    except
+      Result := -1;
+    end;
+
+  finally
+    Png.Free;
+  end;
+end;
+
 procedure TJppPngCollection.Clear;
 begin
   FItems.Clear;
@@ -135,6 +177,20 @@ begin
     FItems[i].Enabled := Enable;
 end;
 
+function TJppPngCollection.GetPngImage(const Index: integer): TPngImage;
+begin
+  Result := Items[Index].PngImage;
+end;
+
+function TJppPngCollection.GetPngImageByName(const PngName: string; IgnoreCase: Boolean): TPngImage;
+var
+  x: integer;
+begin
+  x := PngIndex(PngName, IgnoreCase);
+  if x < 0 then Exit(nil);
+  Result := Items[x].PngImage;
+end;
+
 function TJppPngCollection.IsValidIndex(const Index: integer): Boolean;
 begin
   Result := Items.IsValidIndex(Index);
@@ -161,6 +217,41 @@ begin
       Break;
     end;
   end;
+end;
+
+function TJppPngCollection.ReportStr: string;
+var
+  i: integer;
+  s, Sep: string;
+  pci: TJppPngCollectionItem;
+  b: Boolean;
+begin
+  s :=
+    'PngCollection: ' + Self.Name + ENDL +
+    'Items: ' + IntToStr(Items.Count) + ENDL;
+
+  Sep := '  ';
+  for i := 0 to Items.Count - 1 do
+  begin
+    pci := Items[i];
+    s := s + 'Item ' + IntToStr(i + 1) + ENDL;
+    s := s + Sep + 'Index: ' + IntToStr(pci.Index) + ENDL;
+    s := s + Sep + 'Name: ' + pci.Name + ENDL;
+    s := s + Sep + 'Description: ' + pci.Description + ENDL;
+    s := s + Sep + 'Enabled: ' + BoolToStrYN(pci.Enabled) + ENDL;
+    s := s + Sep + 'Tag: ' + IntToStr(pci.Tag) + ENDL;
+    b := pci.PngImage.Empty;
+    s := s + Sep + 'Empy image: ' + BoolToStrYN(b) + ENDL;
+    if b then Continue;
+    s := s + Sep + 'Width: ' + IntToStrEx(pci.PngImage.Width) + ENDL;
+    s := s + Sep + 'Height: ' + IntToStrEx(pci.PngImage.Height) + ENDL;
+    s := s + Sep + 'Bit depth: ' + IntToStr(pci.PngImage.Header.BitDepth) + ENDL;
+    s := s + Sep + 'Compression level: ' + IntToStr(pci.PngImage.CompressionLevel) + ENDL;
+    s := s + Sep + 'Compression method: ' + IntToStr(pci.PngImage.Header.CompressionMethod) + ENDL;
+    s := s + Sep + 'Transparent color: ' + ColorToRgbIntStr(pci.PngImage.TransparentColor) + ENDL;
+  end;
+
+  Result := s;
 end;
 
 procedure TJppPngCollection.SetTagExt(const Value: TJppTagExt);
