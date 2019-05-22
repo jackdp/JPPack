@@ -16,7 +16,8 @@ uses
   JPL.Colors,
 
   // JPPack units
-  JPP.BasicSpeedButton, JPP.ColorComboBox, JPP.Panel, JPP.LinkLabel, JPP.PngButton, JPP.PngButton.ColorMaps, JPP.ColorListBox, JPP.BasicPanel;
+  JPP.BasicSpeedButton, JPP.ColorComboBox, JPP.Panel, JPP.LinkLabel, JPP.PngButton, JPP.PngButton.ColorMaps, JPP.ColorListBox, JPP.BasicPanel,
+  JPP.DoubleLineLabel, JPP.DoubleLabel, JPP.PngCollection;
 
 
 
@@ -78,11 +79,18 @@ type
     pnRight: TJppBasicPanel;
     clb: TJppColorListBox;
     lbl3: TLabel;
+    TJppDoubleLineLabel: TJppDoubleLineLabel;
+    JppDoubleLabel1: TJppDoubleLabel;
+    JppDoubleLineLabel1: TJppDoubleLineLabel;
+    JppDoubleLineLabel2: TJppDoubleLineLabel;
+    btnToolbarAssignIcon: TJppBasicSpeedButton;
+    JppPngCollection1: TJppPngCollection;
     procedure FormCreate(Sender: TObject);
     procedure ButtonClick(Sender: TObject);
     procedure actEscExecute(Sender: TObject);
     procedure SetJppPngButtonsFont;
     procedure actLoadColorMapExecute(Sender: TObject);
+    procedure btnToolbarAssignIconClick(Sender: TObject);
     procedure ccbColorChanged(Sender: TObject);
     procedure clbColorChanged(Sender: TObject);
     procedure clbMeasureItem(Control: TWinControl; Index: Integer; var Height: Integer);
@@ -104,6 +112,8 @@ implementation
 
 
 procedure TFormMain.FormCreate(Sender: TObject);
+var
+  vl: TJppPanelVerticalLine;
 begin
   Caption := APP_NAME;
   Application.Title := APP_NAME;
@@ -124,7 +134,7 @@ begin
   SetJppLinkLabelFonts(lblLoadColorMap, 'Segoe UI', 12);
 
   //Colors: normal, hot , disabled, visited normal, visited hot
-  SetJppLinkLabelColors(lblFugueIcons, clSilver, clSilver, clGray, clGray, clSilver);
+  SetJppLinkLabelColors(lblFugueIcons, clSilver, clWhite, clGray, clGray, clSilver);
   SetJppLinkLabelColors(lblLoadColorMap, lblLoadColorMap.FontNormal.Color);
 
 
@@ -132,6 +142,11 @@ begin
 
   SetJppPngButtonsFont;
 
+  vl := pnToolbar.VerticalLines[0];
+  vl.PosX := btnToolbarSave.Left + btnToolbarSave.Width + btnToolbarSave.Margins.Right;
+
+  vl := pnToolbar.VerticalLines[1];
+  vl.PosX := btnToolbarColor.Left + btnToolbarColor.Width + btnToolbarColor.Margins.Right;
 end;
 
 
@@ -175,6 +190,13 @@ begin
   btnDelphi.LoadColorMapFromIniFile(dlgOpen.FileName, 'JppPngButton_ColorMap', TJppPngButtonIniColorFormat.icfDefault);
 end;
 
+procedure TFormMain.btnToolbarAssignIconClick(Sender: TObject);
+begin
+  if not btnToolbarAssignIcon.PngImage.Empty then Exit;
+  btnToolbarAssignIcon.PngImage.Assign(JppPngCollection1.Items[0].PngImage);
+  btnToolbarAssignIcon.Caption := '------ FIRE! ------';
+end;
+
 procedure TFormMain.ButtonClick(Sender: TObject);
 begin
   with Sender as TControl do ShowMessage(Name + ': ' + ClassName);
@@ -192,7 +214,7 @@ end;
 
 procedure TFormMain.clbMeasureItem(Control: TWinControl; Index: Integer; var Height: Integer);
 begin
-  if clb.IsSeparatorItem(Index) then Height := 19;
+  if clb.IsSeparatorItem(Index) then Height := 22;
 end;
 
 end.

@@ -67,6 +67,70 @@ object FormMain: TFormMain
     Font.Style = []
     ParentFont = False
   end
+  object TJppDoubleLineLabel: TJppDoubleLineLabel
+    Left = 27
+    Top = 588
+    Width = 296
+    Height = 19
+    RightCaption = ' RightCaption '
+    LineColor = clBlack
+    LinePeriod = 5
+    Caption = 'TJppDoubleLineLabel'
+    RightCaptionFont.Charset = DEFAULT_CHARSET
+    RightCaptionFont.Color = clWhite
+    RightCaptionFont.Height = -16
+    RightCaptionFont.Name = 'Tahoma'
+    RightCaptionFont.Style = []
+    RightCaptionColor = 14712099
+    RightCaptionBorderColor = 14712099
+  end
+  object JppDoubleLabel1: TJppDoubleLabel
+    Left = 28
+    Top = 666
+    Width = 195
+    Height = 19
+    RightCaption = ' RightCaption '
+    Caption = 'TJppDoubleLabel'
+    RightCaptionFont.Charset = DEFAULT_CHARSET
+    RightCaptionFont.Color = clWhite
+    RightCaptionFont.Height = -16
+    RightCaptionFont.Name = 'Tahoma'
+    RightCaptionFont.Style = []
+    RightCaptionColor = 1776574
+    RightCaptionBorderColor = 1776574
+  end
+  object JppDoubleLineLabel1: TJppDoubleLineLabel
+    Left = 28
+    Top = 613
+    Width = 295
+    Height = 13
+    RightCaption = 'RightCaption'
+    LineStyle = dllsSolid
+    Caption = 'TJppDoubleLineLabel'
+    RightCaptionFont.Charset = DEFAULT_CHARSET
+    RightCaptionFont.Color = clWindowText
+    RightCaptionFont.Height = -11
+    RightCaptionFont.Name = 'Segoe UI'
+    RightCaptionFont.Style = [fsBold]
+  end
+  object JppDoubleLineLabel2: TJppDoubleLineLabel
+    Left = 28
+    Top = 632
+    Width = 295
+    Height = 13
+    RightCaption = 'RightCaption'
+    LineStyle = dllsDash
+    LineColor = clRed
+    Caption = 'TJppDoubleLineLabel'
+    RightCaptionFont.Charset = DEFAULT_CHARSET
+    RightCaptionFont.Color = clWindowText
+    RightCaptionFont.Height = -11
+    RightCaptionFont.Name = 'Consolas'
+    RightCaptionFont.Style = []
+    LinePosDeltaY = -4
+    LineSizeDeltaX1 = 10
+    LineSizeDeltaX2 = -10
+  end
   object JppPanel1: TJppPanel
     Left = 28
     Top = 120
@@ -473,7 +537,7 @@ object FormMain: TFormMain
     ButtonsSpacing = 3
     ButtonChangeColor.Left = 302
     ButtonChangeColor.Top = 73
-    ButtonChangeColor.Width = 24
+    ButtonChangeColor.Width = 28
     ButtonChangeColor.Height = 22
     ButtonChangeColor.Hint = 'Change color...'
     ButtonChangeColor.Caption = '...'
@@ -498,7 +562,7 @@ object FormMain: TFormMain
     ButtonChangeColor.Visible = True
     ButtonCopyColor.Left = 329
     ButtonCopyColor.Top = 73
-    ButtonCopyColor.Width = 46
+    ButtonCopyColor.Width = 41
     ButtonCopyColor.Height = 22
     ButtonCopyColor.Hint = 'Copy color to the Clipboard'
     ButtonCopyColor.Caption = 'Copy'
@@ -523,7 +587,7 @@ object FormMain: TFormMain
     ButtonCopyColor.Visible = True
     ButtonPasteColor.Left = 378
     ButtonPasteColor.Top = 73
-    ButtonPasteColor.Width = 46
+    ButtonPasteColor.Width = 43
     ButtonPasteColor.Height = 22
     ButtonPasteColor.Hint = 'Paste color from Clipboard'
     ButtonPasteColor.Caption = 'Paste'
@@ -821,8 +885,22 @@ object FormMain: TFormMain
     Left = 0
     Top = 0
     Width = 1062
-    Height = 47
-    VerticalLines = <>
+    Height = 36
+    VerticalLines = <
+      item
+        Pen.Color = 10132122
+        Pen.Style = psDot
+        TopMargin = 3
+        BottomMargin = 3
+        PosX = 200
+      end
+      item
+        Pen.Color = 10132122
+        Pen.Style = psDot
+        TopMargin = 3
+        BottomMargin = 3
+        PosX = 250
+      end>
     HorizontalLines = <>
     Captions = <>
     HorizontalBars = <>
@@ -846,13 +924,15 @@ object FormMain: TFormMain
     Appearance.Borders.Bottom.Border3D = False
     DesignSize = (
       1062
-      47)
+      36)
     object btnToolbarColor: TJppBasicSpeedButton
-      Left = 171
-      Top = 9
-      Width = 75
-      Height = 25
+      AlignWithMargins = True
+      Left = 155
+      Top = 3
+      Width = 96
+      Height = 26
       Hint = 'Button with transparent border & background'
+      Margins.Bottom = 7
       Caption = 'Color'
       Appearance.Normal.Color = 1776411
       Appearance.Normal.FontColor = 15921906
@@ -900,15 +980,19 @@ object FormMain: TFormMain
         3E3E8E349BCD6B77D0D7D787A1A1A1D99393933744ABD59A542AD5ED5E7FA656
         AB55AAD56A39A2942A9F03CA06EB615ED9B6E7ED76FBE21F260DE4E1D8B161C0
         0000000049454E44AE426082}
+      AutoWidthMargin = 24
+      Align = alLeft
       ParentShowHint = False
       ShowHint = True
       OnClick = ButtonClick
     end
     object btnToolbarOpen: TJppBasicSpeedButton
-      Left = 9
-      Top = 9
-      Width = 75
-      Height = 25
+      AlignWithMargins = True
+      Left = 3
+      Top = 3
+      Width = 73
+      Height = 26
+      Margins.Bottom = 7
       Caption = 'Open'
       Appearance.Normal.Color = 13464129
       Appearance.Normal.FontColor = 15461355
@@ -945,13 +1029,17 @@ object FormMain: TFormMain
         A7EC6038C098E5CE3051498C4187E8E007827BAF186E4FDBC9004A8D9F406981
         0D88058098B8108480BF40FC03887F32529A9D0110EBFEFFA5E325BE00000000
         49454E44AE426082}
+      AutoWidthMargin = 12
+      Align = alLeft
       OnClick = ButtonClick
     end
     object btnToolbarSave: TJppBasicSpeedButton
-      Left = 90
-      Top = 9
-      Width = 75
-      Height = 25
+      AlignWithMargins = True
+      Left = 82
+      Top = 3
+      Width = 67
+      Height = 26
+      Margins.Bottom = 7
       Caption = 'Save'
       Appearance.Normal.Color = clBtnFace
       Appearance.Normal.FontColor = clWindowText
@@ -991,11 +1079,13 @@ object FormMain: TFormMain
         C4848420291564506FF98CDD2719D6B98142460E880594813E536030483EC832
         FF08B640B4FF936883CCFFC0F0FCC659862D0D2003F841090C8899898A430400
         659A1F00DA16B7061C7628800000000049454E44AE426082}
+      AutoWidthMargin = 12
+      Align = alLeft
       OnClick = ButtonClick
     end
     object lblFugueIcons: TJppLinkLabel
       Left = 695
-      Top = 11
+      Top = 4
       Width = 351
       Height = 21
       FontNormal.Charset = DEFAULT_CHARSET
@@ -1029,14 +1119,41 @@ object FormMain: TFormMain
       Caption = 'Fugue Icons from http://p.yusukekamiyamane.com'
       Transparent = True
       Layout = tlCenter
-      ExplicitLeft = 579
+    end
+    object btnToolbarAssignIcon: TJppBasicSpeedButton
+      AlignWithMargins = True
+      Left = 257
+      Top = 3
+      Width = 212
+      Height = 26
+      Margins.Bottom = 7
+      Caption = 'Assign icon from TJppPngCollection'
+      Appearance.Normal.Color = 6381921
+      Appearance.Normal.FontColor = 15724527
+      Appearance.Normal.BorderColor = 170
+      Appearance.Normal.BorderWidth = 1
+      Appearance.Hot.Color = clHighlight
+      Appearance.Hot.FontColor = clHighlightText
+      Appearance.Hot.BorderColor = clHighlight
+      Appearance.Hot.BorderWidth = 1
+      Appearance.Down.Color = 9917440
+      Appearance.Down.FontColor = clHighlightText
+      Appearance.Down.BorderColor = 9917440
+      Appearance.Down.BorderWidth = 1
+      Appearance.Disabled.Color = 16250871
+      Appearance.Disabled.FontColor = clBtnShadow
+      Appearance.Disabled.BorderColor = clBtnShadow
+      Appearance.Disabled.BorderWidth = 1
+      AutoWidthMargin = 12
+      Align = alLeft
+      OnClick = btnToolbarAssignIconClick
     end
   end
   object pnButtons: TJppBasicPanel
     Left = 447
-    Top = 47
+    Top = 36
     Width = 377
-    Height = 690
+    Height = 701
     Align = alRight
     BevelOuter = bvNone
     TabOrder = 3
@@ -1055,6 +1172,8 @@ object FormMain: TFormMain
     Appearance.Borders.Top.Visible = False
     Appearance.Borders.Bottom.Pen.Color = clBtnShadow
     Appearance.Borders.Bottom.Visible = False
+    ExplicitTop = 47
+    ExplicitHeight = 690
     object lbl1: TLabel
       Left = 68
       Top = 11
@@ -4108,9 +4227,9 @@ object FormMain: TFormMain
   end
   object pnRight: TJppBasicPanel
     Left = 824
-    Top = 47
+    Top = 36
     Width = 238
-    Height = 690
+    Height = 701
     Align = alRight
     BevelOuter = bvNone
     ParentBackground = True
@@ -4126,6 +4245,8 @@ object FormMain: TFormMain
     Appearance.Borders.Top.Pen.Color = clBtnHighlight
     Appearance.Borders.Bottom.Pen.Color = clBtnShadow
     Appearance.DrawGradient = False
+    ExplicitTop = 47
+    ExplicitHeight = 690
     object lbl3: TLabel
       Left = 0
       Top = 0
@@ -4546,19 +4667,19 @@ object FormMain: TFormMain
       Appearance.NumericFont.Style = []
       Appearance.NumericTextPosDeltaY = 0
       Appearance.SeparatorItem.Background.Gradient.SpeedPercent = 100
-      Appearance.SeparatorItem.Background.Gradient.ColorFrom = 13994069
-      Appearance.SeparatorItem.Background.Gradient.ColorTo = 11559469
+      Appearance.SeparatorItem.Background.Gradient.ColorFrom = 9737364
+      Appearance.SeparatorItem.Background.Gradient.ColorTo = 7237230
       Appearance.SeparatorItem.Background.Borders.Left.Color = 3947580
       Appearance.SeparatorItem.Background.Borders.Left.Visible = False
       Appearance.SeparatorItem.Background.Borders.Right.Color = 3947580
       Appearance.SeparatorItem.Background.Borders.Right.Visible = False
-      Appearance.SeparatorItem.Background.Borders.Top.Color = 11559469
-      Appearance.SeparatorItem.Background.Borders.Bottom.Color = 11559469
+      Appearance.SeparatorItem.Background.Borders.Top.Color = 7237230
+      Appearance.SeparatorItem.Background.Borders.Bottom.Color = 7237230
       Appearance.SeparatorItem.Font.Charset = DEFAULT_CHARSET
-      Appearance.SeparatorItem.Font.Color = 16641503
+      Appearance.SeparatorItem.Font.Color = clWhite
       Appearance.SeparatorItem.Font.Height = -11
-      Appearance.SeparatorItem.Font.Name = 'Tahoma'
-      Appearance.SeparatorItem.Font.Style = [fsBold]
+      Appearance.SeparatorItem.Font.Name = 'Verdana'
+      Appearance.SeparatorItem.Font.Style = []
       Appearance.SelectedItem.Background.Gradient.SpeedPercent = 100
       Appearance.SelectedItem.Background.Gradient.ColorFrom = 699891
       Appearance.SelectedItem.Background.Gradient.ColorTo = 628693
@@ -4581,13 +4702,13 @@ object FormMain: TFormMain
       Appearance.ChangeColorItem.Caption = 'Select color...'
       ColorListSet = [cltWebGrayBlack, cltWebWhite, cltWebPink, cltWebRed, cltWebOrange, cltWebYellow, cltWebBrown, cltWebGreen, cltWebCyan, cltWebBlue, cltWebPurpleVioletMagenta, cltWeb216Safe]
       Options = [clboAddOnSelectIfNotExists, clboAddAtTop]
-      SelectedColor = clBlack
+      SelectedColor = clNone
       OnColorChanged = clbColorChanged
     end
   end
   object ActionList1: TActionList
     Left = 328
-    Top = 536
+    Top = 525
     object actEsc: TAction
       Caption = 'actEsc'
       ShortCut = 27
@@ -4604,7 +4725,37 @@ object FormMain: TFormMain
       'E:\Projects_G\libs\JPPack\demos\JPPack_Test\Color Map - VCL Glos' +
       'sy.colormap'
     Filter = 'ColorMaps (*.colormap)|*.colormap|All files (*.*)|*.*'
-    Left = 379
-    Top = 517
+    Left = 399
+    Top = 530
+  end
+  object JppPngCollection1: TJppPngCollection
+    Items = <
+      item
+        Name = 'Png_0'
+        PngImage.Data = {
+          89504E470D0A1A0A0000000D49484452000000100000001008060000001FF3FF
+          610000001974455874536F6674776172650041646F626520496D616765526561
+          647971C9653C000002374944415478DAA5924F68135110C6BF97DD3459AD469A
+          C4946A43C052FF855E4A5AE84144F4A00545452F420B123C8A7AB0872A2868A1
+          150F9EBC48C1E24DA227A9F4200A2218281E0AB6A095B40A56B3491A2B6CDA6C
+          76FD5EB221B2A6271F7C99BC9979BF7D6F66846DDBF89F25EA808210D204A9A8
+          63756A995A658625B32CE7D0BD848289B4D91400EE349A6E081CA02DD3F191F6
+          0BFD25EBAF2F879D73FF009CA410D58B0EC491431EEBF8C0FD0263A54D01B9C6
+          0DE4F2D1F688180E8B7DE8B05F63CE2EE12DFD8B54A529E0A70370964AED1511
+          0C7A9248D8B358B15EE20D7DAF989D97091137E09B03F0D4E4A719109D38E6BD
+          89042F5E298FE19DBD82E7F4CB9A98ED9B01F8AB52B280275BAEA14F3984B07C
+          57F90916CD149ED13FC3EDEF5D6EC0570244EDEA71B10D175A9238A89E103B51
+          2FEE9CF5CBB88A17FC3B456577BB01CB8D3948FAAFE08877500485A241D162B0
+          CA0558FA0F73ED8C95667C425E38EA06646A804EEAD6F694882B6D5B15253000
+          6FF814CAB96998FA0C568F6E2C303E4A2DC5DC80CF0DC0785B4AEDF246FB3DFE
+          D808D4D61E9496EEC3987F64E54F1BB28DD7E58BBBDC80F9C6134603977DFD3B
+          2E9DF7F9F7DC66097C2865C6507838B95E7C60BC67FCAE1C9BFD6E8020609245
+          EC052B1F506F8446FA428173C3B2AB283E7D6CE9E369BD5234EFCC02E98B6CA3
+          DD04203B100900ED6785E81ED2B4E3C17038569DD26C36336518D329DBFE5464
+          07E8FACE731B6E80FC5A2BB5C59927A8AA5A8D99A6599F50996C506B3C571DE9
+          3F0C47FEE1CE5B7F430000000049454E44AE426082}
+      end>
+    Left = 371
+    Top = 619
   end
 end
