@@ -1,5 +1,12 @@
 unit JPP.StorageCtrl;
 
+{
+  Jacek Pazera
+  http://www.pazera-software.com
+  https://github.com/jackdp
+  Last mod: 2018.06.08
+}
+
 interface
 
 uses
