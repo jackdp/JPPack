@@ -4,19 +4,20 @@
 
 - [Overview](#overview)
 - [Components](#components)
-  * [TJppPanel](#tjpppanel)
-  * [TJppBasicPanel](#tjppbasicpanel)
-  * [TJppPngButton](#tjpppngbutton)
-  * [TJppBasicPngButton](#tjppbasicpngbutton)
-  * [TJppBasicSpeedButton](#tjppbasicspeedbutton)
-  * [TJppColorComboBox](#tjppcolorcombobox)
-  * [TJppColorListBox](#tjppcolorlistbox)
-  * [TJppLinkLabel](#tjpplinklabel)
-  * [TJppDoubleLineLabel](#tjppdoublelinelabel)
-  * [TJppDoubleLabel](#tjppdoublelabel)
-  * [TJppTimer](#tjpptimer)
-  * [TJppStorageCtrl](#tjppstoragectrl)
-  * [TJppStringStorageCtrl](#tjppstringstoragectrl)
+  1. [TJppPanel](#tjpppanel)
+  1. [TJppBasicPanel](#tjppbasicpanel)
+  1. [TJppPngButton](#tjpppngbutton)
+  1. [TJppBasicPngButton](#tjppbasicpngbutton)
+  1. [TJppBasicSpeedButton](#tjppbasicspeedbutton)
+  1. [TJppColorComboBox](#tjppcolorcombobox)
+  1. [TJppColorListBox](#tjppcolorlistbox)
+  1. [TJppLinkLabel](#tjpplinklabel)
+  1. [TJppDoubleLineLabel](#tjppdoublelinelabel)
+  1. [TJppDoubleLabel](#tjppdoublelabel)
+  1. [TJppTimer](#tjpptimer)
+  1. [TJppPngCollection](#tjpppngcollection)
+  1. [TJppStorageCtrl](#tjppstoragectrl)
+  1. [TJppStringStorageCtrl](#tjppstringstoragectrl)
 - [TagExt](#tagext)
 - [Installation](#installation)
 
@@ -195,7 +196,8 @@ My modifications:
 The `RightCaption` has its own font, background and border color.  
 The `RightCaption` can be positioned vertically by `RightCaptionPosDeltaY`.  
 The line can be positioned vertically by `LinePosDeltaY`.  
-The length of the line can be modified by `LineSizeDeltaX1` and `LineSizeDeltaX2`.
+The length of the line can be modified by `LineSizeDeltaX1` and `LineSizeDeltaX2`.  
+If `AutoHeight = True`, the height of the component will be calculated and applied automatically.
 
 ---
 
@@ -207,7 +209,7 @@ A simple label component composed of 2 captions: left (property `Caption`) and r
 <img src="./docs/img/TJppDoubleLabel.png">
 </p>
 
-The space between captions can be modified by `Spacing` property.  
+The space between captions can be modified using the `Spacing` property.  
 Based on **TJppDoubleLineLabel**.
 
 ---
@@ -246,6 +248,59 @@ end;
 
 ---
 
+### TJppPngCollection
+
+A non-visual component that can store any number of PNG images. Unlike **TImageList**, each image can have a different size. Images are stored internally as PNG, not bitmaps, which reduces the size of the DFM file. Of course, assuming that PNG images are compressed.
+
+PNG images can be added in the **Object Inspector** or in the code using `AddPngImage`, `AddImageFromFile` or `Items.Insert` methods:
+
+```delphi
+...
+var
+  Png: TPngImage;
+begin
+  Png := TPngImage.Create;
+  try
+    Png.LoadFromFile('C:\image.png');
+    JppPngCollection.AddPngImage(Png);
+    // OR
+    // JppPngCollection.AddPngImageFromFile('C:\image.png');
+  finally
+    Png.Free;
+  end;
+end;
+```
+The `AddPngImage` method adds a **copy** of the PNG image, so you are responsible for freeing the `Png` object in the above example.
+
+To retrieve a PNG image from a collection, you can use the methods: `GetPngImage`, `GetPngImageByName` or `Items[Index].PngImage`.
+
+There are additional properties associated with each PNG image in the collection:
+```delphi
+  Name: string;
+  Description: string;
+  Tag: integer;
+  Enabled: Boolean
+```
+And read only properties:
+```delphi
+  Width: integer;
+  Height: integer;
+```
+
+**Important!**  
+The **TPngImage** objects are created automatically when creating collection items. If you want to check if any item of the collection has a PNG image assigned, you can not do it by comparing with **nil**. You must use the `TPngImage.Empty` method:
+
+```delphi
+  // Improperly
+  if JppPngCollection.Items[0].PngImage <> nil then ... // <-- Always returns True
+```
+```delphi
+  // Properly
+  if not JppPngCollection.Items[0].PngImage.Empty then ... // OK, image assigned
+```
+
+---
+
 ### TJppStorageCtrl
 
 `TJppStorageCtrl` is a non-visual component that allows you to store information of different types in the collection. Each item of the collection stores the following data:
@@ -258,7 +313,7 @@ end;
 - 2 Byte values,
 - 2 Pointer values.
 
-Items are accesible from the *Object Inspector* using `StorageCollection` property.
+Items are accesible from the **Object Inspector** using `StorageCollection` property.
 The values of each item of the collection, except pointers, can also be set in the *Object Inspector*. Pointer values can only be set in the code and they are initialized by default to `nil`.
 
 To acces the collection items in the code you can use the `Items` property, eg:
@@ -273,23 +328,25 @@ JppStorageCtrl[0].PointerValue1 := SomePointer;
 ```
 This component can be useful if you want to have access to some global data, and you do not want to create global variables.
 
-I sometimes use this component in the early stages of writing applications. In later stages, a definitely better way to store and manage data is to design specialized records, classes, generic/pointer containers, etc.
+I sometimes use this component in the early stages of writing applications. In later stages, a definitely better way to store and manage data is to design specialized records, classes, arrays, generic/pointer containers, etc.
 
 ---
 
 ### TJppStringStorageCtrl
 
 A non-visual component that allows you to store collection of strings with additional data. Each item of the collection has the following properties:
-- `ItemName`: **string**
-- `Value`: **string**
-- `Enabled`: Boolean
-- `Tag`: integer
+```delphi
+  ItemName: string;
+  Value: string;
+  Enabled: Boolean;
+  Tag: integer;
+```
 
 ---
 
 ## TagExt
 
-Each component in the **JPPack** package has the `TagExt` property. Here you can store one integer value (`IntValue`), string (`StrValue`), float number (`RealValue`), pointer (`PointerValue`) and date (`DateValue`). The first three values are available from the `Object Inspector` and in the code, the last two - only in the code.
+Each component in the **JPPack** package has the `TagExt` property. Here you can store one integer value (`IntValue`), string (`StrValue`), float number (`RealValue`), pointer (`PointerValue`) and date (`DateValue`). The first three values are available from the **Object Inspector** and in the code, the last two - only in the code.
 
 Default values:
 
@@ -309,10 +366,21 @@ Before installing the **JPPack** package, you must first install 2 another packa
 1. **PngComponents** from https://bitbucket.org/uweraabe/pngcomponents  
 You can use *PngComponents* ver. 1.4.1 package from the [3rd-party](3rd-party) folder. I tested *JPPack* with this version and it looks like everything works OK.
 
-In the [packages](packages) folder you can find installation packages for all Delphi versions from **XE2** to **10.2 Tokyo**.  
+If you have installed the **PNG Components** using the **GetIt Package Manager**, you will probably have to change the name `PngComponents` to `PngComponentsD` in the **JPPackVCL.dpk** file.
+
+In the [packages](packages) folder you can find installation packages for all Delphi versions from **XE2** to **10.3 Rio**.  
 Go to the subfolder with the name of your Delphi version (eg `Delphi_XE7` for XE7 version) and open the file `JPPackVCL.dproj` or `JPPackVCL.dpk`. In the *Project Manager*, right-click the `JPPackVCL.bpl` file, then select `Install` in the popup menu. After a short time, a message should appear displaying information about the correct installation of the package and with the list of newly installed components. All components you can find ont the **JPPack** page in the *Tool Palette*.
 
 After installing the package, it is best to add the `source` folder to the **library path**:
 1. Select menu `Tools` --> `Options`.
 1. In the tree view on the left, go to `Environment Options` --> `Delphi Options` --> `Library`.
 1. In the **Library path** combo box (on the right), add `;` (semicolon) and the path to the `source` directory.
+
+If you want to install the **JPPack** in Delphi 2009 and Delphi XE, remove *unit scopes* (eg. `Winapi.Windows` -> `Windows`, `System.SysUtils` -> `SysUtils`) and try compiling. Perhaps it will be necessary to comment out some properties, but there should be no major problems.
+
+
+## License
+
+The license for my work is the simplest in the world: **You can do with my code whatever you want without any cost.**
+
+But, in some units I use code from other open source projects, so you should look at the PAS source files and license of the authors of these projects for more information.
