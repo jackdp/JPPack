@@ -1,6 +1,6 @@
 # JPPack
 
-**A small collection of VCL components for Delphi XE2 - 10.2 Tokyo**
+**A small collection of VCL components for Delphi XE2 - 10.3 Rio**
 
 - [Overview](#overview)
 - [Components](#components)
@@ -12,8 +12,11 @@
   * [TJppColorComboBox](#tjppcolorcombobox)
   * [TJppColorListBox](#tjppcolorlistbox)
   * [TJppLinkLabel](#tjpplinklabel)
+  * [TJppDoubleLineLabel](#tjppdoublelinelabel)
+  * [TJppDoubleLabel](#tjppdoublelabel)
   * [TJppTimer](#tjpptimer)
   * [TJppStorageCtrl](#tjppstoragectrl)
+  * [TJppStringStorageCtrl](#tjppstringstoragectrl)
 - [TagExt](#tagext)
 - [Installation](#installation)
 
@@ -21,7 +24,7 @@
 ## Overview
 
 **JPPack** is a small collection of VCL components for Delphi.  
-Supported Delphi versions: **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**.
+Supported Delphi versions: **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**.
 
 <p align="center">
 <img src="./docs/img/JPPack.png">
@@ -67,9 +70,13 @@ Moreover, the `TJppPanel` has a built-in support for the unlimited collection of
 
 [More info...](./docs/TJppPanel.md)
 
+---
+
 ### TJppBasicPanel
 
 A truncated version of the `TJppPanel`. It does not have built-in collections of captions, vertical lines, horizontal lines, and horizontal bars.
+
+---
 
 ### TJppPngButton
 
@@ -91,13 +98,19 @@ Color schemes can be edited with the `TJppPngButton Color Maps Designer` program
 
 [More info...](./docs/TJppPngButton.md)
 
+---
+
 ### TJppBasicPngButton
 
 This button is a slightly truncated version of the `TJppPngButton`. It has only one gradient for each button state and does not support color schemes.
 
+---
+
 ### TJppBasicSpeedButton
 
 This button is very similar to `TJppBasicPngButton`, but it is based on `TGraphicControl`, so it does not take the focus (it has no *focused* state).
+
+---
 
 ### TJppColorComboBox
 
@@ -124,6 +137,8 @@ Each color selected by the user, but not yet in the color list, can be automatic
 
 [More info...](./docs/TJppColorComboBox.md)
 
+---
+
 ### TJppColorListBox
 
 A highly customizable *ListBox* displaying a list of predefined and/or user-defined colors.
@@ -136,12 +151,66 @@ A highly customizable *ListBox* displaying a list of predefined and/or user-defi
 
 It is very similar to `TJppColorComboBox`, but it has no built-in components.
 
+---
 
 ### TJppLinkLabel
 
 Label with additional fonts (`TFont`) for 5 states: *normal*, *visited-normal*, *hot*, *visited-hot* and *disabled*. It is inherited from `TCustomLabel`.
 
 [More info...](./docs/TJppLinkLabel.md)
+
+---
+
+### TJppDoubleLineLabel
+
+A label component composed of 3 parts:
+1. Left caption (property `Caption`)
+2. Right caption (property `RightCaption`)
+3. Line drawn between the captions.
+
+Based on **TPegtopLineLabel** from **Pegtop Common Components** written by Jens Gruschel (http://www.pegtop.net/delphi/components/common/index.htm).
+
+<p align="center">
+<img src="./docs/img/TJppDoubleLineLabel_1.png">
+<br><br>
+<img src="./docs/img/TJppDoubleLineLabel_2.png">
+<br><br>
+<img src="./docs/img/TJppDoubleLineLabel_3.png">
+</p>
+
+My modifications:
+* **TPegtopLineLabel** renamed to **TJppDoubleLineLabel**
+* `Annex` renamed to `RightCaption`
+* RightCaptionFont
+* LinePosDeltaY
+* LineSizeDeltaX1
+* LineSizeDeltaX2
+* RightCaptionColor
+* RightCaptionBorderColor
+* AutoHeight
+* RightCaptionPosDeltaY
+* TagExt
+* Added prefixes `Jpp`
+
+The `RightCaption` has its own font, background and border color.  
+The `RightCaption` can be positioned vertically by `RightCaptionPosDeltaY`.  
+The line can be positioned vertically by `LinePosDeltaY`.  
+The length of the line can be modified by `LineSizeDeltaX1` and `LineSizeDeltaX2`.
+
+---
+
+### TJppDoubleLabel
+
+A simple label component composed of 2 captions: left (property `Caption`) and right (property `RightCaption`).
+
+<p align="center">
+<img src="./docs/img/TJppDoubleLabel.png">
+</p>
+
+The space between captions can be modified by `Spacing` property.  
+Based on **TJppDoubleLineLabel**.
+
+---
 
 ### TJppTimer
 
@@ -175,6 +244,8 @@ begin
 end;
 ```
 
+---
+
 ### TJppStorageCtrl
 
 `TJppStorageCtrl` is a non-visual component that allows you to store information of different types in the collection. Each item of the collection stores the following data:
@@ -203,6 +274,18 @@ JppStorageCtrl[0].PointerValue1 := SomePointer;
 This component can be useful if you want to have access to some global data, and you do not want to create global variables.
 
 I sometimes use this component in the early stages of writing applications. In later stages, a definitely better way to store and manage data is to design specialized records, classes, generic/pointer containers, etc.
+
+---
+
+### TJppStringStorageCtrl
+
+A non-visual component that allows you to store collection of strings with additional data. Each item of the collection has the following properties:
+- `ItemName`: **string**
+- `Value`: **string**
+- `Enabled`: Boolean
+- `Tag`: integer
+
+---
 
 ## TagExt
 
