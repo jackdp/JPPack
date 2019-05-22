@@ -97,6 +97,10 @@
         <DCCReference Include="..\..\source\JPP.Timer.pas"/>
         <DCCReference Include="..\..\source\JPP.StorageCtrl.pas"/>
         <DCCReference Include="..\..\source\JPP.FormIniStorage.pas"/>
+        <DCCReference Include="..\..\source\JPP.StringStorageCtrl.pas"/>
+        <DCCReference Include="..\..\source\JPP.PngCollection.pas"/>
+        <DCCReference Include="..\..\source\JPP.DoubleLabel.pas"/>
+        <DCCReference Include="..\..\source\JPP.DoubleLineLabel.pas"/>
         <DCCReference Include="..\..\source\JPP.Register.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>

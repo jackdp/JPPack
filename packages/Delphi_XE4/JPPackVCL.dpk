@@ -63,6 +63,10 @@ contains
   JPP.Timer in '..\..\source\JPP.Timer.pas',
   JPP.StorageCtrl in '..\..\source\JPP.StorageCtrl.pas',
   JPP.FormIniStorage in '..\..\source\JPP.FormIniStorage.pas',
+  JPP.StringStorageCtrl in '..\..\source\JPP.StringStorageCtrl.pas',
+  JPP.PngCollection in '..\..\source\JPP.PngCollection.pas',
+  JPP.DoubleLabel in '..\..\source\JPP.DoubleLabel.pas',
+  JPP.DoubleLineLabel in '..\..\source\JPP.DoubleLineLabel.pas',
   JPP.Register in '..\..\source\JPP.Register.pas';
 
 end.
