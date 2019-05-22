@@ -10,7 +10,8 @@ uses
   JPP.BasicPngButton, JPP.PngButton, JPP.BasicSpeedButton,
   JPP.ColorComboBox, JPP.ColorListBox,
   JPP.LinkLabel, JPP.Timer, JPP.StorageCtrl, JPP.StringStorageCtrl,
-  JPP.FormIniStorage, {JPP.PictureCollection,} JPP.PngCollection
+  JPP.FormIniStorage, JPP.PngCollection,
+  JPP.DoubleLineLabel, JPP.DoubleLabel
   ;
 
 
@@ -34,8 +35,8 @@ begin
       TJppStorageCtrl, 
       TJppStringStorageCtrl,
       TJppFormIniStorage,
-      //TJppPictureCollection,
-      TJppPngCollection
+      TJppPngCollection,
+      TJppDoubleLineLabel, TJppDoubleLabel
     ]
   );
 end;
