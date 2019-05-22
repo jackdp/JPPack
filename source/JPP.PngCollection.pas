@@ -1,5 +1,12 @@
 unit JPP.PngCollection;
 
+{
+  Jacek Pazera
+  http://www.pazera-software.com
+  https://github.com/jackdp
+  Last mod: 2019.05.22
+}
+
 interface
 
 uses
