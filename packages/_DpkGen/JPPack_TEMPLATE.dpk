@@ -1,4 +1,4 @@
-package JPPackVCL;
+package JPPack;
 
 {$R *.res}
 {$R '..\DCR\JppBasicPanel.dcr'}
@@ -33,7 +33,8 @@ package JPPackVCL;
 {$IMAGEBASE $400000}
 {$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'JPPack VCL Components'}
+{$DESCRIPTION '<description>'}
+{$LIBSUFFIX '<LibSuffix>'}
 {$IMPLICITBUILD ON}
 
 requires

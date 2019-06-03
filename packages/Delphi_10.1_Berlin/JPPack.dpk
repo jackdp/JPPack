@@ -1,4 +1,4 @@
-package JPPackVCL;
+package JPPack;
 
 {$R *.res}
 {$R '..\DCR\JppBasicPanel.dcr'}
@@ -34,6 +34,7 @@ package JPPackVCL;
 {$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'JPPack VCL Components'}
+{$LIBSUFFIX 'Berlin'}
 {$IMPLICITBUILD ON}
 
 requires
