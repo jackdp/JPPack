@@ -6,7 +6,7 @@ uses
   Winapi.Windows,
   System.SysUtils, System.Classes, System.UITypes,
   Vcl.Controls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs,
-  JPL.Colors,
+  //JPL.Colors,
   JPP.Types, JPP.Gradient, JPP.Graphics;
 
 type
