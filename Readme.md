@@ -23,6 +23,14 @@
 - [License](#license)
 
 
+## Lazarus info
+
+03.06.2019
+
+*Work on the version for Lazarus is underway. Most components (about 80%) are already working. I should finish in a few days.*
+
+---
+
 ## Overview
 
 **JPPack** is a small collection of VCL components for Delphi.  
@@ -367,10 +375,12 @@ Before installing the **JPPack** package, you must first install 2 another packa
 1. **PngComponents** from https://bitbucket.org/uweraabe/pngcomponents  
 You can use *PngComponents* ver. 1.4.1 package from the [3rd-party](3rd-party) folder. I tested *JPPack* with this version and it looks like everything works OK.
 
-If you have installed the **PNG Components** using the **GetIt Package Manager**, you will probably have to change the name `PngComponents` to `PngComponentsD` in the **JPPackVCL.dpk** file.
+If you have installed the **PNG Components** using the **GetIt Package Manager**, you will probably have to change the name `PngComponents` to `PngComponentsD` in the **JPPack.dpk** file.
 
 In the [packages](packages) folder you can find installation packages for all Delphi versions from **XE2** to **10.3 Rio**.  
-Go to the subfolder with the name of your Delphi version (eg `Delphi_XE7` for XE7 version) and open the file `JPPackVCL.dproj` or `JPPackVCL.dpk`. In the *Project Manager*, right-click the `JPPackVCL.bpl` file, then select `Install` in the popup menu. After a short time, a message should appear displaying information about the correct installation of the package and with the list of newly installed components. All components you can find ont the **JPPack** page in the *Tool Palette*.
+Go to the subfolder with the name of your Delphi version (eg `Delphi_XE7` for XE7 version) and open the file `JPPack.dproj` or `JPPack.dpk`. In the *Project Manager*, right-click the `JPPack.bpl` file, then select `Install` in the popup menu. After a short time, a message should appear displaying information about the correct installation of the package and with the list of newly installed components. All components you can find ont the **JPPack** page in the *Tool Palette*.
+
+You can also compile package for **Win64** target.
 
 After installing the package, it is best to add the `source` folder to the **library path**:
 1. Select menu `Tools` --> `Options`.
