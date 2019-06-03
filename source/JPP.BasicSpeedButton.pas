@@ -446,8 +446,8 @@ begin
         imgDisabled := TPngImage.Create;
         try
           imgDisabled.Assign(FPngImage);
-          MakeImageGrayscale(imgDisabled, Appearance.GlyphDisabledGrayscaleFactor);
-          MakeImageBlended(imgDisabled, Appearance.GlyphDisabledBlendFactor);
+          if pngBlendOnDisabled in FPngOptions then MakeImageGrayscale(imgDisabled, Appearance.GlyphDisabledGrayscaleFactor);
+          if pngGrayscaleOnDisabled in FPngOptions then MakeImageBlended(imgDisabled, Appearance.GlyphDisabledBlendFactor);
           Draw(GlyphPos.X, GlyphPos.Y, imgDisabled)
         finally
           imgDisabled.Free;
