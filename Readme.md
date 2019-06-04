@@ -37,7 +37,7 @@
 Supported Delphi versions: **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**.
 
 <p align="center">
-<img src="./docs/img/JPPack.png">
+<img src="docs/img/JPPack.png">
 </p>
 
 These components were created within a few years, they were repeatedly modified, improved, and extended with the functions needed in the implementation of specific projects. Generally, there is a small chaos, but I think everything works OK (I hope!).
