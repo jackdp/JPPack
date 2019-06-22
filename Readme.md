@@ -1,13 +1,13 @@
 # JPPack
 
-**A small collection of VCL components for Delphi XE2 - 10.3 Rio**
+**A small collection of VCL/LCL components for Delphi XE2 - 10.3 Rio and Lazarus**
 
 - [Overview](#overview)
 - [Components](#components)
   1. [TJppPanel](#tjpppanel)
   1. [TJppBasicPanel](#tjppbasicpanel)
-  1. [TJppPngButton](#tjpppngbutton)
-  1. [TJppBasicPngButton](#tjppbasicpngbutton)
+  1. [TJppPngButton (Delphi only)](#tjpppngbutton)
+  1. [TJppBasicPngButton (Delphi only)](#tjppbasicpngbutton)
   1. [TJppBasicSpeedButton](#tjppbasicspeedbutton)
   1. [TJppColorComboBox](#tjppcolorcombobox)
   1. [TJppColorListBox](#tjppcolorlistbox)
@@ -23,18 +23,13 @@
 - [License](#license)
 
 
-## Lazarus info
-
-03.06.2019
-
-*Work on the version for Lazarus is underway. Most components (about 80%) are already working. I should finish in a few days.*
-
 ---
 
 ## Overview
 
-**JPPack** is a small collection of VCL components for Delphi.  
-Supported Delphi versions: **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**.
+**JPPack** is a small collection of VCL components for Delphi and LCL components for Lazarus.  
+Supported Delphi versions: **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**.  
+**Lazarus**: 2.0.3 (FPC 3.3.1).
 
 <p align="center">
 <img src="docs/img/JPPack.png">
@@ -90,6 +85,7 @@ A truncated version of the `TJppPanel`. It does not have built-in collections of
 
 ### TJppPngButton
 
+Currently **only for Delphi**.  
 `TJppPngButton` is an extended `TPngBitBtn` button from the **PngComponents** package.  
 
 <p align="center">
@@ -112,6 +108,7 @@ Color schemes can be edited with the `TJppPngButton Color Maps Designer` program
 
 ### TJppBasicPngButton
 
+Currently **only for Delphi**.  
 This button is a slightly truncated version of the `TJppPngButton`. It has only one gradient for each button state and does not support color schemes.
 
 ---
@@ -370,6 +367,8 @@ Property | Default value
 
 ## Installation
 
+### Delphi
+
 Before installing the **JPPack** package, you must first install 2 another packages:
 1. **JPLib** from https://github.com/jackdp/JPLib
 1. **PngComponents** from https://bitbucket.org/uweraabe/pngcomponents  
@@ -389,6 +388,12 @@ After installing the package, it is best to add the `source` folder to the **lib
 
 If you want to install the **JPPack** in Delphi 2009 and Delphi XE, remove *unit scopes* (eg. `Winapi.Windows` -> `Windows`, `System.SysUtils` -> `SysUtils`) and try compiling. Perhaps it will be necessary to comment out some properties, but there should be no major problems.
 
+### Lazarus
+
+To install, you need a several units from my **JPLib** library from https://github.com/jackdp/JPLib.
+
+Open package file (`LazPackage\jppacklcl.lpk`) in the Lazarus IDE. Click button `Compile` then `Use`->`Install` and rebuild IDE.
+All components you can find ont the **JPPackLCL** page in the *Component Palette*.
 
 ## License
 
