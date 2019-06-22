@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <PathDelim Value="\"/>
+    <Name Value="jppacklcl"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="..\resources"/>
+        <OtherUnitFiles Value="..\src;..\source"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files Count="21">
+      <Item1>
+        <Filename Value="..\source\JPP.Common.pas"/>
+        <UnitName Value="JPP.Common"/>
+      </Item1>
+      <Item2>
+        <Filename Value="..\source\JPP.Common.Procs.pas"/>
+        <UnitName Value="JPP.Common.Procs"/>
+      </Item2>
+      <Item3>
+        <Filename Value="..\source\JPP.DoubleLabel.pas"/>
+        <UnitName Value="JPP.DoubleLabel"/>
+      </Item3>
+      <Item4>
+        <Filename Value="..\source\JPP.Gradient.pas"/>
+        <UnitName Value="JPP.Gradient"/>
+      </Item4>
+      <Item5>
+        <Filename Value="..\source\JPP.Graphics.pas"/>
+        <UnitName Value="JPP.Graphics"/>
+      </Item5>
+      <Item6>
+        <Filename Value="..\source\JPP.Types.pas"/>
+        <UnitName Value="JPP.Types"/>
+      </Item6>
+      <Item7>
+        <Filename Value="..\source\LazJPPackRegister.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="LazJPPackRegister"/>
+      </Item7>
+      <Item8>
+        <Filename Value="..\source\JPP.DoubleLineLabel.pas"/>
+        <UnitName Value="JPP.DoubleLineLabel"/>
+      </Item8>
+      <Item9>
+        <Filename Value="..\source\JPP.LinkLabel.pas"/>
+        <UnitName Value="JPP.LinkLabel"/>
+      </Item9>
+      <Item10>
+        <Filename Value="..\source\JPP.MemIniFile.pas"/>
+        <UnitName Value="JPP.MemIniFile"/>
+      </Item10>
+      <Item11>
+        <Filename Value="..\source\JPP.StorageCtrl.pas"/>
+        <UnitName Value="JPP.StorageCtrl"/>
+      </Item11>
+      <Item12>
+        <Filename Value="..\source\JPP.StringStorageCtrl.pas"/>
+        <UnitName Value="JPP.StringStorageCtrl"/>
+      </Item12>
+      <Item13>
+        <Filename Value="..\source\JPP.PngCollection.pas"/>
+        <UnitName Value="JPP.PngCollection"/>
+      </Item13>
+      <Item14>
+        <Filename Value="..\source\JPP.Timer.pas"/>
+        <UnitName Value="JPP.Timer"/>
+      </Item14>
+      <Item15>
+        <Filename Value="..\source\JPP.BasicPanel.pas"/>
+        <UnitName Value="JPP.BasicPanel"/>
+      </Item15>
+      <Item16>
+        <Filename Value="..\source\JPP.Panel.pas"/>
+        <UnitName Value="JPP.Panel"/>
+      </Item16>
+      <Item17>
+        <Filename Value="..\source\JPP.BasicSpeedButton.pas"/>
+        <UnitName Value="JPP.BasicSpeedButton"/>
+      </Item17>
+      <Item18>
+        <Filename Value="..\source\LDPngFunctions.pas"/>
+        <UnitName Value="LDPngFunctions"/>
+      </Item18>
+      <Item19>
+        <Filename Value="..\source\JPP.ColorControls.Common.pas"/>
+        <UnitName Value="JPP.ColorControls.Common"/>
+      </Item19>
+      <Item20>
+        <Filename Value="..\source\JPP.ColorListBox.pas"/>
+        <UnitName Value="JPP.ColorListBox"/>
+      </Item20>
+      <Item21>
+        <Filename Value="..\source\JPP.ColorComboBox.pas"/>
+        <UnitName Value="JPP.ColorComboBox"/>
+      </Item21>
+    </Files>
+    <RequiredPkgs Count="1">
+      <Item1>
+        <PackageName Value="LCLBase"/>
+      </Item1>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <CustomOptions Items="ExternHelp" Version="2">
+      <_ExternHelp Items="Count"/>
+    </CustomOptions>
+  </Package>
+</CONFIG>

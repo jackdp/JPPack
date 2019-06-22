@@ -1,7 +1,9 @@
+unit JPP.DoubleLabel;
+
 {
   Jacek Pazera
   https://github.com/jackdp
-  Last mod: 2019.05.22
+  Last mod: 2019.05.25
 
   A simple label component composed of 2 captions: left (property Caption) and right (property RightCaption).
   The space between captions can be modified by Spacing property.
@@ -10,12 +12,13 @@
   More information in file JPP.DoubleLineLabel.pas
 }
 
-unit JPP.DoubleLabel;
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
-  Windows, Messages, Classes, Graphics, Controls, StdCtrls, JPP.Common;
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  Messages, Classes, Graphics, Controls, StdCtrls, JPP.Common {$IFDEF FPC}, LCLType, LCLIntf, LMessages, Types{$ENDIF};
 
 type
 
@@ -29,7 +32,7 @@ type
     FSpacing: integer;
     FAutoWidth: Boolean;
     FAutoHeight: Boolean;
-    FEllipsisPosition: TEllipsisPosition;
+    {$IFDEF MSWINDOWS}FEllipsisPosition: TEllipsisPosition;{$ENDIF}
     FShowAccelChar: Boolean;
     FRightCaptionPosDeltaY: ShortInt;
     FTagExt: TJppTagExt;
@@ -43,7 +46,7 @@ type
     procedure SetSpacing(const Value: integer);
     procedure SetAutoWidth(const Value: Boolean);
     procedure SetAutoHeight(const Value: Boolean);
-    procedure SetEllipsisPosition(const Value: TEllipsisPosition);
+    {$IFDEF MSWINDOWS}procedure SetEllipsisPosition(const Value: TEllipsisPosition);{$ENDIF}
     procedure SetShowAccelChar(const Value: Boolean);
     procedure SetRightCaptionPosDeltaY(const Value: ShortInt);
     procedure SetTagExt(const Value: TJppTagExt);
@@ -70,7 +73,7 @@ type
     property ParentShowHint;
     property PopupMenu;
     property ShowHint;
-    {$IF CompilerVersion > 23}property StyleElements;{$IFEND}
+    {$IFDEF DCC}{$IF CompilerVersion > 23}property StyleElements;{$IFEND}{$ENDIF}
     property Visible;
     property OnClick;
     property OnContextPopup;
@@ -85,7 +88,7 @@ type
     property OnResize;
     property OnStartDock;
     property OnStartDrag;
-    property OnMouseActivate;
+    {$IFDEF DCC}property OnMouseActivate;{$ENDIF}
     property OnMouseEnter;
     property OnMouseLeave;
     property RightCaptionFont: TFont read FRightCaptionFont write SetRightCaptionFont;
@@ -94,7 +97,7 @@ type
     property Spacing: integer read FSpacing write SetSpacing default 6;
     property AutoWidth: Boolean read FAutoWidth write SetAutoWidth default True;
     property AutoHeight: Boolean read FAutoHeight write SetAutoHeight default True;
-    property EllipsisPosition: TEllipsisPosition read FEllipsisPosition write SetEllipsisPosition default epEndEllipsis;
+    {$IFDEF MSWINDOWS}property EllipsisPosition: TEllipsisPosition read FEllipsisPosition write SetEllipsisPosition default epEndEllipsis;{$ENDIF}
     property ShowAccelChar: Boolean read FShowAccelChar write SetShowAccelChar default False;
     property RightCaptionPosDeltaY: ShortInt read FRightCaptionPosDeltaY write SetRightCaptionPosDeltaY default 0;
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
@@ -111,13 +114,13 @@ begin
   Height := 13;
   FRightCaption := 'RightCaption';
   FRightCaptionFont := TFont.Create;
-  FRightCaptionFont.OnChange := PropsChanged;
+  FRightCaptionFont.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
   FRightCaptionColor := clNone;
   FRightCaptionBorderColor := clNone;
   FSpacing := 6;
   FAutoWidth := True;
   FAutoHeight := True;
-  FEllipsisPosition := epEndEllipsis;
+  {$IFDEF MSWINDOWS}FEllipsisPosition := epEndEllipsis;{$ENDIF}
   FShowAccelChar := False;
   FRightCaptionPosDeltaY := 0;
   FTagExt := TJppTagExt.Create(Self);
@@ -148,7 +151,7 @@ begin
   // get size:
   Canvas.Font.Assign(Font);
   xCaptionHeight := Canvas.TextHeight(Caption);
-  GetTextMetrics(Canvas.Handle, Metric);
+  GetTextMetrics(Canvas.Handle, Metric{%H-});
   CaptionSize := Canvas.TextExtent(Caption);
 
   Canvas.Font.Assign(FRightCaptionFont);
@@ -224,7 +227,9 @@ begin
   // --------------------- Caption text ----------------------
   if Caption <> '' then
   begin
-    Windows.DrawText(Canvas.Handle, PChar(Caption), Length(Caption), CaptionRect, DT_LEFT or DT_END_ELLIPSIS or DT_EXPANDTABS or DT_NOCLIP);
+    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(
+      Canvas.Handle, PChar(Caption), Length(Caption), CaptionRect, DT_LEFT or DT_END_ELLIPSIS or DT_EXPANDTABS or DT_NOCLIP
+    );
   end;
 
   // ------------------ RightCaption text ------------------------
@@ -265,15 +270,17 @@ begin
 
     dtFormat := DT_LEFT or DT_NOCLIP;
 
+    {$IFDEF MSWINDOWS}
     case FEllipsisPosition of
       epPathEllipsis: dtFormat := dtFormat or DT_PATH_ELLIPSIS;
       epEndEllipsis: dtFormat := dtFormat or DT_END_ELLIPSIS;
       epWordEllipsis: dtFormat := dtFormat or DT_WORD_ELLIPSIS;
     end;
+    {$ENDIF}
 
     if not FShowAccelChar then dtFormat := dtFormat + DT_NOPREFIX;
 
-    Windows.DrawText(Canvas.Handle, PChar(FRightCaption), Length(FRightCaption), RightCaptionRect, dtFormat);
+    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(Canvas.Handle, PChar(FRightCaption), Length(FRightCaption), RightCaptionRect, dtFormat);
 
   end; // with Canvas
 
@@ -363,12 +370,14 @@ begin
   Invalidate;
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TJppDoubleLabel.SetEllipsisPosition(const Value: TEllipsisPosition);
 begin
   if FEllipsisPosition = Value then Exit;
   FEllipsisPosition := Value;
   Invalidate;
 end;
+{$ENDIF}
 
 procedure TJppDoubleLabel.SetLayout(Value: TTextLayout);
 begin

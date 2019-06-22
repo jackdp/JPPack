@@ -1449,7 +1449,7 @@ end;
 destructor TJppComboBoxStorageParams.Destroy;
 begin
   FBasicParams.Free;
-  FFont.Free;
+  Font.Free;
   inherited;
 end;
 

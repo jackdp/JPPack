@@ -1,7 +1,9 @@
+unit JPP.DoubleLineLabel;
+
 {
   Jacek Pazera
   https://github.com/jackdp
-  Last mod: 2019.05.22
+  Last mod: 2019.05.25
 
   A label component composed of 3 parts:
   1. Left caption (property Caption)
@@ -74,12 +76,13 @@
 //   expressed or implied. In no event shall the author be held liable for any
 //   damages arising from the use of this software.
 
-unit JPP.DoubleLineLabel;
+
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
-  Windows, Messages, Classes, Graphics, Controls, StdCtrls, JPP.Common;
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF} Messages, Classes, Graphics, Controls, StdCtrls, JPP.Common {$IFDEF FPC}, LCLType, Types, LCLIntf{$ENDIF};
 
 type
   TJppDoubleLabelLineStyle = (dllsNone, dllsSolid, dllsDash, dllsDot);
@@ -150,7 +153,7 @@ type
     property ParentShowHint;
     property PopupMenu;
     property ShowHint;
-    {$IF CompilerVersion > 23}property StyleElements;{$IFEND}
+    {$IFDEF DCC}{$IF CompilerVersion > 23}property StyleElements;{$IFEND}{$ENDIF}
     property Visible;
     property OnClick;
     property OnContextPopup;
@@ -165,7 +168,7 @@ type
     property OnResize;
     property OnStartDock;
     property OnStartDrag;
-    property OnMouseActivate;
+    {$IFDEF DCC}property OnMouseActivate;{$ENDIF}
     property OnMouseEnter;
     property OnMouseLeave;
     property RightCaptionFont: TFont read FRightCaptionFont write SetRightCaptionFont;
@@ -194,7 +197,7 @@ begin
   FLineSeparation := 2;
   FRightCaption := 'RightCaption';
   FRightCaptionFont := TFont.Create;
-  FRightCaptionFont.OnChange := PropsChanged;
+  FRightCaptionFont.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
   //FRightCaptionFont.Assign(Font);
   LinePosDeltaY := 0;
   FRightCaptionColor := clNone;
@@ -228,6 +231,7 @@ begin
   // get size:
   Canvas.Font.Assign(Font);
   xCaptionHeight := Canvas.TextHeight(Caption);
+  {$IFDEF FPC}Metric.tmAscent := 1; {$ENDIF} // suppress stupid message
   GetTextMetrics(Canvas.Handle, Metric);
   CaptionSize := Canvas.TextExtent(Caption);
 
@@ -303,7 +307,9 @@ begin
 //    Canvas.Brush.Color := clWhite;
 //    Canvas.FillRect(CaptionRect);
 //    Canvas.Brush.Style := bsClear;
-    Windows.DrawText(Canvas.Handle, PChar(Caption), Length(Caption), CaptionRect, DT_LEFT or DT_END_ELLIPSIS or DT_EXPANDTABS or DT_NOCLIP);
+    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(
+      Canvas.Handle, PChar(Caption), Length(Caption), CaptionRect, DT_LEFT or DT_END_ELLIPSIS or DT_EXPANDTABS or DT_NOCLIP
+    );
   end;
 
   // ------------------ RightCaption text ------------------------
@@ -344,7 +350,9 @@ begin
 
     RightCaptionRect.Top := RightCaptionRect.Top + FRightCaptionPosDeltaY;
 
-    Windows.DrawText(Canvas.Handle, PChar(FRightCaption), Length(FRightCaption), RightCaptionRect, DT_LEFT or DT_NOPREFIX or DT_EXPANDTABS or DT_NOCLIP);
+    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(
+      Canvas.Handle, PChar(FRightCaption), Length(FRightCaption), RightCaptionRect, DT_LEFT or DT_NOPREFIX or DT_EXPANDTABS or DT_NOCLIP
+    );
 
   end; // with Canvas
 

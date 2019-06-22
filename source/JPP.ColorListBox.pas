@@ -1,16 +1,25 @@
 ﻿unit JPP.ColorListBox;
 
+{$IFDEF FPC} {$mode delphi} {$ENDIF}
+//{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages,
+  {$IFDEF MSWINDOWS}Windows, Messages,{$ENDIF}
+  {$IFDEF DCC}
   System.SysUtils, System.Classes, System.Types, System.UITypes,
   Vcl.GraphUtil, Vcl.Controls, Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.StdCtrls,
+  {$ELSE}
+  SysUtils, Classes, Types, Controls, ExtCtrls, Graphics, StdCtrls, Dialogs, LCLType, LCLIntf,
+  {$ENDIF}
 
   JPL.Conversion, JPL.Strings, JPL.Colors, JPL.ColorArrays,
   JPP.Types, JPP.Common, JPP.Common.Procs, JPP.ColorControls.Common, JPP.Graphics, JPP.Gradient;
 
 type
+
+  TJppColorArray = array of TColorArrayItem;
 
   TJppColorListBoxItemType = (clbitNone, clbitSeparator, clbitColor, clbitChangeColor);
 
@@ -75,7 +84,7 @@ type
     FOptions: TJppColorListBoxOptions;
     FOnBeforePaintItem: TJppColorListBoxBeforePaintItem;
     FOnAfterPaintItem: TJppColorListBoxAfterPaintItem;
-    FColorDialogOptions: TColorDialogOptions;
+    {$IFDEF DCC}FColorDialogOptions: TColorDialogOptions;{$ENDIF}
     FOnGetColorStrValue: TJppColorControlGetColorStrValue;
     FOnColorChanged: TNotifyEvent;
     FOnSelectChangeColorItem: TJppColorControlSelectChangeColor;
@@ -94,7 +103,7 @@ type
     procedure SetOptions(const Value: TJppColorListBoxOptions);
     procedure SetOnBeforePaintItem(const Value: TJppColorListBoxBeforePaintItem);
     procedure SetOnAfterPaintItem(const Value: TJppColorListBoxAfterPaintItem);
-    procedure SetColorDialogOptions(const Value: TColorDialogOptions);
+    {$IFDEF DCC}procedure SetColorDialogOptions(const Value: TColorDialogOptions);{$ENDIF}
     procedure SetOnColorChanged(const Value: TNotifyEvent);
     procedure SetOnGetColorStrValue(const Value: TJppColorControlGetColorStrValue);
     procedure SetOnSelectChangeColorItem(const Value: TJppColorControlSelectChangeColor);
@@ -109,9 +118,9 @@ type
     procedure KeyPress(var Key: Char); override;
     procedure Loaded; override;
     ///////////////////////////////////////////////////////////////////////////////////////////
-    procedure DrawItem(Index: Integer; Rect: TRect; State: TOwnerDrawState); override;
+    procedure DrawItem(Index: Integer; ARect: TRect; State: TOwnerDrawState); override;
     ///////////////////////////////////////////////////////////////////////////////////////////
-    procedure GetColorFromStr(sVal: string; var ColorName: string; var Color: TColor);
+    procedure GetColorFromStr(sVal: string; var ColorName: string; var AColor: TColor);
     procedure RecreateItems;
     procedure Click; override;
 
@@ -136,26 +145,26 @@ type
     function GetItemType(const Index: Integer): TJppColorListBoxItemType;
     function GetItemColor(const Index: Integer): TColor;
     function GetItemName(const Index: Integer): string;
-    function GetColorIndex(const Color: TColor; bFirst: Boolean = True): Integer;
+    function GetColorIndex(const AColor: TColor; bFirst: Boolean = True): Integer;
 
     function IsSeparatorItem(const Index: Integer): Boolean;
     function IsColorItem(const Index: integer): Boolean;
     function IsChangeColorItem(const Index: integer): Boolean;
 
-    function ColorExists(const Color: TColor): Boolean;
+    function ColorExists(const AColor: TColor): Boolean;
 
     procedure AddColorsFromArray(const Arr: array of TColorArrayItem; GroupName: string = ''; bAddSeparator: Boolean = False);
 
-    function AddColor(const Color: TColor; const ColorName: string): Integer;
-    procedure InsertColor(const Index: Integer; const Color: TColor; const ColorName: string); overload;
-    procedure InsertColor(const Index: integer; const ColorName: string; const Color: TColor); overload;
+    function AddColor(const AColor: TColor; const ColorName: string): Integer;
+    procedure InsertColor(const Index: Integer; const AColor: TColor; const ColorName: string); overload;
+    procedure InsertColor(const Index: integer; const ColorName: string; const AColor: TColor); overload;
 
     function AddChangeColorItem(bUseDefaultCaption: Boolean = True; ItemCaption: string = 'Select color...'): integer;
     procedure InsertChangeColorItem(const Index: integer; bUseDefaultCaption: Boolean = True; ItemCaption: string = 'Select color...');
-    function AddSeparatorItem(const Caption: string): integer;
-    procedure InsertSeparatorItem(const Index: integer; const Caption: string);
+    function AddSeparatorItem(const ACaption: string): integer;
+    procedure InsertSeparatorItem(const Index: integer; const ACaption: string);
 
-    function AsColorArray: TArray<TColorArrayItem>;
+    function AsColorArray: TJppColorArray; // {$IFDEF FPC}specialize{$ENDIF} TArray<TColorArrayItem>;
     procedure UpdateColorObject(const Index: Integer; bForce: Boolean = False);
     procedure UpdateAllColorObjects;
 
@@ -168,7 +177,7 @@ type
 
     property ColorListSet: TColorListSet read FColorListSet write SetColorListSet;
     property Options: TJppColorListBoxOptions read FOptions write SetOptions;
-    property ColorDialogOptions: TColorDialogOptions read FColorDialogOptions write SetColorDialogOptions default [cdFullOpen, cdAnyColor];
+    {$IFDEF DCC}property ColorDialogOptions: TColorDialogOptions read FColorDialogOptions write SetColorDialogOptions default [cdFullOpen, cdAnyColor];{$ENDIF}
 
     property OnColorChanged: TNotifyEvent read FOnColorChanged write SetOnColorChanged;
     property OnSelectSeparatorItem: TJppColorControlSelectSeparator read FOnSelectSeparatorItem write SetOnSelectSeparatorItem;
@@ -190,26 +199,28 @@ type
   TJppColorListBox = class(TJppCustomColorListBox)
   published
     property Align;
-    property AutoComplete;
+    {$IFDEF DCC}property AutoComplete;{$ENDIF}
 
     //property Style;
 
     property Anchors;
+    {$IFDEF DCC}
     property BevelEdges;
     property BevelInner;
     property BevelKind;
     property BevelOuter;
+    {$ENDIF}
     property BiDiMode;
     property Color;
     property Constraints;
-    property Ctl3D;
+    {$IFDEF DCC}property Ctl3D;{$ENDIF}
     property DoubleBuffered;
     property Enabled;
     property Font;
     property ItemHeight;
     property ParentBiDiMode;
     property ParentColor;
-    property ParentCtl3D;
+    {$IFDEF DCC}property ParentCtl3D;{$ENDIF}
     property ParentDoubleBuffered;
     property ParentFont;
     property ParentShowHint;
@@ -217,9 +228,9 @@ type
     property ShowHint;
     property TabOrder;
     property TabStop;
-    property Touch;
+    {$IFDEF DCC}property Touch;{$ENDIF}
     property Visible;
-    {$IF RTLVersion > 23} property StyleElements; {$IFEND}
+    {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
@@ -229,11 +240,11 @@ type
     property OnEndDrag;
     property OnEnter;
     property OnExit;
-    property OnGesture;
+    {$IFDEF DCC}property OnGesture;{$ENDIF}
     property OnKeyDown;
     property OnKeyPress;
     property OnKeyUp;
-    property OnMouseActivate;
+    {$IFDEF DCC}property OnMouseActivate;{$ENDIF}
     property OnMouseDown;
     property OnMouseEnter;
     property OnMouseLeave;
@@ -253,7 +264,7 @@ type
     property Options;
 
     property SelectedColor;
-    property ColorDialogOptions;
+    {$IFDEF DCC}property ColorDialogOptions;{$ENDIF}
 
     property OnSelectSeparatorItem;
     property OnSelectChangeColorItem;
@@ -265,6 +276,9 @@ type
     property OnGetItemGradientColors;
     property OnGetItemTextColor;
     property OnGetNumericItemTextColor;
+    {$IFDEF FPC}
+    property BorderSpacing;
+    {$ENDIF}
   end;
   {$ENDREGION TJppColorListBox}
 
@@ -303,6 +317,7 @@ begin
   inherited Style := lbOwnerDrawVariable;
   Parent := TWinControl(AOwner);
 
+  {$IFDEF FPC}Color := clWindow;{$ENDIF}
   FUpdateCounter := 0;
 
   FOnSelectSeparatorItem := nil;
@@ -317,12 +332,12 @@ begin
   FOnGetNumericItemTextColor := nil;
 
   FAppearance := TJppColorListBoxAppearance.Create(Self);
-  FAppearance.OnChange := PropsChanged;
+  FAppearance.OnChange := (*{$IFDEF FPC} @ {$ENDIF}*)PropsChanged;
 
   FTagExt := TJppTagExt.Create(Self);
 
   FNoneColor := clNone;
-  FColorDialogOptions := [cdFullOpen, cdAnyColor];
+  {$IFDEF DCC}FColorDialogOptions := [cdFullOpen, cdAnyColor];{$ENDIF}
 
   FColorListSet := [cltBasic];
   {
@@ -362,6 +377,7 @@ begin
 
     FAppearance.Assign(clb.Appearance);
 
+    {$IFDEF DCC}
     if bBevel then
     begin
       BevelEdges := clb.BevelEdges;
@@ -369,6 +385,7 @@ begin
       BevelKind := clb.BevelKind;
       BevelOuter := clb.BevelOuter;
     end;
+    {$ENDIF}
 
     if bBorderStyle then Self.BorderStyle := clb.BorderStyle;
     if bBackgroundColor then Self.Color := clb.Color;
@@ -425,35 +442,35 @@ begin
   Items.Insert(Index, '@=' + ItemCaption);
 end;
 
-function TJppCustomColorListBox.AddColor(const Color: TColor; const ColorName: string): Integer;
+function TJppCustomColorListBox.AddColor(const AColor: TColor; const ColorName: string): Integer;
 var
   x: Integer;
 begin
-  x := Items.Add(ColorName + '=' + ColorToRgbIntStr(ColorToRGB(Color), 3, '0', ','));
+  x := Items.Add(ColorName + '=' + ColorToRgbIntStr(ColorToRGB(AColor), 3, '0', ','));
   //Items.InsertObject(x, ColorName, TObject(Color));
-  Items.Objects[x] := TObject(Color);
+  Items.Objects[x] := TObject(AColor);
   Result := x;
 end;
 
-procedure TJppCustomColorListBox.InsertColor(const Index: Integer; const Color: TColor; const ColorName: string);
+procedure TJppCustomColorListBox.InsertColor(const Index: Integer; const AColor: TColor; const ColorName: string);
 begin
-  Items.Insert(Index, ColorName + '=' + ColorToRgbIntStr(Color, 3, '0', ','));
-  Items.Objects[Index] := TObject(Color);
+  Items.Insert(Index, ColorName + '=' + ColorToRgbIntStr(AColor, 3, '0', ','));
+  Items.Objects[Index] := TObject(AColor);
 end;
 
-procedure TJppCustomColorListBox.InsertColor(const Index: integer; const ColorName: string; const Color: TColor);
+procedure TJppCustomColorListBox.InsertColor(const Index: integer; const ColorName: string; const AColor: TColor);
 begin
-  InsertColor(Index, Color, ColorName);
+  InsertColor(Index, AColor, ColorName);
 end;
 
-function TJppCustomColorListBox.AddSeparatorItem(const Caption: string): integer;
+function TJppCustomColorListBox.AddSeparatorItem(const ACaption: string): integer;
 begin
-  Result := Items.Add('-=' + Caption);
+  Result := Items.Add('-=' + ACaption);
 end;
 
-procedure TJppCustomColorListBox.InsertSeparatorItem(const Index: integer; const Caption: string);
+procedure TJppCustomColorListBox.InsertSeparatorItem(const Index: integer; const ACaption: string);
 begin
-  Items.Insert(Index, '-=' + Caption);
+  Items.Insert(Index, '-=' + ACaption);
 end;
 
 procedure TJppCustomColorListBox.AddColorsFromArray(const Arr: array of TColorArrayItem; GroupName: string = ''; bAddSeparator: Boolean = False);
@@ -563,7 +580,7 @@ var
 begin
   dlgColor := TColorDialog.Create(Self);
   try
-    dlgColor.Options := FColorDialogOptions;
+    {$IFDEF DCC}dlgColor.Options := FColorDialogOptions;{$ENDIF}
     dlgColor.Color := FSelectedColor;
     if not dlgColor.Execute then
     begin
@@ -578,14 +595,14 @@ end;
 
 procedure TJppCustomColorListBox.KeyPress(var Key: Char);
 var
-  Color: TColor;
+  AColor: TColor;
 begin
   inherited KeyPress(Key);
 
   if IsColorItem(ItemIndex) then
   begin
-    Color := GetSelectedColor;
-    if Color <> FNoneColor then FSelectedColor := Color;
+    AColor := GetSelectedColor;
+    if AColor <> FNoneColor then FSelectedColor := AColor;
   end;
 
   if (Key = #13) and (IsChangeColorItem(ItemIndex)) then
@@ -598,13 +615,13 @@ end;
 
   {$REGION '                      GetColorFromStr                          '}
 
-procedure TJppCustomColorListBox.GetColorFromStr(sVal: string; var ColorName: string; var Color: TColor);
+procedure TJppCustomColorListBox.GetColorFromStr(sVal: string; var ColorName: string; var AColor: TColor);
 var
   s: string;
   xp: Integer;
 begin
   ColorName := '';
-  Color := FNoneColor;
+  AColor := FNoneColor;
 
   s := Trim(sVal);
 
@@ -618,12 +635,12 @@ begin
   if s[1] = '$' then
   begin
     if not TryStrToInt(s, xp) then Exit;
-    Color := TColor(xp);
+    AColor := TColor(xp);
     Exit;
   end;
 
-  if not TryRgbStrToColor(s, Color) then
-    if not TryHtmlStrToColor(s, Color) then Color := FNoneColor;
+  if not TryRgbStrToColor(s, AColor) then
+    if not TryHtmlStrToColor(s, AColor) then AColor := FNoneColor;
 
 end;
 
@@ -631,7 +648,7 @@ end;
 
 
 
-function TJppCustomColorListBox.GetColorIndex(const Color: TColor; bFirst: Boolean = True): Integer;
+function TJppCustomColorListBox.GetColorIndex(const AColor: TColor; bFirst: Boolean = True): Integer;
 var
   i: Integer;
   cl: TColor;
@@ -642,7 +659,7 @@ begin
     if IsSeparatorItem(i) then Continue;
     if Items.Objects[i] = nil then UpdateColorObject(i);
     cl := TColor(Items.Objects[i]);
-    if cl = Color then
+    if cl = AColor then
     begin
       Result := i;
       if bFirst then Break;
@@ -652,9 +669,9 @@ end;
 
 
 
-function TJppCustomColorListBox.ColorExists(const Color: TColor): Boolean;
+function TJppCustomColorListBox.ColorExists(const AColor: TColor): Boolean;
 begin
-  Result := GetColorIndex(Color) >= 0;
+  Result := GetColorIndex(AColor) >= 0;
 end;
 
 function TJppCustomColorListBox.GetItemColor(const Index: Integer): TColor;
@@ -668,7 +685,7 @@ end;
 procedure TJppCustomColorListBox.GetItemInfo(const Index: Integer; out ItemData: TJppColorListBoxItemData);
 var
   s, sName, s1: string;
-  Color: TColor;
+  AColor: TColor;
   xp: integer;
 begin
   ItemData.Color := FNoneColor;
@@ -691,9 +708,9 @@ begin
     Exit;
   end;
 
-  GetColorFromStr(s, sName, Color);
+  GetColorFromStr(s, sName, AColor);
   ItemData.Name := sName;
-  ItemData.Color := Color;
+  ItemData.Color := AColor;
 end;
 
 function TJppCustomColorListBox.GetItemName(const Index: Integer): string;
@@ -748,11 +765,13 @@ begin
   FAppearance := Value;
 end;
 
+{$IFDEF DCC}
 procedure TJppCustomColorListBox.SetColorDialogOptions(const Value: TColorDialogOptions);
 begin
   if FColorDialogOptions = Value then Exit;
   FColorDialogOptions := Value;
 end;
+{$ENDIF}
 
 procedure TJppCustomColorListBox.SetColorListSet(const Value: TColorListSet);
 begin
@@ -877,45 +896,45 @@ end;
 
 procedure TJppCustomColorListBox.UpdateAllColorObjects;
 var
-  Color: TColor;
+  AColor: TColor;
   i: Integer;
 begin
   for i := 0 to Items.Count - 1 do
   begin
     if IsSeparatorItem(i) then Exit;
-    Color := GetItemColor(i);
-    Items.Objects[i] := TObject(Color);
+    AColor := GetItemColor(i);
+    Items.Objects[i] := TObject(AColor);
   end;
 end;
 
 procedure TJppCustomColorListBox.UpdateColorObject(const Index: Integer; bForce: Boolean = False);
 var
-  Color: TColor;
+  AColor: TColor;
 begin
   if IsSeparatorItem(Index) then Exit;
 
   if bForce or (Items.Objects[Index] = nil) then
   begin
-    Color := GetItemColor(Index);
-    Items.Objects[Index] := TObject(Color);
+    AColor := GetItemColor(Index);
+    Items.Objects[Index] := TObject(AColor);
   end;
 end;
 
-function TJppCustomColorListBox.AsColorArray: TArray<TColorArrayItem>;
+function TJppCustomColorListBox.AsColorArray: TJppColorArray; // {$IFDEF FPC}specialize{$ENDIF} TArray<TColorArrayItem>;
 var
   i: Integer;
-  Color: TColor;
+  AColor: TColor;
   ColorName: string;
 begin
-  SetLength(Result, 0);
+  SetLength(Result{%H-}, 0);
   for i := 0 to Items.Count - 1 do
   begin
     if IsSeparatorItem(i) then Continue;
     //if Items.Objects[i] = nil then UpdateColorObject(i);
-    Color := TColor(Items.Objects[i]);
+    AColor := TColor(Items.Objects[i]);
     ColorName := GetItemName(i);
     SetLength(Result, Length(Result) + 1);
-    Result[High(Result)].Color := Color;
+    Result[High(Result)].Color := AColor;
     Result[High(Result)].Name := ColorName;
   end;
 end;
@@ -924,7 +943,7 @@ end;
 
 {$REGION '                                        DrawItem                                              '}
 
-procedure TJppCustomColorListBox.DrawItem(Index: Integer; Rect: TRect; State: TOwnerDrawState);
+procedure TJppCustomColorListBox.DrawItem(Index: Integer; ARect: TRect; State: TOwnerDrawState);
 {
   TOwnerDrawState = set of (odSelected, odGrayed, odDisabled, odChecked,
     odFocused, odDefault, odHotLight, odInactive, odNoAccel, odNoFocusRect,
@@ -932,7 +951,8 @@ procedure TJppCustomColorListBox.DrawItem(Index: Integer; Rect: TRect; State: TO
 }
 
 var
-  s, sName: string;
+  //s,
+  sName: string;
   sOut, sRgbInt, sRgbHex, sBgrHex, sUserColorStr: string;
   y, xTextStart, xTextLeft, xTextWidth: Integer;
   ColorRect, OutTextRect: TRect;
@@ -953,17 +973,17 @@ begin
   GetItemInfo(Index, ItemData);
 
   bPaintHandled := False;
-  if Assigned(FOnBeforePaintItem) then FOnBeforePaintItem(Index, Rect, State, ItemData, bPaintHandled);
+  if Assigned(FOnBeforePaintItem) then FOnBeforePaintItem(Index, ARect, State, ItemData, bPaintHandled);
   if bPaintHandled then Exit;
 
   if Assigned(OnDrawItem) then
   begin
-    inherited OnDrawItem(Self, Index, Rect, State);
+    inherited OnDrawItem(Self, Index, ARect, State);
     Exit;
   end;
 
 
-  s := ItemData.Name;
+  //s := ItemData.Name;
   bSeparatorItem := ItemData.ItemType = clbitSeparator;
   bChangeColorItem := ItemData.ItemType = clbitChangeColor;
   bSelected := odSelected in State;
@@ -981,7 +1001,9 @@ begin
     Pen.Color := Self.Color;
     Brush.Style := bsSolid;
     Pen.Style := psSolid;
-    Rectangle(Rect);
+    //InflateRect(ARect, 4, 4);
+    Rectangle(ARect);
+    //InflateRect(ARect, -2, -2);
 
     {$REGION ' ------------ DRAW: Separator Item ---------------- '}
     if bSeparatorItem then
@@ -996,24 +1018,24 @@ begin
         clBgFrom := grd.ColorFrom;
         clBgTo := grd.ColorTo;
         if Assigned(FOnGetItemGradientColors) then FOnGetItemGradientColors(Index, State, ItemData, clBgFrom, clBgTo);
-        cyGradientFill(Self.Canvas, Rect, clBgFrom, clBgTo, grd.Orientation, grd.Balance, grd.AngleDegree, grd.BalanceMode, grd.MaxDegrade, grd.SpeedPercent);
+        cyGradientFill(Self.Canvas, ARect, clBgFrom, clBgTo, grd.Orientation, grd.Balance, grd.AngleDegree, grd.BalanceMode, grd.MaxDegrade, grd.SpeedPercent);
       end
       else
       begin
         clBackground := FAppearance.SeparatorItem.Background.Color;
         if Assigned(FOnGetItemBackgroundColor) then FOnGetItemBackgroundColor(Index, State, ItemData, clBackground);
         Brush.Color := clBackground;
-        Rectangle(Rect);
+        Rectangle(ARect);
       end;
 
       // ------------- Frame ----------------
       if FAppearance.SeparatorItem.Background.DrawBorders then
       begin
         Borders := FAppearance.SeparatorItem.Background.Borders;
-        if Borders.Left.Visible then DrawRectLeftBorder(Self.Canvas, Rect, Borders.Left.Color, Borders.Left.Width, Borders.Left.Style);
-        if Borders.Right.Visible then DrawRectRightBorder(Self.Canvas, Rect, Borders.Right.Color, Borders.Right.Width, Borders.Right.Style, 1);
-        if Borders.Top.Visible then DrawRectTopBorder(Self.Canvas, Rect, Borders.Top.Color, Borders.Top.Width, Borders.Top.Style);
-        if Borders.Bottom.Visible then DrawRectBottomBorder(Self.Canvas, Rect, Borders.Bottom.Color, Borders.Bottom.Width, Borders.Bottom.Style, 1);
+        if Borders.Left.Visible then DrawRectLeftBorder(Self.Canvas, ARect, Borders.Left.Color, Borders.Left.Width, Borders.Left.Style);
+        if Borders.Right.Visible then DrawRectRightBorder(Self.Canvas, ARect, Borders.Right.Color, Borders.Right.Width, Borders.Right.Style, 1);
+        if Borders.Top.Visible then DrawRectTopBorder(Self.Canvas, ARect, Borders.Top.Color, Borders.Top.Width, Borders.Top.Style);
+        if Borders.Bottom.Visible then DrawRectBottomBorder(Self.Canvas, ARect, Borders.Bottom.Color, Borders.Bottom.Width, Borders.Bottom.Style, 1);
       end;
 
       // ---------- Caption --------------
@@ -1024,7 +1046,7 @@ begin
         Font.Assign(FAppearance.SeparatorItem.Font);
         clText := Font.Color;
         if not Enabled then clText := FAppearance.SeparatorItem.DisabledFontColor;
-        y := GetMiddlePosY(Rect, TextHeight(sName)) + FAppearance.SeparatorItem.TextPosDeltaY;
+        y := GetMiddlePosY(ARect, TextHeight(sName)) + FAppearance.SeparatorItem.TextPosDeltaY;
         if Assigned(FOnGetItemTextColor) then FOnGetItemTextColor(Index, State, ItemData, clText);
         Font.Color := clText;
 
@@ -1032,8 +1054,8 @@ begin
 
         case FAppearance.SeparatorItem.Alignment of
           taLeftJustify: xTextLeft := FAppearance.SeparatorItem.CaptionMargin;
-          taRightJustify: xTextLeft := Rect.Width - xTextWidth - FAppearance.SeparatorItem.CaptionMargin;
-          taCenter: xTextLeft := (Rect.Width div 2) - (xTextWidth div 2);
+          taRightJustify: xTextLeft := ARect.Width - xTextWidth - FAppearance.SeparatorItem.CaptionMargin;
+          taCenter: xTextLeft := (ARect.Width div 2) - (xTextWidth div 2);
           else xTextLeft := 10;
         end;
 
@@ -1060,24 +1082,24 @@ begin
           clBgFrom := grd.ColorFrom;
           clBgTo := grd.ColorTo;
           if Assigned(FOnGetItemGradientColors) then FOnGetItemGradientColors(Index, State, ItemData, clBgFrom, clBgTo);
-          cyGradientFill(Self.Canvas, Rect, clBgFrom, clBgTo, grd.Orientation, grd.Balance, grd.AngleDegree, grd.BalanceMode, grd.MaxDegrade, grd.SpeedPercent);
+          cyGradientFill(Self.Canvas, ARect, clBgFrom, clBgTo, grd.Orientation, grd.Balance, grd.AngleDegree, grd.BalanceMode, grd.MaxDegrade, grd.SpeedPercent);
         end
         else
         begin
           clBackground := FAppearance.SelectedItem.Background.Color;
           if Assigned(FOnGetItemBackgroundColor) then FOnGetItemBackgroundColor(Index, State, ItemData, clBackground);
           Brush.Color := clBackground;
-          Rectangle(Rect);
+          Rectangle(ARect);
         end;
 
         // ------------- Frame ----------------
         if FAppearance.SelectedItem.Background.DrawBorders then
         begin
           Borders := FAppearance.SelectedItem.Background.Borders;
-          if Borders.Left.Visible then DrawRectLeftBorder(Self.Canvas, Rect, Borders.Left.Color, Borders.Left.Width, Borders.Left.Style);
-          if Borders.Right.Visible then DrawRectRightBorder(Self.Canvas, Rect, Borders.Right.Color, Borders.Right.Width, Borders.Right.Style, 1);
-          if Borders.Top.Visible then DrawRectTopBorder(Self.Canvas, Rect, Borders.Top.Color, Borders.Top.Width, Borders.Top.Style);
-          if Borders.Bottom.Visible then DrawRectBottomBorder(Self.Canvas, Rect, Borders.Bottom.Color, Borders.Bottom.Width, Borders.Bottom.Style, 1);
+          if Borders.Left.Visible then DrawRectLeftBorder(Self.Canvas, ARect, Borders.Left.Color, Borders.Left.Width, Borders.Left.Style);
+          if Borders.Right.Visible then DrawRectRightBorder(Self.Canvas, ARect, Borders.Right.Color, Borders.Right.Width, Borders.Right.Style, 1);
+          if Borders.Top.Visible then DrawRectTopBorder(Self.Canvas, ARect, Borders.Top.Color, Borders.Top.Width, Borders.Top.Style);
+          if Borders.Bottom.Visible then DrawRectBottomBorder(Self.Canvas, ARect, Borders.Bottom.Color, Borders.Bottom.Width, Borders.Bottom.Style, 1);
         end;
       end
 
@@ -1093,24 +1115,24 @@ begin
           clBgFrom := grd.ColorFrom;
           clBgTo := grd.ColorTo;
           if Assigned(FOnGetItemGradientColors) then FOnGetItemGradientColors(Index, State, ItemData, clBgFrom, clBgTo);
-          cyGradientFill(Self.Canvas, Rect, clBgFrom, clBgTo, grd.Orientation, grd.Balance, grd.AngleDegree, grd.BalanceMode, grd.MaxDegrade, grd.SpeedPercent);
+          cyGradientFill(Self.Canvas, ARect, clBgFrom, clBgTo, grd.Orientation, grd.Balance, grd.AngleDegree, grd.BalanceMode, grd.MaxDegrade, grd.SpeedPercent);
         end
         else
         begin
           clBackground := FAppearance.ChangeColorItem.Background.Color;
           if Assigned(FOnGetItemBackgroundColor) then FOnGetItemBackgroundColor(Index, State, ItemData, clBackground);
           Brush.Color := clBackground;
-          Rectangle(Rect);
+          Rectangle(ARect);
         end;
 
         // ------------- Frame ----------------
         if FAppearance.ChangeColorItem.Background.DrawBorders then
         begin
           Borders := FAppearance.ChangeColorItem.Background.Borders;
-          if Borders.Left.Visible then DrawRectLeftBorder(Self.Canvas, Rect, Borders.Left.Color, Borders.Left.Width, Borders.Left.Style);
-          if Borders.Right.Visible then DrawRectRightBorder(Self.Canvas, Rect, Borders.Right.Color, Borders.Right.Width, Borders.Right.Style, 1);
-          if Borders.Top.Visible then DrawRectTopBorder(Self.Canvas, Rect, Borders.Top.Color, Borders.Top.Width, Borders.Top.Style);
-          if Borders.Bottom.Visible then DrawRectBottomBorder(Self.Canvas, Rect, Borders.Bottom.Color, Borders.Bottom.Width, Borders.Bottom.Style, 1);
+          if Borders.Left.Visible then DrawRectLeftBorder(Self.Canvas, ARect, Borders.Left.Color, Borders.Left.Width, Borders.Left.Style);
+          if Borders.Right.Visible then DrawRectRightBorder(Self.Canvas, ARect, Borders.Right.Color, Borders.Right.Width, Borders.Right.Style, 1);
+          if Borders.Top.Visible then DrawRectTopBorder(Self.Canvas, ARect, Borders.Top.Color, Borders.Top.Width, Borders.Top.Style);
+          if Borders.Bottom.Visible then DrawRectBottomBorder(Self.Canvas, ARect, Borders.Bottom.Color, Borders.Bottom.Width, Borders.Bottom.Style, 1);
         end;
 
       end;
@@ -1134,14 +1156,14 @@ begin
         if Assigned(FOnGetItemTextColor) then FOnGetItemTextColor(Index, State, ItemData, clText);
         Font.Color := clText;
 
-        y := GetMiddlePosY(Rect, TextHeight(sName)) + FAppearance.ChangeColorItem.TextPosDeltaY;
+        y := GetMiddlePosY(ARect, TextHeight(sName)) + FAppearance.ChangeColorItem.TextPosDeltaY;
 
         xTextWidth := TextWidth(sName);
 
         case FAppearance.ChangeColorItem.Alignment of
           taLeftJustify: xTextLeft := FAppearance.ChangeColorItem.CaptionMargin;
-          taRightJustify: xTextLeft := Rect.Width - xTextWidth - FAppearance.ChangeColorItem.CaptionMargin;
-          taCenter: xTextLeft := (Rect.Width div 2) - (xTextWidth div 2);
+          taRightJustify: xTextLeft := ARect.Width - xTextWidth - FAppearance.ChangeColorItem.CaptionMargin;
+          taCenter: xTextLeft := (ARect.Width div 2) - (xTextWidth div 2);
         else
           xTextLeft := 10;
         end;
@@ -1170,24 +1192,24 @@ begin
         clBgFrom := grd.ColorFrom;
         clBgTo := grd.ColorTo;
         if Assigned(FOnGetItemGradientColors) then FOnGetItemGradientColors(Index, State, ItemData, clBgFrom, clBgTo);
-        cyGradientFill(Self.Canvas, Rect, clBgFrom, clBgTo, grd.Orientation, grd.Balance, grd.AngleDegree, grd.BalanceMode, grd.MaxDegrade, grd.SpeedPercent);
+        cyGradientFill(Self.Canvas, ARect, clBgFrom, clBgTo, grd.Orientation, grd.Balance, grd.AngleDegree, grd.BalanceMode, grd.MaxDegrade, grd.SpeedPercent);
       end
       else
       begin
         clBackground := FAppearance.SelectedItem.Background.Color;
         if Assigned(FOnGetItemBackgroundColor) then FOnGetItemBackgroundColor(Index, State, ItemData, clBackground);
         Brush.Color := clBackground;
-        Rectangle(Rect);
+        Rectangle(ARect);
       end;
 
       // ------------- Frame ----------------
       if FAppearance.SelectedItem.Background.DrawBorders then
       begin
         Borders := FAppearance.SelectedItem.Background.Borders;
-        if Borders.Left.Visible then DrawRectLeftBorder(Self.Canvas, Rect, Borders.Left.Color, Borders.Left.Width, Borders.Left.Style);
-        if Borders.Right.Visible then DrawRectRightBorder(Self.Canvas, Rect, Borders.Right.Color, Borders.Right.Width, Borders.Right.Style, 1);
-        if Borders.Top.Visible then DrawRectTopBorder(Self.Canvas, Rect, Borders.Top.Color, Borders.Top.Width, Borders.Top.Style);
-        if Borders.Bottom.Visible then DrawRectBottomBorder(Self.Canvas, Rect, Borders.Bottom.Color, Borders.Bottom.Width, Borders.Bottom.Style, 1);
+        if Borders.Left.Visible then DrawRectLeftBorder(Self.Canvas, ARect, Borders.Left.Color, Borders.Left.Width, Borders.Left.Style);
+        if Borders.Right.Visible then DrawRectRightBorder(Self.Canvas, ARect, Borders.Right.Color, Borders.Right.Width, Borders.Right.Style, 1);
+        if Borders.Top.Visible then DrawRectTopBorder(Self.Canvas, ARect, Borders.Top.Color, Borders.Top.Width, Borders.Top.Style);
+        if Borders.Bottom.Visible then DrawRectBottomBorder(Self.Canvas, ARect, Borders.Bottom.Color, Borders.Bottom.Width, Borders.Bottom.Style, 1);
       end;
 
     end
@@ -1200,7 +1222,7 @@ begin
       if Assigned(FOnGetItemBackgroundColor) then FOnGetItemBackgroundColor(Index, State, ItemData, clBackground);
       Brush.Color := clBackground;
       Pen.Color := Brush.Color;
-      Rectangle(Rect);
+      Rectangle(ARect);
     end;
 
     {$ENDREGION}
@@ -1216,7 +1238,7 @@ begin
     {$REGION ' --------------- DRAW: Color rectangle ------------- '}
     if FAppearance.ColorRectangle.Visible and (FAppearance.ColorRectangle.Width > 0) then
     begin
-      ColorRect := Rect;
+      ColorRect := ARect;
       ColorRect.Left := FAppearance.LeftMargin + FAppearance.ColorRectangle.LeftMargin;
       ColorRect.Right := ColorRect.Left + FAppearance.ColorRectangle.Width;
       Pen.Width := FAppearance.ColorRectangle.BorderWidth;
@@ -1279,7 +1301,7 @@ begin
 
     Brush.Style := bsClear;
     Pen.Style := psClear;
-    OutTextRect := Rect;
+    OutTextRect := ARect;
 
     if FAppearance.UseCustomNumericFont then
     begin
@@ -1311,7 +1333,7 @@ begin
       // RGB Int
       if FAppearance.ShowRgbInt then
       begin
-        sOut := sRgbInt;
+        sOut := {%H-}sRgbInt;
         y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
         TextOut(xTextLeft, y, sOut);
         xTextLeft := xTextLeft + TextWidth(sOut);
@@ -1326,7 +1348,7 @@ begin
       // RGB Hex
       if FAppearance.ShowRgbHex then
       begin
-        sOut := sRgbHex;
+        sOut := {%H-}sRgbHex;
         y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
         TextOut(xTextLeft, y, sOut);
         xTextLeft := xTextLeft + TextWidth(sOut);
@@ -1341,7 +1363,7 @@ begin
       // BGR Hex
       if FAppearance.ShowBgrHex then
       begin
-        sOut := sBgrHex;
+        sOut := {%H-}sBgrHex;
         y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
         TextOut(xTextLeft, y, sOut);
         xTextLeft := xTextLeft + TextWidth(sOut);
@@ -1396,7 +1418,7 @@ begin
     {$ENDREGION DRAW: Text}
   end;
 
-  if Assigned(FOnAfterPaintItem) then FOnAfterPaintItem(Index, Rect, State, ItemData);
+  if Assigned(FOnAfterPaintItem) then FOnAfterPaintItem(Index, ARect, State, ItemData);
 
 end;
 
@@ -1418,7 +1440,7 @@ begin
   FOwner := AOwner;
   FChangeColorItem := TJppColorControlGradientCaptionItem.Create(AOwner);
 
-  FChangeColorItem.OnChange := PropsChanged;
+  FChangeColorItem.OnChange := (*{$IFDEF FPC} @ {$ENDIF}*)PropsChanged;
 
   if (csLoading in AOwner.ComponentState) then
   begin
@@ -1460,5 +1482,11 @@ end;
 
 
 {$endregion TJPColorComboBoxAppearance}
+
+initialization
+
+  {$IFDEF FPC}
+  RegisterClass(TJppColorListBox);
+  {$ENDIF}
 
 end.

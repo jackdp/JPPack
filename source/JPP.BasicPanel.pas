@@ -1,11 +1,17 @@
 unit JPP.BasicPanel;
 
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+
 interface
 
 uses
+  {$IFDEF DCC}
   Winapi.Messages, Winapi.Windows,
   System.SysUtils, System.Classes, System.Types, System.UITypes,
   Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Graphics, Vcl.StdCtrls, Vcl.GraphUtil, Vcl.Themes, Vcl.ExtCtrls, Vcl.Dialogs,
+  {$ELSE}
+  SysUtils, Messages, LMessages, LCLType, LCLIntf, Classes, Graphics, Controls, StdCtrls, ExtCtrls,
+  {$ENDIF}
   JPL.Colors,
   JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs;
 
@@ -111,7 +117,7 @@ type
 
 
   {$region ' --------------------------- TJppCustomBasePanel ---------------------------------- '}
-  TProcOnOnDragDropFiles = procedure (Sender: TObject; var msg: TWMDropFiles) of object;
+  {$IFDEF MSWINDOWS}TProcOnOnDragDropFiles = procedure (Sender: TObject; var msg: TWMDropFiles) of object;{$ENDIF}
 
   TJppCustomBasePanel = class(TCustomPanel)
   private
@@ -122,10 +128,10 @@ type
     FLayout: TTextLayout;
     FWordWrap: Boolean;
     FOnAfterDrawBackground: TNotifyEvent;
-    FOnDragDropFiles: TProcOnOnDragDropFiles;
+    {$IFDEF MSWINDOWS}FOnDragDropFiles: TProcOnOnDragDropFiles;{$ENDIF}
     procedure CMMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
-    procedure CMDropFiles(var msg: TWMDropFiles); message WM_DROPFILES;
+    {$IFDEF MSWINDOWS}procedure CMDropFiles(var msg: TWMDropFiles); message WM_DROPFILES;{$ENDIF}
     procedure PropsChanged(Sender: TObject);
     procedure SetLayout(const Value: TTextLayout);
     procedure SetWordWrap(const Value: Boolean);
@@ -148,7 +154,7 @@ type
     property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
     property OnPaint: TNotifyEvent read FOnPaint write FOnPaint;
     property OnVisibleChanging: TNotifyEvent read FOnVisibleChanging write FOnVisibleChanging;
-    property OnDragDropFiles: TProcOnOnDragDropFiles read FOnDragDropFiles write FOnDragDropFiles;
+    {$IFDEF MSWINDOWS}property OnDragDropFiles: TProcOnOnDragDropFiles read FOnDragDropFiles write FOnDragDropFiles;{$ENDIF}
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -201,17 +207,17 @@ type
     property Alignment;
     property Anchors;
     property AutoSize;
-    property BevelInner;
-    property BevelOuter;
-    property BevelWidth;
-    property BevelKind;
+    //property BevelInner;
+    //property BevelOuter;
+    //property BevelWidth;
+    {$IFDEF DCC} property BevelKind; {$ENDIF}
     property BiDiMode;
     property BorderWidth;
     property BorderStyle;
 //    property Caption;
 //    property Color;
     property Constraints;
-    property Ctl3D;
+    {$IFDEF DCC} property Ctl3D; {$ENDIF}
     property UseDockManager default True;
     property DockSite;
     //{$IFDEF DELPHI2009_OR_ABOVE} property DoubleBuffered; {$ENDIF}
@@ -221,12 +227,12 @@ type
     property Enabled;
     property FullRepaint;
     property Font;
-    property Locked;
+    {$IFDEF DCC} property Locked; {$ENDIF}
     {$IFDEF DELPHI2009_OR_ABOVE} property Padding; {$ENDIF}
     property ParentBiDiMode;
     property ParentBackground default false;
 //    property ParentColor;
-    property ParentCtl3D;
+    {$IFDEF DCC} property ParentCtl3D; {$ENDIF}
     property ParentFont;
     property ParentShowHint;
     property PopupMenu;
@@ -236,7 +242,7 @@ type
     property TabStop;
     //property VerticalAlignment;  -> replaced by Layout property ...
     property Visible;
-    property OnCanResize;
+    {$IFDEF DCC} property OnCanResize; {$ENDIF}
     property OnClick;
     property OnConstrainedResize;
     property OnContextPopup;
@@ -267,24 +273,31 @@ type
     property OnMouseLeave;
     property OnAfterDrawBackground;
     property OnPaint;
-    property OnDragDropFiles;
+    {$IFDEF MSWINDOWS}property OnDragDropFiles;{$ENDIF}
     property Appearance;
     property TagExt;
-    {$IF RTLVersion > 23} property StyleElements; {$IFEND}
-    property Touch;
+    {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
+    {$IFDEF DCC} property Touch; {$ENDIF}
     property DoubleBuffered;
     property ParentDoubleBuffered;
+    {$IFDEF FPC}
+    property BorderSpacing;
+    //property BevelColor;
+    property ChildSizing;
+    property OnGetDockCaption;
+    {$ENDIF}
   end;
   {$endregion}
 
 
-
+{$IFDEF DCC}
 {$IF RTLVersion >= 24.0 }
   TJppBasicPanelStyleHook = class(TStyleHook)
   strict protected
     //procedure DrawPanel(ACanvas: TCanvas; AMouseInControl: Boolean); override;
   end;
 {$IFEND}
+{$ENDIF}
 
 
 
@@ -349,12 +362,14 @@ end;
 
 procedure TJppCustomBasePanel.DrawBackground(ARect: TRect);
 begin
+  {$IFDEF DCC}
   if (not StyleServices.Enabled) or not ParentBackground
   then
   begin
     //Canvas.Brush.Color := Color;
     //Canvas.FillRect(ARect);
   end;
+  {$ENDIF}
 end;
 
 procedure TJppCustomBasePanel.DrawCaption(aRect: TRect);
@@ -385,10 +400,12 @@ begin
   if Assigned(FOnVisibleChanging) then FOnVisibleChanging(Self);
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TJppCustomBasePanel.CMDropFiles(var msg: TWMDropFiles);
 begin
   if Assigned(FOnDragDropFiles) then FOnDragDropFiles(Self, msg);
 end;
+{$ENDIF}
 
 procedure TJppCustomBasePanel.CMMouseEnter(var Msg: TMessage);
 begin
@@ -439,10 +456,10 @@ begin
 
   FTagExt := TJppTagExt.Create(Self);
   FAppearance := TJppBasicPanelAppearance.Create(Self);
-  FAppearance.OnChange := PropsChanged;
+  FAppearance.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
-  FAppearance.UpperGradient.OnChange := GradientChanged;
-  FAppearance.BottomGradient.OnChange := GradientChanged;
+  FAppearance.UpperGradient.OnChange := {$IFDEF FPC} @ {$ENDIF}GradientChanged;
+  FAppearance.BottomGradient.OnChange := {$IFDEF FPC} @ {$ENDIF}GradientChanged;
 
 end;
 
@@ -517,10 +534,11 @@ procedure TJppCustomBasicPanel.DrawBackground(ARect: TRect);
 var
   R: TRect;
   xBottomGradientTop: integer;
-  bVclStyle: Boolean;
+  {$IFDEF DCC} bVclStyle: Boolean; {$ENDIF}
   Border: TJppBasicPanelBorder;
   xBottom: integer;
 
+  {$IFDEF DCC}
   Rect: TRect;
   LColor: TColor;
   LStyle: TCustomStyleServices;
@@ -535,6 +553,7 @@ var
     BottomColor := BaseBottomColor;
     if Bevel = bvLowered then BottomColor := BaseTopColor;
   end;
+  {$ENDIF}
 
 begin
 
@@ -544,10 +563,12 @@ begin
     Exit;
   end;
 
+  {$IFDEF DCC}
   bVclStyle := Assigned(TStyleManager.ActiveStyle) and (TStyleManager.ActiveStyle.Name <> 'Windows');
+  {$ENDIF}
 
   //if (not bVclStyle) or (bVclStyle and (not (seClient in StyleElements))) then
-  if (not bVclStyle) {$IF RTLVersion > 23} or (bVclStyle and (not (seClient in StyleElements))) {$IFEND} then
+  {$IFDEF DCC}if (not bVclStyle) {$IF RTLVersion > 23} or (bVclStyle and (not (seClient in StyleElements))) {$IFEND} then{$ENDIF}
   begin
 
     Canvas.Brush.Style := bsClear;
@@ -588,9 +609,10 @@ begin
 
     end;
 
-  end
+  end{$IFDEF FPC};{$ENDIF}
 
 
+  {$IFDEF DCC}
   else
 
   // VCL Style
@@ -645,6 +667,8 @@ begin
 
   end; // VCL Style
 
+  {$ENDIF} // DCC
+
 
   DrawBorders(ARect);
 
@@ -686,7 +710,7 @@ begin
   FBottomGradient.ColorTo := GetSimilarColor(clBtnFace, 10, False);
 
   FBorders := TJppBasicPanelBorders.Create(AOwner);
-  FBorders.OnChange := PropsChanged;
+  FBorders.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FBorderToGradientMargin := 0;
   FDrawGradient := True;
@@ -784,7 +808,7 @@ begin
   inherited Create;
   FPen := TPen.Create;
   FVisible := True;
-  FPen.OnChange := PropsChanged;
+  FPen.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FBorder3D := True;
 end;
 
@@ -797,7 +821,7 @@ end;
 procedure TJppBasicPanelBorder.Assign(Border: TJppBasicPanelBorder);
 begin
   FPen.Assign(Border.Pen);
-  FPen.OnChange := PropsChanged;
+  FPen.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FVisible := Border.Visible;
   FBorder3D := Border.Border3D;
 end;
@@ -849,10 +873,10 @@ begin
   FTop := TJppBasicPanelBorder.Create(AOwner);
   FBottom := TJppBasicPanelBorder.Create(AOwner);
 
-  FLeft.OnChange := PropsChanged;
-  FRight.OnChange := PropsChanged;
-  FTop.OnChange := PropsChanged;
-  FBottom.OnChange := PropsChanged;
+  FLeft.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
+  FRight.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
+  FTop.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
+  FBottom.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FLeft.Pen.Color := clBtnHighlight;
   FRight.Pen.Color := clBtnShadow;
@@ -909,6 +933,8 @@ end;
 
 
 {$region ' ---------------- Themes ------------------------- '}
+{$IFDEF DCC}
+
 {$IF RTLVersion < 23.0 }
 //type
 //  TThemeServicesHelper = class helper for TThemeServices
@@ -950,6 +976,8 @@ end;
 //  TCustomStyleEngine.UnRegisterStyleHook(TJppBasicPanel, TJppBasicPanelStyleHook);
 //end;
 {$IFEND}
+
+{$ENDIF} // DCC
 {$endregion Themes}
 
 end.

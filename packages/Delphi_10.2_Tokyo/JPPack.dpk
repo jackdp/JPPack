@@ -68,6 +68,7 @@ contains
   JPP.PngCollection in '..\..\source\JPP.PngCollection.pas',
   JPP.DoubleLabel in '..\..\source\JPP.DoubleLabel.pas',
   JPP.DoubleLineLabel in '..\..\source\JPP.DoubleLineLabel.pas',
+  LDPngFunctions in '..\..\source\LDPngFunctions.pas',
   JPP.Register in '..\..\source\JPP.Register.pas';
 
 end.

@@ -964,8 +964,10 @@ begin
           begin
             imgHot := TPngImage.Create;
             try
+              //if not FPngImage.Empty then imgHot.SetSize(FPngImage.Width, FPngImage.Height);
               imgHot.Assign(FPngImage);
-              SetPngGamma(Appearance.GlyphHotGammaFactor / 100, imgHot);
+              PngSetGamma(imgHot, Appearance.GlyphHotGammaFactor / 100);
+              //SetPngGamma(Appearance.GlyphHotGammaFactor / 100, imgHot);
               Draw(GlyphPos.X, GlyphPos.Y, imgHot)
             finally
               imgHot.Free;

@@ -1,11 +1,24 @@
 unit JPP.StringStorageCtrl;
 
+{
+  Jacek Pazera
+  http://www.pazera-software.com
+  https://github.com/jackdp
+  Last mod: 2019.05.25
+}
+
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+
 interface
 
 uses
+  {$IFDEF DCC}
   Winapi.Messages, Winapi.Windows,
   System.SysUtils, System.Classes, System.Types, System.UITypes,
   Vcl.Graphics,
+  {$ELSE}
+  SysUtils, Classes, Types, LCLType, Graphics,
+  {$ENDIF}
 
   JPP.Types, JPP.Common;
 
@@ -27,7 +40,7 @@ type
     procedure SetEnabled(const Value: Boolean);
   protected
   public
-    constructor Create(Collection: TCollection); override;
+    constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
   published
     property ItemName: string read FItemName write SetItemName;
@@ -420,7 +433,7 @@ end;
 
 
 {$region ' ------------------ TJppStringStorageCtrlItem - collection item ------------------- '}
-constructor TJppStringStorageCtrlItem.Create(Collection: TCollection);
+constructor TJppStringStorageCtrlItem.Create(ACollection: TCollection);
 begin
   inherited;
 

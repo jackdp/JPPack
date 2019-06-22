@@ -1,11 +1,20 @@
 unit JPP.ColorControls.Common;
 
+
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages,
+  {$IFDEF MSWINDOWS}
+  Windows, Messages,
+  {$ENDIF}
+  {$IFDEF DCC}
   System.SysUtils, System.Classes, System.Types,
   Vcl.Controls, Vcl.StdCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Buttons, Vcl.Clipbrd, Vcl.ExtCtrls,
+  {$ELSE}
+  SysUtils, Classes, Types, Controls, StdCtrls, Graphics, Buttons, Clipbrd, ExtCtrls, LCLType, LCLIntf,
+  {$ENDIF}
 
   JPL.Strings, JPL.Conversion, JPL.Colors, JPL.ColorArrays,
 
@@ -51,7 +60,7 @@ type
   {$Region ' ------ TJppColorControlSelectedItem ------ '}
   TJppColorControlSelectedItem = class(TJppColorControlGradientItem)
   private
-    FOwner: TComponent;
+    //FOwner: TComponent;
     FFontColor: TColor;
     FDisabledFontColor: TColor;
     procedure SetFontColor(const Value: TColor);
@@ -69,7 +78,7 @@ type
   {$Region ' ------ TJppColorControlCustomGradientCaptionItem ------ '}
   TJppColorControlCustomGradientCaptionItem = class(TJppColorControlGradientItem)
   private
-    FOwner: TComponent;
+    //FOwner: TComponent;
     FFont: TFont;
     FAlignment: TAlignment;
     FCaptionMargin: integer;
@@ -341,7 +350,7 @@ begin
   inherited Create;
   FOwner := AOwner;
   FBackground := TJppGradientBackground.Create(AOwner);
-  FBackground.OnChange := PropsChanged;
+  FBackground.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 end;
 
 destructor TJppColorControlGradientItem.Destroy;
@@ -427,7 +436,7 @@ begin
   FOwner := AOwner;
   //Background.OnChange := PropsChanged;
   FFont := TFont.Create;
-  FFont.OnChange := PropsChanged;
+  FFont.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FAlignment := taCenter;
   FCaptionMargin := 10;
   FTextPosDeltaY := -1;
@@ -445,7 +454,7 @@ begin
   BeginUpdate;
   try
     FFont.Assign(ccgci.Font);
-    FFont.OnChange := PropsChanged;
+    FFont.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
     FAlignment := ccgci.Alignment;
     FCaptionMargin := ccgci.CaptionMargin;
     FCaption := ccgci.Caption;
@@ -816,22 +825,22 @@ begin
 
   FUseCustomNumericFont := True;
   FNumericFont := TFont.Create;
-  FNumericFont.OnChange := PropsChanged;
+  FNumericFont.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FNumericFont.Name := 'Consolas';
   FNumericFont.Size := 9;
   //FNumericFont.Style := [];
 
   FColorRectangle := TJppColorControlRectangle.Create(AOwner);
-  FColorRectangle.OnChange := PropsChanged;
+  FColorRectangle.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FRgbIntParams := TJppColorControlRgbIntParams.Create(AOwner);
-  FRgbIntParams.OnChange := PropsChanged;
+  FRgbIntParams.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FRgbHexParams := TJppColorControlRgbHexParams.Create(AOwner);
-  FRgbHexParams.OnChange := PropsChanged;
+  FRgbHexParams.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FBgrHexParams := TJppColorControlBgrHexParams.Create(AOwner);
-  FBgrHexParams.OnChange := PropsChanged;
+  FBgrHexParams.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FShowColorName := True;
   FShowRgbInt := True;
@@ -845,10 +854,10 @@ begin
   FNumericFontSelectedColor := clHighlightText;
 
   FSeparatorItem := TJppColorControlSeparatorItem.Create(AOwner);
-  FSeparatorItem.OnChange := PropsChanged;
+  FSeparatorItem.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FSelectedItem := TJppColorControlSelectedItem.Create(AOwner);
-  FSelectedItem.OnChange := PropsChanged;
+  FSelectedItem.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FSelectedItem.Background.Gradient.ColorFrom := clHighlight;
   FSelectedItem.Background.Gradient.ColorTo := $00FF8A15; //GetSimilarColor(clHighlight, 10, False);
   FSelectedItem.Background.Color := clHighlight;
@@ -892,7 +901,7 @@ begin
     FDataSeparator := cca.DataSeparator;
     FUseCustomNumericFont := cca.UseCustomNumericFont;
     FNumericFont.Assign(cca.NumericFont);
-    FNumericFont.OnChange := PropsChanged;
+    FNumericFont.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
     FNumericFontSelectedColor := cca.NumericFontSelectedColor;
     FNumericTextPosDeltaY := cca.NumericTextPosDeltaY;
 
@@ -900,10 +909,10 @@ begin
     FTextPosDeltaY := cca.TextPosDeltaY;
 
     FSeparatorItem.Assign(cca.SeparatorItem);
-    FSeparatorItem.OnChange := PropsChanged;
+    FSeparatorItem.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
     FSelectedItem.Assign(cca.SelectedItem);
-    FSelectedItem.OnChange := PropsChanged;
+    FSelectedItem.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
     FDisabledBackgroundColor := cca.DisabledBackgroundColor;
     FDisabledFontColor := cca.DisabledFontColor;

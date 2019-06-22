@@ -4,19 +4,29 @@ unit JPP.PngCollection;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mod: 2019.05.22
+  Last mod: 2019.05.25
 }
+
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
+  {$IFDEF DCC}
   Winapi.Messages, Winapi.Windows,
   System.SysUtils, System.Classes, System.Types, System.UITypes,
   Vcl.Graphics, Vcl.Imaging.PngImage,
+  {$ELSE}
+  SysUtils, Classes, Graphics,
+  {$ENDIF}
   JPP.Common, JPL.Strings, JPL.Conversion, JPL.Colors;
 
 
 type
+
+  {$IFDEF FPC}
+  TPngImage = TPortableNetworkGraphic;
+  {$ENDIF}
 
   TJppPngCollectionItem = class;
   TJppPngCollectionItems = class;
@@ -38,7 +48,7 @@ type
     function Count: integer;
     function IsValidIndex(const Index: integer): Boolean;
     function AddPngImageFromFile(const FileName: string): integer; // Returns the index of the added item
-    function AddPngImage(Png: TPngImage; ImageName: string = ''; Description: string = ''; Enabled: Boolean = True; Tag: integer = 0): integer; // Returns the index of the added item
+    function AddPngImage(Png: TPngImage; ImageName: string = ''; Description: string = ''; Enabled: Boolean = True; ATag: integer = 0): integer; // Returns the index of the added item
     function GetPngImage(const Index: integer): TPngImage;
     function GetPngImageByName(const PngName: string; IgnoreCase: Boolean = True): TPngImage; // Returns the first PngImage with the given name
     function ReportStr: string; // for debug
@@ -84,7 +94,7 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     function GetDisplayName: string; override;
   public
-    constructor Create(Collection: TCollection); overload; override;
+    constructor Create(ACollection: TCollection); overload; override;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
   published
@@ -119,7 +129,7 @@ begin
   inherited Destroy;
 end;
 
-function TJppPngCollection.AddPngImage(Png: TPngImage; ImageName, Description: string; Enabled: Boolean; Tag: integer): integer;
+function TJppPngCollection.AddPngImage(Png: TPngImage; ImageName, Description: string; Enabled: Boolean; ATag: integer): integer;
 var
   pci: TJppPngCollectionItem;
 begin
@@ -130,7 +140,7 @@ begin
     if ImageName <> '' then pci.Name := ImageName;
     pci.Description := Description;
     pci.Enabled := Enabled;
-    pci.Tag := Tag;
+    pci.Tag := ATag;
   except
     Result := -1;
   end;
@@ -252,9 +262,11 @@ begin
     if b then Continue;
     s := s + Sep + 'Width: ' + IntToStrEx(pci.PngImage.Width) + ENDL;
     s := s + Sep + 'Height: ' + IntToStrEx(pci.PngImage.Height) + ENDL;
+    {$IFDEF DCC}
     s := s + Sep + 'Bit depth: ' + IntToStr(pci.PngImage.Header.BitDepth) + ENDL;
     s := s + Sep + 'Compression level: ' + IntToStr(pci.PngImage.CompressionLevel) + ENDL;
     s := s + Sep + 'Compression method: ' + IntToStr(pci.PngImage.Header.CompressionMethod) + ENDL;
+    {$ENDIF}
     s := s + Sep + 'Transparent color: ' + ColorToRgbIntStr(pci.PngImage.TransparentColor) + ENDL;
   end;
 
@@ -321,9 +333,9 @@ end;
 
 
 {$region ' ---------------------- TJppPngCollectionItem --------------------------- '}
-constructor TJppPngCollectionItem.Create(Collection: TCollection);
+constructor TJppPngCollectionItem.Create(ACollection: TCollection);
 begin
-  inherited Create(Collection);
+  inherited Create(ACollection);
   FPngImage := TPngImage.Create;
   FName := 'Png_' + IntToStr(Index);
   FTag := 0;

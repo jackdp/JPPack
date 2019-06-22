@@ -115,6 +115,7 @@
         <DCCReference Include="..\..\source\JPP.PngCollection.pas"/>
         <DCCReference Include="..\..\source\JPP.DoubleLabel.pas"/>
         <DCCReference Include="..\..\source\JPP.DoubleLineLabel.pas"/>
+        <DCCReference Include="..\..\source\LDPngFunctions.pas"/>
         <DCCReference Include="..\..\source\JPP.Register.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

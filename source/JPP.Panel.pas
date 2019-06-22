@@ -1,5 +1,7 @@
 unit JPP.Panel;
 
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+
 {$IFDEF VER200}
   {$DEFINE DELPHI2009_OR_ABOVE}
 {$ENDIF}
@@ -7,17 +9,22 @@ unit JPP.Panel;
 interface
 
 uses
+  {$IFDEF DCC}
   Winapi.Messages, Winapi.Windows,
   System.SysUtils, System.Classes, System.Types, System.UITypes,
   Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Graphics, Vcl.StdCtrls, Vcl.GraphUtil, Vcl.Themes, Vcl.ExtCtrls, Vcl.Dialogs,
-
-  JPL.Colors,
+  {$ELSE}
+  SysUtils, Messages, LMessages, LCLType, LCLIntf, Classes, Graphics, Controls, StdCtrls, ExtCtrls, Forms,
+  {$ENDIF}
+  JPL.Colors, JPL.Math,
   JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs;
 
 
 type
 
   //TJppPanelTagExt = class(TJppTagExt);
+
+  //{$IFDEF FPC}TVerticalAlignment = (taAlignTop, taAlignBottom, taVerticalCenter);{$ENDIF}
 
   TJppVerticalLinePosition = (vlpFromLeft, vlpCenter, vlpFromRight);
   TJppHorizontalLinePosition = (hlpFromTop, hlpCenter, hlpFromBottom);
@@ -57,7 +64,7 @@ type
   protected
     procedure PropsChanged(Sender: TObject);
   public
-    constructor Create(Collection: TCollection); override;
+    constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
   published
     property OnChange: TNotifyEvent read FOnChange write SetOnChange;
@@ -122,7 +129,7 @@ type
   protected
     procedure PropsChanged(Sender: TObject);
   public
-    constructor Create(Collection: TCollection); override;
+    constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
   published
@@ -181,7 +188,7 @@ type
   protected
     procedure PropsChanged(Sender: TObject);
   public
-    constructor Create(Collection: TCollection); override;
+    constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
   published
@@ -237,7 +244,7 @@ type
   protected
     procedure PropsChanged(Sender: TObject);
   public
-    constructor Create(Collection: TCollection); override;
+    constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
   published
@@ -372,7 +379,7 @@ type
   {$endregion}
 
   {$region ' --------------------------- TJppBasePanel ---------------------------------- '}
-  TProcOnOnDragDropFiles = procedure (Sender: TObject; var msg: TWMDropFiles) of object;
+  {$IFDEF MSWINDOWS}TProcOnOnDragDropFiles = procedure (Sender: TObject; var msg: TWMDropFiles) of object;{$ENDIF}
 
   TJppBasePanel = class(TCustomPanel)
   private
@@ -383,10 +390,10 @@ type
     FLayout: TTextLayout;
     FWordWrap: Boolean;
     FOnAfterDrawBackground: TNotifyEvent;
-    FOnDragDropFiles: TProcOnOnDragDropFiles;
+    {$IFDEF MSWINDOWS}FOnDragDropFiles: TProcOnOnDragDropFiles;{$ENDIF}
     procedure CMMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
-    procedure CMDropFiles(var msg: TWMDropFiles); message WM_DROPFILES;
+    {$IFDEF MSWINDOWS}procedure CMDropFiles(var msg: TWMDropFiles); message WM_DROPFILES;{$ENDIF}
     procedure PropsChanged(Sender: TObject);
     procedure SetLayout(const Value: TTextLayout);
     procedure SetWordWrap(const Value: Boolean);
@@ -409,7 +416,7 @@ type
     property OnMouseLeave: TNotifyEvent read FOnMouseLeave write FOnMouseLeave;
     property OnPaint: TNotifyEvent read FOnPaint write FOnPaint;
     property OnVisibleChanging: TNotifyEvent read FOnVisibleChanging write FOnVisibleChanging;
-    property OnDragDropFiles: TProcOnOnDragDropFiles read FOnDragDropFiles write FOnDragDropFiles;
+    {$IFDEF MSWINDOWS}property OnDragDropFiles: TProcOnOnDragDropFiles read FOnDragDropFiles write FOnDragDropFiles;{$ENDIF}
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -434,7 +441,7 @@ type
     procedure SetHorizontalLines(const Value: TJppPanelHorizontalLines);
     procedure SetCaptions(const Value: TJppPanelCaptions);
     procedure SetHorizontalBars(const Value: TJppPanelHorizontalBars);
-    procedure WMMouseWheel(var Message: TWMMouseWheel); message WM_MOUSEWHEEL;
+    {$IFDEF DCC}procedure WMMouseWheel(var Message: TWMMouseWheel); message WM_MOUSEWHEEL;{$ENDIF}
   protected
     procedure DrawBackground(ARect: TRect); override;
     procedure DrawBorders(ARect: TRect);
@@ -478,17 +485,17 @@ type
     property Alignment;
     property Anchors;
     property AutoSize;
-    property BevelInner;
-    property BevelOuter;
-    property BevelWidth;
-    property BevelKind;
+    //property BevelInner;
+    //property BevelOuter;
+    //property BevelWidth;
+    {$IFDEF DCC}property BevelKind;{$ENDIF}
     property BiDiMode;
     property BorderWidth;
     property BorderStyle;
 //    property Caption;
 //    property Color;
     property Constraints;
-    property Ctl3D;
+    {$IFDEF DCC}property Ctl3D;{$ENDIF}
     property UseDockManager default True;
     property DockSite;
     {$IFDEF DELPHI2009_OR_ABOVE} property DoubleBuffered; {$ENDIF}
@@ -498,12 +505,12 @@ type
     property Enabled;
     property FullRepaint;
     property Font;
-    property Locked;
+    {$IFDEF DCC}property Locked;{$ENDIF}
     {$IFDEF DELPHI2009_OR_ABOVE} property Padding; {$ENDIF}
     property ParentBiDiMode;
     property ParentBackground default false;
 //    property ParentColor;
-    property ParentCtl3D;
+    {$IFDEF DCC}property ParentCtl3D;{$ENDIF}
     property ParentFont;
     property ParentShowHint;
     property PopupMenu;
@@ -513,7 +520,7 @@ type
     property TabStop;
     //property VerticalAlignment;  -> replaced by Layout property ...
     property Visible;
-    property OnCanResize;
+    {$IFDEF DCC}property OnCanResize;{$ENDIF}
     property OnClick;
     property OnConstrainedResize;
     property OnContextPopup;
@@ -544,25 +551,33 @@ type
     property OnMouseLeave;
     property OnAfterDrawBackground;
     property OnPaint;
-    property OnDragDropFiles;
+    {$IFDEF MSWINDOWS}property OnDragDropFiles;{$ENDIF}
     property Appearance;
     property TagExt;
+    {$IFDEF DCC}
     {$IF RTLVersion > 23}
     property StyleElements;
     {$IFEND}
     property Touch;
+    {$ENDIF}
     property DoubleBuffered;
+    {$IFDEF FPC}
+    property BorderSpacing;
+    property ChildSizing;
+    property OnGetDockCaption;
+    {$ENDIF}
   end;
   {$endregion}
 
 
+{$IFDEF DCC}
 {$IF RTLVersion >= 24.0 }
   TJppPanelStyleHook = class(TStyleHook)
   strict protected
     //procedure DrawPanel(ACanvas: TCanvas; AMouseInControl: Boolean); override;
   end;
 {$IFEND}
-
+{$ENDIF}
 
 
 
@@ -629,12 +644,14 @@ end;
 
 procedure TJppBasePanel.DrawBackground(ARect: TRect);
 begin
+  {$IFDEF DCC}
   if (not StyleServices.Enabled) or not ParentBackground
   then
   begin
     //Canvas.Brush.Color := Color;
     //Canvas.FillRect(ARect);
   end;
+  {$ENDIF}
 end;
 
 procedure TJppBasePanel.DrawCaption(aRect: TRect);
@@ -665,10 +682,12 @@ begin
   if Assigned(FOnVisibleChanging) then FOnVisibleChanging(Self);
 end;
 
+{$IFDEF MSWINDOWS}
 procedure TJppBasePanel.CMDropFiles(var msg: TWMDropFiles);
 begin
   if Assigned(FOnDragDropFiles) then FOnDragDropFiles(Self, msg);
 end;
+{$ENDIF}
 
 procedure TJppBasePanel.CMMouseEnter(var Msg: TMessage);
 begin
@@ -719,22 +738,22 @@ begin
 
   FTagExt := TJppTagExt.Create(Self);
   FAppearance := TJppPanelAppearance.Create(Self);
-  FAppearance.OnChange := PropsChanged;
+  FAppearance.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
-  FAppearance.UpperGradient.OnChange := GradientChanged;
-  FAppearance.BottomGradient.OnChange := GradientChanged;
+  FAppearance.UpperGradient.OnChange := {$IFDEF FPC} @ {$ENDIF}GradientChanged;
+  FAppearance.BottomGradient.OnChange := {$IFDEF FPC} @ {$ENDIF}GradientChanged;
 
   FVerticalLines := TJppPanelVerticalLines.Create(Self);
-  FVerticalLines.OnChange := PropsChanged;
+  FVerticalLines.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FHorizontalLines := TJppPanelHorizontalLines.Create(Self);
-  FHorizontalLines.OnChange := PropsChanged;
+  FHorizontalLines.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FCaptions := TJppPanelCaptions.Create(Self);
-  FCaptions.OnChange := PropsChanged;
+  FCaptions.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FHorizontalBars := TJppPanelHorizontalBars.Create(Self);
-  FHorizontalBars.OnChange := PropsChanged;
+  FHorizontalBars.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 end;
 
 destructor TJppCustomPanel.Destroy;
@@ -819,6 +838,7 @@ begin
   Invalidate;
 end;
 
+{$IFDEF DCC}
 procedure TJppCustomPanel.WMMouseWheel(var Message: TWMMouseWheel);
 var
   b: Boolean;
@@ -829,6 +849,7 @@ begin
   p.Y := Message.YPos;
   if Assigned(OnMouseWheel) then OnMouseWheel(Self, KeysToShiftState(Message.Keys), Message.WheelDelta, p, b);
 end;
+{$ENDIF}
 
 procedure TJppCustomPanel.AdjustClientRect(var Rect: TRect);
 begin
@@ -837,101 +858,11 @@ end;
 
   {$region ' ---------------- TJppCustomPanel.Paint --------------------------- '}
 procedure TJppCustomPanel.Paint;
-const
-  Alignments: array[TAlignment] of Longint = (DT_LEFT, DT_RIGHT, DT_CENTER);
-  VerticalAlignments: array[TVerticalAlignment] of Longint = (DT_TOP, DT_BOTTOM, DT_VCENTER);
-var
-  Rect: TRect;
-  LColor: TColor;
-  LStyle: TCustomStyleServices;
-  LDetails: TThemedElementDetails;
-  TopColor, BottomColor: TColor;
-  BaseColor, BaseTopColor, BaseBottomColor: TColor;
-  //FontHeight: Integer;
-  //Flags: Longint;
-
-  procedure AdjustColors(Bevel: TPanelBevel);
-  begin
-    TopColor := BaseTopColor;
-    if Bevel = bvLowered then TopColor := BaseBottomColor;
-    BottomColor := BaseBottomColor;
-    if Bevel = bvLowered then BottomColor := BaseTopColor;
-  end;
-
 begin
   inherited;
+
    exit;
-  LStyle := StyleServices;
 
-  Rect := GetClientRect;
-
-  BaseColor := Color;
-  BaseTopColor := clBtnHighlight;
-  BaseBottomColor := clBtnShadow;
-
-  {$IF RTLVersion > 23}
-  if LStyle.Enabled and (seClient in StyleElements) then
-  {$ELSE}
-  if LStyle.Enabled then
-  {$IFEND}
-  begin
-
-    LDetails := LStyle.GetElementDetails(tpPanelBackground);
-    if LStyle.GetElementColor(LDetails, ecFillColor, LColor) and (LColor <> clNone) then BaseColor := LColor;
-
-    LDetails := LStyle.GetElementDetails(tpPanelBevel);
-    if LStyle.GetElementColor(LDetails, ecEdgeHighLightColor, LColor) and (LColor <> clNone) then BaseTopColor := LColor;
-    if LStyle.GetElementColor(LDetails, ecEdgeShadowColor, LColor) and (LColor <> clNone) then BaseBottomColor := LColor;
-
-  end;
-
-
-  if BevelOuter <> bvNone then
-  begin
-    AdjustColors(BevelOuter);
-    Frame3D(Canvas, Rect, TopColor, BottomColor, BevelWidth);
-  end;
-
-
-  if not (LStyle.Enabled and (csParentBackground in ControlStyle)) then Frame3D(Canvas, Rect, BaseColor, BaseColor, BorderWidth)
-  else InflateRect(Rect, -Integer(BorderWidth), -Integer(BorderWidth));
-
-
-  if BevelInner <> bvNone then
-  begin
-    AdjustColors(BevelInner);
-    Frame3D(Canvas, Rect, TopColor, BottomColor, BevelWidth);
-  end;
-
-
-  with Canvas do
-  begin
-
-    if not LStyle.Enabled or not ParentBackground {$IF RTLVersion > 23} or not (seClient in StyleElements) {$IFEND} then
-    begin
-      Brush.Color := BaseColor;
-      FillRect(Rect);
-    end;
-
-//    if FShowCaption and (Caption <> '') then
-//    begin
-//      Brush.Style := bsClear;
-//      Font := Self.Font;
-//      Flags := DT_EXPANDTABS or DT_SINGLELINE or
-//        VerticalAlignments[FVerticalAlignment] or Alignments[FAlignment];
-//      Flags := DrawTextBiDiModeFlags(Flags);
-//      if LStyle.Enabled and (seFont in StyleElements) then
-//      begin
-//        LDetails := LStyle.GetElementDetails(tpPanelBackground);
-//        if not LStyle.GetElementColor(LDetails, ecTextColor, LColor) or (LColor = clNone) then
-//          LColor := Font.Color;
-//        LStyle.DrawText(Handle, LDetails, Caption, Rect, TTextFormatFlags(Flags), LColor)
-//      end
-//      else
-//        DrawText(Handle, Caption, -1, Rect, Flags);
-//    end;
-  end;
-  //inherited;
 end;
   {$endregion}
 
@@ -940,10 +871,11 @@ procedure TJppCustomPanel.DrawBackground(ARect: TRect);
 var
   R: TRect;
   xBottomGradientTop: integer;
-  bVclStyle: Boolean;
+  {$IFDEF DCC}bVclStyle: Boolean;{$ENDIF}
   Border: TJppPanelBorder;
   xBottom: integer;
 
+  {$IFDEF DCC}
   Rect: TRect;
   LColor: TColor;
   LStyle: TCustomStyleServices;
@@ -958,6 +890,7 @@ var
     BottomColor := BaseBottomColor;
     if Bevel = bvLowered then BottomColor := BaseTopColor;
   end;
+  {$ENDIF}
 
 begin
 
@@ -971,9 +904,9 @@ begin
     Exit;
   end;
 
-  bVclStyle := Assigned(TStyleManager.ActiveStyle) and (TStyleManager.ActiveStyle.Name <> 'Windows');
+  {$IFDEF DCC}bVclStyle := Assigned(TStyleManager.ActiveStyle) and (TStyleManager.ActiveStyle.Name <> 'Windows');{$ENDIF}
 
-  if (not bVclStyle) {$IF RTLVersion > 23} or (bVclStyle and (not (seClient in StyleElements))) {$IFEND} then
+  {$IFDEF DCC}if (not bVclStyle) {$IF RTLVersion > 23} or (bVclStyle and (not (seClient in StyleElements))) {$IFEND} then{$ENDIF}
   begin
 
     Canvas.Brush.Style := bsClear;
@@ -1021,9 +954,9 @@ begin
 //    DrawCaptions(ARect);
 //    DrawBorders(ARect);
 
-  end
+  end{$IFDEF FPC};{$ENDIF}
 
-
+  {$IFDEF DCC}
   else
 
   // VCL Style
@@ -1084,11 +1017,14 @@ begin
 //    DrawBorders(ARect);
   end; // VCL Style
 
-    DrawHorizontalBars(ARect);
-    DrawVerticalLines(ARect);
-    DrawHorizontalLines(ARect);
-    DrawCaptions(ARect);
-    DrawBorders(ARect);
+  {$ENDIF}
+
+
+  DrawHorizontalBars(ARect);
+  DrawVerticalLines(ARect);
+  DrawHorizontalLines(ARect);
+  DrawCaptions(ARect);
+  DrawBorders(ARect);
 
 end;
   {$endregion DrawBackground}
@@ -1112,7 +1048,7 @@ end;
 procedure TJppCustomPanel.DrawCaptions(ARect: TRect);
 var
   i, dxLeft, dxRight, dxTop, dxBottom: integer;
-  Caption: TJppPanelCaption;
+  ACaption: TJppPanelCaption;
   xTop, xLeft: integer;
   tw, th: integer;
 begin
@@ -1127,30 +1063,30 @@ begin
     for i := 0 to Captions.Count - 1 do
     begin
 
-      Caption := Captions[i];
-      if not Caption.Visible then Continue;
-      if Trim(Caption.Text) = '' then Continue;
+      ACaption := Captions[i];
+      if not ACaption.Visible then Continue;
+      if Trim(ACaption.Text) = '' then Continue;
 
-      Font.Assign(Caption.Font);
-      tw := TextWidth(Caption.Text);
-      th := TextHeight(Caption.Text);
+      Font.Assign(ACaption.Font);
+      tw := TextWidth(ACaption.Text);
+      th := TextHeight(ACaption.Text);
 
-      case Caption.HorizontalPosition of
-        thpFromLeft: xLeft := ARect.Left + Caption.PosX + dxLeft + Caption.MarginX;
-        thpFromRight: xLeft := ARect.Right - Caption.PosX - dxRight - Caption.MarginX - tw;
+      case ACaption.HorizontalPosition of
+        thpFromLeft: xLeft := ARect.Left + ACaption.PosX + dxLeft + ACaption.MarginX;
+        thpFromRight: xLeft := ARect.Right - ACaption.PosX - dxRight - ACaption.MarginX - tw;
       else
         xLeft := ((ARect.Right - ARect.Left) div 2) - (tw div 2) + dxLeft - dxRight;
       end;
 
 
-      case Caption.VerticalPosition of
-        tvpFromTop: xTop := ARect.Top + Caption.PosY + dxTop + Caption.MarginY;
-        tvpFromBottom: xTop := ARect.Bottom - Caption.PosY - dxBottom - Caption.MarginY - th;
+      case ACaption.VerticalPosition of
+        tvpFromTop: xTop := ARect.Top + ACaption.PosY + dxTop + ACaption.MarginY;
+        tvpFromBottom: xTop := ARect.Bottom - ACaption.PosY - dxBottom - ACaption.MarginY - th;
       else
         xTop := ((ARect.Bottom - ARect.Top) div 2) - (th div 2) + dxTop - dxBottom;
       end;
 
-      TextOut(xLeft, xTop, Caption.Text);
+      TextOut(xLeft, xTop, ACaption.Text);
 
     end;
 
@@ -1183,8 +1119,8 @@ begin
       case Bar.BarPosition of
         hbpCenter: xTop := ((ARect.Bottom - ARect.Top) div 2) - (Bar.Height div 2) + dxTop - dxBottom;
         hbpFromBottom: xTop := ARect.Bottom - dxBottom - Bar.PosY - Bar.Height;
-        hbpPercentFromTop: xTop := ARect.Top + dxTop + GetPercentValue(Bar.PosY, ARect.Height - dxTop - dxBottom);
-        hbpPercentFromBottom: xTop := ARect.Bottom - dxBottom - GetPercentValue(Bar.PosY, ARect.Height - dxTop - dxBottom) - Bar.Height;
+        hbpPercentFromTop: xTop := ARect.Top + dxTop + PercentOf(Bar.PosY, ARect.Height - dxTop - dxBottom);
+        hbpPercentFromBottom: xTop := ARect.Bottom - dxBottom - PercentOf(Bar.PosY, ARect.Height - dxTop - dxBottom) - Bar.Height;
       else xTop := ARect.Top + dxTop + Bar.PosY; // hbpFromTop
       end;
 
@@ -1217,7 +1153,7 @@ end;
 procedure TJppCustomPanel.DrawHorizontalLines(ARect: TRect);
 var
   i, dxLeft, dxRight, dxTop, dxBottom: integer;
-  Line: TJppPanelHorizontalLine;
+  ALine: TJppPanelHorizontalLine;
   xTop, xLeft, xRight: integer;
 begin
   GetDeltas(dxLeft, dxRight, dxTop, dxBottom);
@@ -1227,17 +1163,17 @@ begin
 
     for i := 0 to HorizontalLines.Count - 1 do
     begin
-      Line := HorizontalLines[i];
-      if (not Line.Visible) or (Line.Pen.Style = psClear) or (Line.Pen.Width <= 0) then Continue;
+      ALine := HorizontalLines[i];
+      if (not ALine.Visible) or (ALine.Pen.Style = psClear) or (ALine.Pen.Width <= 0) then Continue;
 
-      Pen.Assign(Line.Pen);
+      Pen.Assign(ALine.Pen);
 
-      xLeft := ARect.Left + dxLeft + Line.LeftMargin;
-      xRight := ARect.Right - dxRight - Line.RightMargin;
+      xLeft := ARect.Left + dxLeft + ALine.LeftMargin;
+      xRight := ARect.Right - dxRight - ALine.RightMargin;
 
-      case Line.LinePosition of
-        hlpFromTop: xTop := Line.PosY + dxTop;
-        hlpFromBottom: xTop := ARect.Bottom - Line.PosY - dxBottom;
+      case ALine.LinePosition of
+        hlpFromTop: xTop := ALine.PosY + dxTop;
+        hlpFromBottom: xTop := ARect.Bottom - ALine.PosY - dxBottom;
       else
         xTop := (ARect.Height div 2) + dxTop - dxBottom;
       end;
@@ -1255,7 +1191,7 @@ end;
 procedure TJppCustomPanel.DrawVerticalLines(ARect: TRect);
 var
   i, dxLeft, dxRight, dxTop, dxBottom: integer;
-  Line: TJppPanelVerticalLine;
+  ALine: TJppPanelVerticalLine;
   xTop, xLeft, xBottom: integer;
 begin
   GetDeltas(dxLeft, dxRight, dxTop, dxBottom);
@@ -1265,16 +1201,16 @@ begin
 
     for i := 0 to VerticalLines.Count - 1 do
     begin
-      Line := VerticalLines[i];
-      if (not Line.Visible) or (Line.Pen.Style = psClear) or (Line.Pen.Width <= 0) then Continue;
+      ALine := VerticalLines[i];
+      if (not ALine.Visible) or (ALine.Pen.Style = psClear) or (ALine.Pen.Width <= 0) then Continue;
 
-      Pen.Assign(Line.Pen);
-      xTop := ARect.Top + dxTop + Line.TopMargin;
-      xBottom := ARect.Bottom - dxBottom - Line.BottomMargin;
+      Pen.Assign(ALine.Pen);
+      xTop := ARect.Top + dxTop + ALine.TopMargin;
+      xBottom := ARect.Bottom - dxBottom - ALine.BottomMargin;
 
-      case Line.LinePosition of
-        vlpFromLeft: xLeft := Line.PosX + dxLeft;
-        vlpFromRight: xLeft := ARect.Right - Line.PosX - dxRight;
+      case ALine.LinePosition of
+        vlpFromLeft: xLeft := ALine.PosX + dxLeft;
+        vlpFromRight: xLeft := ARect.Right - ALine.PosX - dxRight;
       else
         xLeft := (ARect.Width div 2) + dxLeft - dxRight;
       end;
@@ -1306,7 +1242,7 @@ begin
   FBottomGradient.ColorTo := GetSimilarColor(clBtnFace, 10, False);
 
   FBorders := TJppPanelBorders.Create(AOwner);
-  FBorders.OnChange := PropsChanged;
+  FBorders.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FBorderToGradientMargin := 0;
   FDrawGradient := True;
@@ -1417,7 +1353,7 @@ begin
   inherited Create;
   FPen := TPen.Create;
   FVisible := True;
-  FPen.OnChange := PropsChanged;
+  FPen.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FBorder3D := True;
 end;
 
@@ -1430,7 +1366,7 @@ end;
 procedure TJppPanelBorder.Assign(Border: TJppPanelBorder);
 begin
   FPen.Assign(Border.Pen);
-  FPen.OnChange := PropsChanged;
+  FPen.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FVisible := Border.Visible;
   FBorder3D := Border.Border3D;
 end;
@@ -1474,10 +1410,10 @@ begin
   FTop := TJppPanelBorder.Create(AOwner);
   FBottom := TJppPanelBorder.Create(AOwner);
 
-  FLeft.OnChange := PropsChanged;
-  FRight.OnChange := PropsChanged;
-  FTop.OnChange := PropsChanged;
-  FBottom.OnChange := PropsChanged;
+  FLeft.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
+  FRight.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
+  FTop.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
+  FBottom.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
   FLeft.Pen.Color := clBtnHighlight;
   FRight.Pen.Color := clBtnShadow;
@@ -1539,11 +1475,11 @@ end;
 {$endregion}
 
 {$region ' -------------------------------- TJppPanelVerticalLine - collection item ----------------------------------- '}
-constructor TJppPanelVerticalLine.Create(Collection: TCollection);
+constructor TJppPanelVerticalLine.Create(ACollection: TCollection);
 begin
-  inherited Create(Collection);
+  inherited Create(ACollection);
   FPen := TPen.Create;
-  FPen.OnChange := PropsChanged;
+  FPen.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FTopMargin := 0;
   FBottomMargin := 0;
   FVisible := True;
@@ -1625,14 +1561,14 @@ end;
 function TJppPanelVerticalLines.Add: TJppPanelVerticalLine;
 begin
   Result := TJppPanelVerticalLine(inherited Add);
-  Result.OnChange := PropsChanged;
+  Result.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   PropsChanged(Self);
 end;
 
 function TJppPanelVerticalLines.Insert(Index: Integer): TJppPanelVerticalLine;
 begin
   Result := TJppPanelVerticalLine(inherited Insert(Index));
-  Result.OnChange := PropsChanged;
+  Result.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   PropsChanged(Self);
 end;
 
@@ -1677,11 +1613,11 @@ end;
 {$endregion TJppPanelVerticalLines}
 
 {$region ' ----------------------------------- TJppPanelHorizontalLine - collection item ------------------------------------ '}
-constructor TJppPanelHorizontalLine.Create(Collection: TCollection);
+constructor TJppPanelHorizontalLine.Create(ACollection: TCollection);
 begin
-  inherited Create(Collection);
+  inherited Create(ACollection);
   FPen := TPen.Create;
-  FPen.OnChange := PropsChanged;
+  FPen.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FLeftMargin := 0;
   FRightMargin := 0;
   FVisible := True;
@@ -1763,14 +1699,14 @@ end;
 function TJppPanelHorizontalLines.Add: TJppPanelHorizontalLine;
 begin
   Result := TJppPanelHorizontalLine(inherited Add);
-  Result.OnChange := PropsChanged;
+  Result.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   PropsChanged(Self);
 end;
 
 function TJppPanelHorizontalLines.Insert(Index: Integer): TJppPanelHorizontalLine;
 begin
   Result := TJppPanelHorizontalLine(inherited Insert(Index));
-  Result.OnChange := PropsChanged;
+  Result.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   PropsChanged(Self);
 end;
 
@@ -1815,11 +1751,11 @@ end;
 {$endregion}
 
 {$region ' ------------------------------------ TJppPanelCaption - collection item --------------------------------- '}
-constructor TJppPanelCaption.Create(Collection: TCollection);
+constructor TJppPanelCaption.Create(ACollection: TCollection);
 begin
   inherited;
   FFont := TFont.Create;
-  FFont.OnChange := PropsChanged;
+  FFont.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FPosX := 10;
   FPosY := 10;
   FMarginX := 0;
@@ -1840,7 +1776,7 @@ begin
   if Source is TJppPanelCaption then
   begin
     FFont.Assign(TJppPanelCaption(Source).Font);
-    FFont.OnChange := PropsChanged;
+    FFont.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
     FPosX := TJppPanelCaption(Source).PosX;
     FPosY := TJppPanelCaption(Source).PosY;
     FMarginX := TJppPanelCaption(Source).MarginX;
@@ -1921,14 +1857,14 @@ end;
 function TJppPanelCaptions.Add: TJppPanelCaption;
 begin
   Result := TJppPanelCaption(inherited Add);
-  Result.OnChange := PropsChanged;
+  Result.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   PropsChanged(Self);
 end;
 
 function TJppPanelCaptions.Insert(Index: Integer): TJppPanelCaption;
 begin
   Result := TJppPanelCaption(inherited Insert(Index));
-  Result.OnChange := PropsChanged;
+  Result.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   PropsChanged(Self);
 end;
 
@@ -1974,17 +1910,17 @@ end;
 
 
 {$region ' -------------------------- TJppPanelHorizontalBar - collection item ------------------------------- '}
-constructor TJppPanelHorizontalBar.Create(Collection: TCollection);
+constructor TJppPanelHorizontalBar.Create(ACollection: TCollection);
 begin
   inherited;
   FBorder := TPen.Create;
-  FBorder.OnChange := PropsChanged;
+  FBorder.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FHeight := 20;
   FPosY := 20;
   FBarPosition := hbpFromTop;
   FBackgroundColor := clBtnFace;
   FGradient := TJppGradientEx.Create(nil);
-  FGradient.OnChange := PropsChanged;
+  FGradient.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FDrawGradient := True;
   FLeftMargin := 0;
   FRightMargin := 0;
@@ -2075,14 +2011,14 @@ end;
 function TJppPanelHorizontalBars.Add: TJppPanelHorizontalBar;
 begin
   Result := TJppPanelHorizontalBar(inherited Add);
-  Result.OnChange := PropsChanged;
+  Result.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   PropsChanged(Self);
 end;
 
 function TJppPanelHorizontalBars.Insert(Index: Integer): TJppPanelHorizontalBar;
 begin
   Result := TJppPanelHorizontalBar(inherited Insert(Index));
-  Result.OnChange := PropsChanged;
+  Result.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   PropsChanged(Self);
 end;
 
@@ -2131,6 +2067,8 @@ end;
 
 
 {$region ' ---------------- Themes ------------------------- '}
+{$IFDEF DCC}
+
 {$IF RTLVersion < 23.0 }
 //type
 //  TThemeServicesHelper = class helper for TThemeServices
@@ -2156,10 +2094,12 @@ end;
 //begin
 //  Result := ThemeServices;
 //end;
+
 {$IFEND}
+{$ENDIF}
 
 
-
+{$IFDEF DCC}
 {$IF RTLVersion >= 24.0 }
 
 //class constructor TJppPanel.Create;
@@ -2173,5 +2113,6 @@ end;
 //end;
 {$IFEND}
 {$endregion Themes}
+{$ENDIF}
 
 end.

@@ -1,18 +1,29 @@
 unit JPP.PngButton;
 
+{$IFDEF FPC} {$mode delphi} {$ENDIF}
+
 interface
 
 uses
+  {$IFDEF DCC}
   Winapi.Windows, Winapi.Messages,
-  System.Classes, System.SysUtils, System.UITypes, System.StrUtils,
-  Vcl.Graphics, Vcl.Controls, Vcl.Buttons, Vcl.GraphUtil, Vcl.Dialogs, Vcl.Imaging.pngimage,
-
+  System.SysUtils, System.Classes, System.UITypes, System.StrUtils,
+  Vcl.Controls, Vcl.Graphics,  Vcl.StdCtrls, Vcl.Buttons, Vcl.GraphUtil, Vcl.ActnList, Vcl.Imaging.pngimage,
   PngFunctions,
+  {$ELSE}
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  SysUtils, Classes, Controls, Graphics, StdCtrls, ActnList, StrUtils, LazPngFunctions, Buttons, LCLType, LCLIntf, LMessages, Messages,
+  {$ENDIF}
+
   JPL.Colors, JPL.Strings,
-  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.Gradient, JPP.Graphics, JPP.PngButton.ColorMaps
+  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.Graphics, JPP.Gradient, JPP.PngButton.ColorMaps
   ;
 
+
 type
+  {$IFDEF FPC}
+  {$IFDEF UNIX}TWMDrawItem = TLMDrawItems;{$ENDIF}
+  {$ENDIF}
 
 
   {$region ' -------------- TJppItemStateParams --------------------- '}
@@ -120,11 +131,13 @@ type
 
   {$region ' ----------------- TJppPngButton ------------------- '}
   TJppPngButton = class(TBitBtn)
-  {$IF RTLVersion >= 24.0 }
-  strict private
-    class constructor Create;
-    class destructor Destroy;
-  {$IFEND}
+  {$IFDEF DCC}
+    {$IF RTLVersion >= 24.0 }
+    strict private
+      class constructor Create;
+      class destructor Destroy;
+    {$IFEND}
+  {$ENDIF}
   private
     bOver: Boolean;
     FPngImage: TPngImage;
@@ -132,7 +145,7 @@ type
     FCanvas: TCanvas;
     FLastKind: TBitBtnKind;
     FImageFromAction: Boolean;
-    FMouseInControl: Boolean;
+    {$IFDEF DCC} FMouseInControl: Boolean; {$ENDIF}
     IsFocused: Boolean;
     FOnMouseEnter: TNotifyEvent;
     FOnMouseLeave: TNotifyEvent;
@@ -154,8 +167,9 @@ type
     //property NumGlyphs stored False;
   protected
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean); override;
-    procedure SetButtonStyle(ADefault: Boolean); override;
+    {$IFDEF DCC} procedure SetButtonStyle(ADefault: Boolean); override; {$ENDIF}
     procedure PropsChanged(Sender: TObject);
+    procedure Paint;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -174,12 +188,14 @@ type
   {$endregion TJppPngButton}
 
 
-  {$IF RTLVersion >= 24.0 }
-  TJppPngButtonStyleHook = class(TBitBtnStyleHook)
-  strict protected
-    procedure DrawButton(ACanvas: TCanvas; AMouseInControl: Boolean); override;
-  end;
-  {$IFEND}
+  {$IFDEF DCC}
+    {$IF RTLVersion >= 24.0 }
+    TJppPngButtonStyleHook = class(TBitBtnStyleHook)
+    strict protected
+      procedure DrawButton(ACanvas: TCanvas; AMouseInControl: Boolean); override;
+    end;
+    {$IFEND}
+  {$ENDIF}
 
 
 
@@ -191,10 +207,10 @@ procedure SetJppPngButtonVclStyle(Button: TJppPngButton; StyleName: string);
 
 implementation
 
-
+{$IFDEF DCC}
 uses
-  Vcl.ActnList, Vcl.Themes, PngButtonFunctions, PngImageList;
-
+  Vcl.Themes, PngButtonFunctions, PngImageList;
+{$ENDIF}
 
 
 {$region ' -------------- helpers ------------ '}
@@ -206,14 +222,14 @@ begin
 
   if (StyleName = '') or (StyleName = 'WINDOWS') then
   begin
-    {$IF RTLVersion > 23} Button.StyleElements := [seFont, seClient, seBorder]; {$IFEND}
+    {$IFDEF DCC}{$IF RTLVersion > 23} Button.StyleElements := [seFont, seClient, seBorder]; {$IFEND}{$ENDIF}
     Button.Appearance.DefaultDrawing := True;
   end
 
   else
 
   begin
-    {$IF RTLVersion > 23} Button.StyleElements := []; {$IFEND}
+    {$IFDEF DCC}{$IF RTLVersion > 23} Button.StyleElements := []; {$IFEND}{$ENDIF}
     Button.Appearance.DefaultDrawing := False;
 
     if AnsiStartsText('AQUALIGHT', StyleName) then Button.ColorMapType := cmtVclAquaLightSlate
@@ -342,6 +358,8 @@ end;
 
 
 {$region ' ---------------- Themes ------------------------- '}
+{$IFDEF DCC}
+
 {$IF RTLVersion < 23.0 }
 type
   TThemeServicesHelper = class helper for TThemeServices
@@ -369,8 +387,6 @@ begin
 end;
 {$IFEND}
 
-
-
 {$IF RTLVersion >= 24.0 }
 
 class constructor TJppPngButton.Create;
@@ -383,6 +399,8 @@ begin
   TCustomStyleEngine.UnRegisterStyleHook(TJppPngButton, TJppPngButtonStyleHook);
 end;
 {$IFEND}
+
+{$ENDIF}
 {$endregion Themes}
 
 
@@ -539,7 +557,7 @@ begin
   FDown.Font.Color := 0;
 
   FDisabled := TJppItemStateParams.Create(AOwner);
-  FDisabled.Color := $00F4F4F4; //$00FCFCFC;
+  FDisabled.Color := $00F4F4F4; // $00FCFCFC;
   FDisabled.UpperGradient.ColorFrom := $00F4F4F4;
   FDisabled.UpperGradient.ColorTo := $00F4F4F4;
   FDisabled.BottomGradient.ColorFrom := $00F4F4F4;
@@ -842,6 +860,7 @@ begin
   FAppearance := Value;
 end;
 
+{$IFDEF DCC}
 procedure TJppPngButton.SetButtonStyle(ADefault: Boolean);
 begin
   inherited SetButtonStyle(ADefault);
@@ -851,6 +870,7 @@ begin
     Refresh;
   end;
 end;
+{$ENDIF}
 
 function TJppPngButton.PngImageStored: Boolean;
 begin
@@ -861,6 +881,17 @@ procedure TJppPngButton.PropsChanged(Sender: TObject);
 begin
   if csLoading in ComponentState then Exit;
   Invalidate;
+end;
+
+procedure TJppPngButton.Paint;
+begin
+  //inherited;
+  with FCanvas do
+  begin
+    Brush.Style := bsSolid;
+    Brush.Color := clRed;
+    Rectangle(ClientRect);
+  end;
 end;
 
 procedure TJppPngButton.SetPngImage(const Value: TPngImage);
@@ -876,9 +907,11 @@ begin
     FPngImage.Assign(Value);
   end;
 
+  {$IFDEF DCC}
   //To work around the gamma-problem
   with FPngImage do
     if not Empty and (Header.ColorType in [COLOR_RGB, COLOR_RGBALPHA, COLOR_PALETTE]) then Chunks.RemoveChunk(Chunks.ItemFromClass(TChunkgAMA));
+  {$ENDIF}
 
   FImageFromAction := False;
   Repaint;
@@ -945,8 +978,10 @@ var
   GlyphPos, TextPos: TPoint;
   IsDown, IsDefault: Boolean;
   Flags: Cardinal;
+  {$IFDEF DCC}
   Button: TThemedButton;
   Details: TThemedElementDetails;
+  {$ENDIF}
 
   bDown, bDefault: Boolean;
   R, R2, BgRect: TRect;
@@ -972,8 +1007,11 @@ begin
 
     Canvas := TCanvas.Create;
     try
-
+      {$IFDEF MSWINDOWS}
       Canvas.Handle := Message.DrawItemStruct^.hDC;
+      {$ELSE}
+      Canvas.Handle := Message.DrawItemStruct^._hDC;
+      {$ENDIF}
       R := ClientRect;
 
       with Canvas do
@@ -1204,7 +1242,12 @@ begin
         // --------------------------------------------- IMAGE ------------------------------------------------------
         Canvas.Font := dp.Font; // <-- potrzebne aby dopasowaæ pozycjê obrazka i tekstu
         if Appearance.ShowCaption then s := Caption else s := '';
-        CalcButtonLayout(Canvas, FPngImage, ClientRect, bDown and Appearance.MoveWhenDown, False, s, Layout, Margin, Spacing, GlyphPos, TextPos, DrawTextBiDiModeFlags(0));
+
+        CalcButtonLayout(
+          Canvas, FPngImage, ClientRect, bDown and Appearance.MoveWhenDown, False, s, Layout, Margin, Spacing, GlyphPos, TextPos,
+          {$IFDEF DCC}DrawTextBiDiModeFlags(0){$ELSE}0{$ENDIF}
+        );
+
         if (FPngImage <> nil) {and (Kind = bkCustom)} and not FPngImage.Empty then
         begin
           PaintRect := Bounds(GlyphPos.X, GlyphPos.Y, FPngImage.Width, FPngImage.Height);
@@ -1214,7 +1257,7 @@ begin
             imgHot := TPngImage.Create;
             try
               imgHot.Assign(FPngImage);
-              SetPngGamma(Appearance.GlyphHotGammaFactor / 100, imgHot);
+              PngSetGamma(imgHot, Appearance.GlyphHotGammaFactor / 100);
               Draw(GlyphPos.X, GlyphPos.Y, imgHot)
             finally
               imgHot.Free;
@@ -1247,7 +1290,10 @@ begin
           //Canvas.Font := dp.Font; <-- to musi byæ wykonane przed obliczeniem pozycji obrazka w CalcButtonLayout
           PaintRect := Rect(TextPos.X, TextPos.Y, Width, Height);
           Canvas.Brush.Style := bsClear;
-          DrawText(Canvas.Handle, PChar(Caption), -1, PaintRect, DrawTextBiDiModeFlags(0) or DT_TOP or DT_LEFT or DT_SINGLELINE);
+          DrawText(
+            Canvas.Handle, PChar(Caption), -1, PaintRect,
+            {$IFDEF DCC}DrawTextBiDiModeFlags(0) or {$ENDIF} DT_TOP or DT_LEFT or DT_SINGLELINE
+          );
         end;
 
 
@@ -1274,13 +1320,14 @@ begin
   begin
 
     R := ClientRect;
-    FCanvas.Handle := Message.DrawItemStruct^.HDC;
+    FCanvas.Handle := Message.DrawItemStruct^.{$IFDEF MSWINDOWS}HDC{$ELSE}_hDC{$ENDIF};
     FCanvas.Font := Self.Font;
     IsDown := Message.DrawItemStruct^.itemState and ODS_SELECTED <> 0;   //IsDown := False;
     IsDefault := Message.DrawItemStruct^.itemState and ODS_FOCUS <> 0;
 
 
     //Draw the border
+    {$IFDEF DCC}
     if StyleServices.Enabled then
     begin
       //Themed border
@@ -1298,6 +1345,7 @@ begin
     end
 
     else
+    {$ENDIF}
 
     begin
 
@@ -1326,7 +1374,7 @@ begin
       begin
         Flags := DFCS_BUTTONPUSH or DFCS_ADJUSTRECT;
         if Message.DrawItemStruct.itemState and ODS_DISABLED <> 0 then Flags := Flags or DFCS_INACTIVE;
-        DrawFrameControl(Message.DrawItemStruct.HDC, R, DFC_BUTTON, Flags);
+        DrawFrameControl(Message.DrawItemStruct^.{$IFDEF MSWINDOWS}HDC{$ELSE}_hDC{$ENDIF}, R, DFC_BUTTON, Flags);
       end;
 
 
@@ -1345,8 +1393,17 @@ begin
 
     //Calculate the position of the PNG glyph
     if Appearance.ShowCaption then s := Caption else s := '';
-    if not FAppearance.MoveWhenDown then CalcButtonLayout(FCanvas, FPngImage, ClientRect, False, False, s, Layout, Margin, Spacing, GlyphPos, TextPos, DrawTextBiDiModeFlags(0))
-    else CalcButtonLayout(FCanvas, FPngImage, ClientRect, IsDown, False, s, Layout, Margin, Spacing, GlyphPos, TextPos, DrawTextBiDiModeFlags(0));
+
+    if not FAppearance.MoveWhenDown then
+      CalcButtonLayout(
+        FCanvas, FPngImage, ClientRect, False, False, s, Layout, Margin, Spacing, GlyphPos, TextPos,
+        {$IFDEF DCC}DrawTextBiDiModeFlags(0){$ELSE}0{$ENDIF}
+      )
+    else
+      CalcButtonLayout(
+        FCanvas, FPngImage, ClientRect, IsDown, False, s, Layout, Margin, Spacing, GlyphPos, TextPos,
+        {$IFDEF DCC}DrawTextBiDiModeFlags(0){$ELSE}0{$ENDIF}
+      );
 
     //Draw the image
     if (FPngImage <> nil) and (Kind = bkCustom) and not FPngImage.Empty then
@@ -1366,17 +1423,17 @@ begin
       begin
         OffsetRect(PaintRect, 1, 1);
         FCanvas.Font.Color := clBtnHighlight;
-        DrawText(FCanvas.Handle, PChar(Caption), -1, PaintRect, DrawTextBiDiModeFlags(0) or DT_TOP or DT_LEFT or DT_SINGLELINE);
+        DrawText(FCanvas.Handle, PChar(Caption), -1, PaintRect, {$IFDEF DCC}DrawTextBiDiModeFlags(0) or {$ENDIF} DT_TOP or DT_LEFT or DT_SINGLELINE);
         OffsetRect(PaintRect, -1, -1);
         FCanvas.Font.Color := clBtnShadow;
       end;
-      DrawText(FCanvas.Handle, PChar(Caption), -1, PaintRect, DrawTextBiDiModeFlags(0) or DT_TOP or DT_LEFT or DT_SINGLELINE);
+      DrawText(FCanvas.Handle, PChar(Caption), -1, PaintRect, {$IFDEF DCC}DrawTextBiDiModeFlags(0) or {$ENDIF} DT_TOP or DT_LEFT or DT_SINGLELINE);
     end;
 
     //Draw the focus rectangle
     if IsFocused and IsDefault then
     begin
-      if not StyleServices.Enabled then
+      {$IFDEF DCC} if not StyleServices.Enabled then {$ENDIF}
       begin
         R := ClientRect;
         InflateRect(R, -3, -3);
@@ -1391,6 +1448,7 @@ begin
 
 
   end;
+  //{$IFDEF FPC}Invalidate;{$ENDIF}
 end;
   {$endregion CNDrawItem}
 
@@ -1410,12 +1468,14 @@ procedure TJppPngButton.CMMouseEnter(var Message: TMessage);
 begin
   inherited;
   bOver := True;
+  {$IFDEF DCC}
   if StyleServices.Enabled and not FMouseInControl and not(csDesigning in ComponentState) then
   begin
-    FMouseInControl := true;
+    FMouseInControl := True;
     Repaint;
   end
   else
+  {$ENDIF}
   begin
     if csDesigning in ComponentState then Exit;
     if Assigned(FOnMouseEnter) then OnMouseEnter(Self);
@@ -1427,12 +1487,14 @@ procedure TJppPngButton.CMMouseLeave(var Message: TMessage);
 begin
   inherited;
   bOver := False;
+  {$IFDEF DCC}
   if StyleServices.Enabled and FMouseInControl then
   begin
     FMouseInControl := False;
     Repaint;
   end
   else
+  {$ENDIF}
   begin
     if csDesigning in ComponentState then Exit;
     if Assigned(FOnMouseLeave) then OnMouseLeave(Self);
@@ -1446,6 +1508,8 @@ end;
 
 
 {$region ' ------------------------- StyleHook -------------------------- '}
+{$IFDEF DCC}
+
 {$IF RTLVersion >= 24.0 }
 procedure TJppPngButtonStyleHook.DrawButton(ACanvas: TCanvas; AMouseInControl: Boolean);
 const
@@ -1515,6 +1579,8 @@ begin
 
 end;
 {$IFEND}
+
+{$ENDIF}
 {$endregion}
 
 

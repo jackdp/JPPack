@@ -1,11 +1,17 @@
 unit JPP.PngButton.ColorMaps;
 
+{$IFDEF FPC} {$mode delphi} {$ENDIF}
+
 interface
 
 uses
-  Winapi.Windows,
-  System.SysUtils, System.IniFiles,
-  Vcl.Graphics;
+  {$IFDEF DCC}
+  Winapi.Windows, System.SysUtils, System.IniFiles, Vcl.Graphics,
+  {$ELSE}
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  SysUtils, IniFiles, Graphics,
+  {$ENDIF}
+  JPL.Colors;
 
 const
   COLORMAP_DEFAULT_INI_SECTION = 'JppPngButton_ColorMap';
@@ -155,9 +161,13 @@ function TJppPngButtonColorMap.AsDfm: string;
 var
   n: string;
   function gcs(Color: TColor): string;
+  var
+    r, g, b: Byte;
   begin
     Color := ColorToRGB(Color);
-    Result := 'RGB(' + IntToStr(GetRValue(Color)) + ', ' + IntToStr(GetGValue(Color)) + ', ' + IntToStr(GetBValue(Color)) + ')';
+    GetRgbChannels(Color, r, g, b);
+    Result := 'RGB(' + IntToStr(r) + ', ' + IntToStr(g) + ', ' + IntToStr(b) + ')';
+    //Result := 'RGB(' + IntToStr(GetRValue(Color)) + ', ' + IntToStr(GetGValue(Color)) + ', ' + IntToStr(GetBValue(Color)) + ')';
   end;
 begin
   n := #13#10;

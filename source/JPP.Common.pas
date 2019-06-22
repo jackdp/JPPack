@@ -1,15 +1,25 @@
 unit JPP.Common;
 
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+
 interface
 
 uses
-  Winapi.Windows,
+  {$IFDEF MSWINDOWS}
+  Windows,
+  {$ENDIF}
+  {$IFDEF DCC}
   System.SysUtils, System.Classes, System.UITypes,
   Vcl.Controls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs,
-  //JPL.Colors,
+  {$ELSE}
+  SysUtils, Classes, Controls, StdCtrls, Graphics, LCLType, LCLIntf,
+  {$ENDIF}
+  JPL.Colors,
   JPP.Types, JPP.Gradient, JPP.Graphics;
 
 type
+
+  {$IFDEF FPC}TEllipsisPosition = (epNone, epPathEllipsis, epEndEllipsis, epWordEllipsis);{$ENDIF}
 
   TJppFocusRectType = (frtSystem, frtCustom, frtNone);
 
@@ -48,7 +58,7 @@ type
     procedure SetDateValue(const Value: TDateTime);
     procedure SetPointerValue(const Value: Pointer);
   public
-    constructor Create(AOwner: TComponent);
+    constructor Create({%H-}AOwner: TComponent);
     destructor Destroy; override;
     property PointerValue: Pointer read FPointerValue write SetPointerValue;
     property DateValue: TDateTime read FDateValue write SetDateValue;
@@ -72,7 +82,7 @@ type
     procedure SetWidth(const Value: Integer);
     procedure SetOnAdjustBounds(const Value: TNotifyEvent);
   protected
-    procedure AdjustBounds; override;
+    {$IFDEF DCC}procedure AdjustBounds; override;{$ENDIF}
   public
     constructor Create(AOwner: TComponent); override;
   published
@@ -95,7 +105,7 @@ type
     property ShowAccelChar;
     property ShowHint;
     property Top: Integer read GetTop;
-    property Touch;
+    {$IFDEF DCC}property Touch;{$ENDIF}
     property Transparent;
     property Layout;
     property WordWrap;
@@ -107,8 +117,8 @@ type
     property OnDragOver;
     property OnEndDock;
     property OnEndDrag;
-    property OnGesture;
-    property OnMouseActivate;
+    {$IFDEF DCC}property OnGesture;{$ENDIF}
+    {$IFDEF DCC}property OnMouseActivate;{$ENDIF}
     property OnMouseDown;
     property OnMouseMove;
     property OnMouseUp;
@@ -421,6 +431,7 @@ begin
   if Assigned(AOwner) then Caption := AOwner.Name;
 end;
 
+{$IFDEF DCC}
 procedure TJppControlBoundLabel.AdjustBounds;
 begin
   inherited AdjustBounds;
@@ -428,6 +439,7 @@ begin
   //if Owner is TCustomLabeledEdit then with Owner as TCustomLabeledEdit do SetLabelPosition(LabelPosition);
   //if Owner is TJPColorComboBoxEx then with Owner as TJPColorComboBoxEx do SetBoundLabelPosition(BoundLabelPosition);
 end;
+{$ENDIF}
 
 function TJppControlBoundLabel.GetHeight: Integer;
 begin
@@ -529,7 +541,7 @@ begin
   FPen := TPen.Create;
   FSpacing := 2;
   FFocusType := frtNone;
-  FPen.OnChange := PropsChanged;
+  FPen.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
 end;
 
 destructor TJppFocusRectParams.Destroy;
@@ -767,10 +779,10 @@ begin
   FOwner := AOwner;
 
   FGradient := TJppGradientEx.Create(AOwner);
-  FGradient.OnChange := PropsChanged;
+  FGradient.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
 
   FBorders := TJppBorders.Create(AOwner);
-  FBorders.OnChange := PropsChanged;
+  FBorders.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
 
   FColor := clBtnFace;
   FDrawGradient := True;
@@ -922,13 +934,13 @@ begin
   FOwner := AOwner;
 
   FLeft := TJppBorder.Create(AOwner);
-  FLeft.OnChange := PropsChanged;
+  FLeft.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
   FRight := TJppBorder.Create(AOwner);
-  FRight.OnChange := PropsChanged;
+  FRight.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
   FTop := TJppBorder.Create(AOwner);
-  FTop.OnChange := PropsChanged;
+  FTop.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
   FBottom := TJppBorder.Create(AOwner);
-  FBottom.OnChange := PropsChanged;
+  FBottom.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
 end;
 
 destructor TJppBorders.Destroy;

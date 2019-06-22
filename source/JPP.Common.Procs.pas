@@ -1,11 +1,17 @@
 unit JPP.Common.Procs;
 
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+
 interface
 
 uses
+  {$IFDEF DCC}
   Winapi.Windows,
   System.SysUtils, System.Classes, System.UITypes,
-  Vcl.Controls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs;
+  Vcl.Controls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs; //, JPL.Math;
+  {$ELSE}
+  SysUtils, Classes, Controls, Graphics, LCLType, LCLIntf; //, JPL.Math;
+  {$ENDIF}
 
 
 
@@ -27,7 +33,7 @@ procedure DrawBottomBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean
 procedure DrawLeftBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = True);
 procedure DrawRightBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = True);
 
-function GetPercentValue(PercentX, Percent100: integer): integer;
+//function GetPercentValue(PercentX, Percent100: integer): integer;
 
 function GetMiddlePosY(const R: TRect; const TextHeight: integer): integer;
 procedure DrawRectTopBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWidth: integer; PenStyle: TPenStyle = psSolid; ExtraSpace: integer = 0);
@@ -49,10 +55,10 @@ begin
   Result := R.Top + (R.Height div 2) - (TextHeight div 2);
 end;
 
-function GetPercentValue(PercentX, Percent100: integer): integer;
-begin
-  Result := Round( (PercentX * Percent100) / 100 );
-end;
+//function GetPercentValue(PercentX, Percent100: integer): integer;
+//begin
+//  Result := Round( (PercentX * Percent100) / 100 );
+//end;
 
 {$region '              Drawing procs                 '}
 

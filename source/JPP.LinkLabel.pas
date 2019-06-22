@@ -1,14 +1,29 @@
 unit JPP.LinkLabel;
 
+{
+  Jacek Pazera
+  http://www.pazera-software.com
+  https://github.com/jackdp
+  Last mod: 2019.05.25
+}
+
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, Winapi.ShellAPI,
-  System.SysUtils, System.Classes, System.UITypes,
+  {$IFDEF MSWINDOWS}
+  Windows,
+  ShellAPI,
+  {$ENDIF}
+  {$IFDEF DCC}
+  Winapi.Messages, System.SysUtils, System.Classes, System.UITypes,
   Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.Buttons, Vcl.GraphUtil, Vcl.Dialogs, Vcl.ActnList, Vcl.Themes,
-
-  JPP.Types, JPP.Graphics, JPP.Common;
+  {$ELSE}
+  SysUtils, Messages, Classes, Controls, StdCtrls, Graphics, ActnList, LCLIntf, LCLType,
+  {$ENDIF}
+  //JPP.Types, JPP.Graphics,
+  JPP.Common;
 
 type
 
@@ -96,7 +111,7 @@ type
     property CursorDisabled;
     property Visited;
 
-    {$IF RTLVersion > 23} property StyleElements; {$IFEND}
+    {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
     property Cursor default crHandPoint;
 
     property Align;
@@ -110,11 +125,11 @@ type
     property DragCursor;
     property DragKind;
     property DragMode;
-    property EllipsisPosition;
+    {$IFDEF DCC} property EllipsisPosition; {$ENDIF}
 
     property FocusControl;
     //property Font;
-    property GlowSize; // Windows Vista only
+    {$IFDEF DCC} property GlowSize; {$ENDIF} // Windows Vista only
     property ParentBiDiMode;
     property ParentColor;
     property ParentFont default False;
@@ -122,7 +137,7 @@ type
     property PopupMenu;
     property ShowAccelChar;
     property ShowHint;
-    property Touch;
+    {$IFDEF DCC} property Touch; {$ENDIF}
     property Transparent;
     property Layout;
     property Visible;
@@ -134,8 +149,8 @@ type
     property OnDragOver;
     property OnEndDock;
     property OnEndDrag;
-    property OnGesture;
-    property OnMouseActivate;
+    {$IFDEF DCC} property OnGesture; {$ENDIF}
+    {$IFDEF DCC} property OnMouseActivate; {$ENDIF}
     property OnMouseDown;
     property OnMouseMove;
     property OnMouseUp;
@@ -223,7 +238,7 @@ begin
   FFontNormal.Color := clBlue;
   FFontNormal.Style := [];
   Font.Assign(FFontNormal);
-  FFontNormal.OnChange := FontNormalChange;
+  FFontNormal.OnChange := {$IFDEF FPC} @ {$ENDIF}FontNormalChange;
 
   FFontHot.Color := clBlue;
   FFontHot.Style := [fsUnderline];
@@ -233,7 +248,7 @@ begin
 
   FFontVisitedNormal.Color := clPurple;
   FFontVisitedNormal.Style := FFontNormal.Style;
-  FFontVisitedNormal.OnChange := FontVisitedChange;
+  FFontVisitedNormal.OnChange := {$IFDEF FPC} @ {$ENDIF}FontVisitedChange;
 
   FFontVisitedHot.Color := FFontVisitedNormal.Color;
   FFontVisitedHot.Style := FFontHot.Style;
@@ -303,7 +318,12 @@ begin
   begin
     FVisited := True;
     Font.Assign(FFontVisitedHot);
+    {$IFDEF MSWINDOWS}
     ShellExecute(0, 'open', PChar(FURL), '', '', SW_SHOW);
+    {$ELSE}
+    if (Copy(FURL, 1, 4) = 'http') or (Copy(FURL, 1, 4) = 'www.') then OpenURL(FURL)
+    else OpenDocument(FURL);
+    {$ENDIF}
   end
   else if FClickActionType = catExecuteAction then
     if Assigned(FAction) then

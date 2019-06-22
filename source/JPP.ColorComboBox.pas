@@ -1,11 +1,19 @@
 unit JPP.ColorComboBox;
 
+{$IFDEF FPC} {$mode delphi} {$ENDIF}
+//{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages,
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  {$IFDEF DCC}
+  Messages,
   System.SysUtils, System.Classes, System.Types, System.UITypes,
   Vcl.Controls, Vcl.StdCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Buttons, Vcl.Clipbrd, Vcl.ExtCtrls,
+  {$ELSE}
+  SysUtils, Classes, Types, Controls, StdCtrls, Graphics, Dialogs, Buttons, Clipbrd, ExtCtrls, LCLType, LCLIntf, Messages, LMessages,
+  {$ENDIF}
 
   JPL.Strings, JPL.Conversion, JPL.Colors, JPL.ColorArrays,
   JPP.Types, JPP.Common, JPP.Common.Procs, JPP.ColorControls.Common, JPP.BasicSpeedButton, JPP.Graphics, JPP.Gradient
@@ -99,7 +107,7 @@ type
     FOptions: TJppColorComboBoxOptions;
     FAppearance: TJppColorComboBoxAppearance;
     FSelected: TColor;
-    FColorDialogOptions: TColorDialogOptions;
+    {$IFDEF DCC}FColorDialogOptions: TColorDialogOptions;{$ENDIF}
     FOnSelectSeparatorItem: TJppColorControlSelectSeparator;
     FOnColorChanged: TNotifyEvent;
     FOnSelectChangeColorItem: TJppColorControlSelectChangeColor;
@@ -126,7 +134,7 @@ type
     procedure SetColorListSet(const Value: TColorListSet);
     procedure SetOptions(const Value: TJppColorComboBoxOptions);
     procedure SetAppearance(const Value: TJppColorComboBoxAppearance);
-    procedure SetColorDialogOptions(const Value: TColorDialogOptions);
+    {$IFDEF DCC}procedure SetColorDialogOptions(const Value: TColorDialogOptions);{$ENDIF}
     procedure SetOnSelectSeparatorItem(const Value: TJppColorControlSelectSeparator);
     procedure SetOnColorChanged(const Value: TNotifyEvent);
     procedure SetOnSelectChangeColorItem(const Value: TJppColorControlSelectChangeColor);
@@ -224,7 +232,7 @@ type
     property NoneColor: TColor read FNoneColor write SetNoneColor default clNone;
     property ColorListSet: TColorListSet read FColorListSet write SetColorListSet default [cltBasic];
     property Options: TJppColorComboBoxOptions read FOptions write SetOptions default [ccboAddOnSelectIfNotExists, ccboAddAtTop];
-    property ColorDialogOptions: TColorDialogOptions read FColorDialogOptions write SetColorDialogOptions default [cdFullOpen, cdAnyColor];
+    {$IFDEF DCC}property ColorDialogOptions: TColorDialogOptions read FColorDialogOptions write SetColorDialogOptions default [cdFullOpen, cdAnyColor];{$ENDIF}
 
     property OnColorChanged: TNotifyEvent read FOnColorChanged write SetOnColorChanged;
     property OnSelectSeparatorItem: TJppColorControlSelectSeparator read FOnSelectSeparatorItem write SetOnSelectSeparatorItem;
@@ -246,20 +254,22 @@ type
   TJppColorComboBox = class(TJppCustomColorComboBox)
     property Align;
     property AutoComplete default True;
-    property AutoCompleteDelay default 500;
+    {$IFDEF DCC}property AutoCompleteDelay default 500;{$ENDIF}
     property AutoDropDown default False;
+    {$IFDEF DCC}
     property AutoCloseUp default False;
     property BevelEdges;
     property BevelInner;
     property BevelKind default bkNone;
     property BevelOuter;
+    {$ENDIF}
     property Style; // Must be published before Items
     property Anchors;
     property BiDiMode;
     property CharCase;
     property Color;
     property Constraints;
-    property Ctl3D;
+    {$IFDEF DCC}property Ctl3D;{$ENDIF}
     property DoubleBuffered;
     property DragCursor;
     property DragKind;
@@ -267,14 +277,14 @@ type
     property DropDownCount;
     property Enabled;
     property Font;
-    property ImeMode;
-    property ImeName;
+    {$IFDEF DCC}property ImeMode;{$ENDIF}
+    {$IFDEF DCC}property ImeName;{$ENDIF}
     property ItemHeight;
     property ItemIndex default -1;
     property MaxLength;
     property ParentBiDiMode;
     property ParentColor;
-    property ParentCtl3D;
+    {$IFDEF DCC}property ParentCtl3D;{$ENDIF}
     property ParentDoubleBuffered;
     property ParentFont;
     property ParentShowHint;
@@ -284,10 +294,10 @@ type
     property TabOrder;
     property TabStop;
     //property Text;
-    property TextHint;
-    property Touch;
+    {$IFDEF DCC}property TextHint;{$ENDIF}
+    {$IFDEF DCC}property Touch;{$ENDIF}
     property Visible;
-    {$IF RTLVersion > 23} property StyleElements; {$IFEND}
+    {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
     property OnChange;
     property OnClick;
     property OnCloseUp;
@@ -301,7 +311,7 @@ type
     property OnEndDrag;
     property OnEnter;
     property OnExit;
-    property OnGesture;
+    {$IFDEF DCC}property OnGesture;{$ENDIF}
     property OnKeyDown;
     property OnKeyPress;
     property OnKeyUp;
@@ -329,7 +339,7 @@ type
     property NoneColor;
     property ColorListSet;
     property Options;
-    property ColorDialogOptions;
+    {$IFDEF DCC}property ColorDialogOptions;{$ENDIF}
 
     property OnSelectSeparatorItem;
     property OnSelectChangeColorItem;
@@ -341,6 +351,9 @@ type
     property OnGetItemGradientColors;
     property OnGetItemTextColor;
     property OnGetNumericItemTextColor;
+    {$IFDEF FPC}
+    property BorderSpacing;
+    {$ENDIF}
   end;
   {$endregion TJppColorComboBox}
 
@@ -383,6 +396,8 @@ begin
   inherited Create(AOwner);
   Parent := TWinControl(AOwner);
 
+  {$IFDEF FPC}Color := clWindow;{$ENDIF}
+
   FUpdateCounter := 0;
 
   FAppearance := TJppColorComboBoxAppearance.Create(Self);
@@ -418,7 +433,7 @@ begin
   SetupButtonPasteColor;
 
   FOptions := [ccboAddOnSelectIfNotExists, ccboAddAtTop];
-  FColorDialogOptions := [cdFullOpen, cdAnyColor];
+  {$IFDEF DCC}FColorDialogOptions := [cdFullOpen, cdAnyColor];{$ENDIF}
 
   FColorListSet := [cltBasic];
   {
@@ -466,6 +481,7 @@ begin
 
     FAppearance.Assign(ccb.Appearance);
 
+    {$IFDEF DCC}
     if bBevel then
     begin
       BevelEdges := ccb.BevelEdges;
@@ -473,6 +489,7 @@ begin
       BevelKind := ccb.BevelKind;
       BevelOuter := ccb.BevelOuter;
     end;
+    {$ENDIF}
 
     if bLabelPos then
     begin
@@ -743,7 +760,7 @@ var
 begin
   dlgColor := TColorDialog.Create(Self);
   try
-    dlgColor.Options := FColorDialogOptions; // dlgColor.Options + [cdFullOpen, cdAnyColor];
+    {$IFDEF DCC}dlgColor.Options := FColorDialogOptions;{$ENDIF} // dlgColor.Options + [cdFullOpen, cdAnyColor];
     dlgColor.Color := FSelected;
     if not dlgColor.Execute then
     begin
@@ -756,10 +773,12 @@ begin
   end;
 end;
 
+{$IFDEF DCC}
 procedure TJppCustomColorComboBox.SetColorDialogOptions(const Value: TColorDialogOptions);
 begin
   FColorDialogOptions := Value;
 end;
+{$ENDIF}
   {$endregion Color Dialog}
 
 
@@ -939,7 +958,7 @@ var
   Color: TColor;
   ColorName: string;
 begin
-  SetLength(Result, 0);
+  SetLength(Result{%H-}, 0);
   for i := 0 to Items.Count - 1 do
   begin
     if IsSeparatorItem(i) then Continue;
@@ -1086,7 +1105,8 @@ procedure TJppCustomColorComboBox.DrawItem(Index: Integer; Rect: TRect; State: T
 }
 
 var
-  s, sName: string;
+  //s,
+  sName: string;
   sOut, sRgbInt, sRgbHex, sBgrHex, sUserColorStr: string;
   y, xTextStart, xTextLeft, xTextWidth: integer;
   ColorRect, OutTextRect: TRect;
@@ -1118,7 +1138,7 @@ begin
 
 
 
-  s := ItemData.Name;
+  //s := ItemData.Name;
   bSeparatorItem := ItemData.ItemType = ccbitSeparator; // IsSeparatorItem(Index); // Copy(s, 1, 1) = '-';
   bChangeColorItem := ItemData.ItemType = ccbitChangeColor; // IsChangeColorItem(Index);
   //bFocused := odFocused in State;
@@ -1480,7 +1500,7 @@ begin
       // RGB Int
       if FAppearance.ShowRgbInt then
       begin
-        sOut := sRgbInt;
+        sOut := {%H-}sRgbInt;
         y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
         TextOut(xTextLeft, y, sOut);
         xTextLeft := xTextLeft + TextWidth(sOut);
@@ -1495,7 +1515,7 @@ begin
       // RGB Hex
       if FAppearance.ShowRgbHex then
       begin
-        sOut := sRgbHex;
+        sOut := {%H-}sRgbHex;
         y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
         TextOut(xTextLeft, y, sOut);
         xTextLeft := xTextLeft + TextWidth(sOut);
@@ -1510,7 +1530,7 @@ begin
       // BGR Hex
       if FAppearance.ShowBgrHex then
       begin
-        sOut := sBgrHex;
+        sOut := {%H-}sBgrHex;
         y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
         TextOut(xTextLeft, y, sOut);
         xTextLeft := xTextLeft + TextWidth(sOut);
@@ -1738,7 +1758,7 @@ begin
     lpRight: P := Point(Left + Width + FBoundLabelSpacing, Top + ((Height - FBoundLabel.Height) div 2));
   end;
 
-  FBoundLabel.SetBounds(P.x, P.y, FBoundLabel.Width, FBoundLabel.Height);
+  FBoundLabel.SetBounds({%H-}P.x, {%H-}P.y, FBoundLabel.Width, FBoundLabel.Height);
 end;
 
 procedure TJppCustomColorComboBox.SetBoundLabelSpacing(const Value: Integer);
@@ -1815,7 +1835,7 @@ end;
 
 procedure TJppComboButton.SetVisible(const Value: Boolean);
 begin
-  inherited;
+  inherited {$IFDEF FPC}SetVisible(Value){$ENDIF};
   FVisible := Value;
   if Value then Show else Hide;
   if Assigned(OnVisibleChanged) then OnVisibleChanged(Self);

@@ -1,11 +1,16 @@
 unit JPP.MemIniFile;
 
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+
 interface
 
 uses
+  {$IFDEF DCC}
   Winapi.Windows,
-  System.SysUtils, System.Classes, System.IniFiles, System.ZLib,
-  Vcl.Graphics,  Vcl.Dialogs,
+  System.SysUtils, System.Classes, System.IniFiles, System.ZLib, Vcl.Graphics,  Vcl.Dialogs,
+  {$ELSE}
+  SysUtils, Classes, IniFiles, Graphics,
+  {$ENDIF}
   JPL.Strings,
   JPP.Common.Procs
   ;
@@ -22,19 +27,23 @@ type
     procedure SetLeftStringBound(const Value: string);
     procedure SetRightStringBound(const Value: string);
   public
-    constructor Create(const FileName: string); overload;
-    constructor Create(const FileName: string; const Encoding: TEncoding); overload;
+    constructor Create(const AFileName: string); overload;
+    constructor Create(const AFileName: string; const AEncoding: TEncoding); overload;
     procedure WriteColor(const Section: string; const Ident: string; Color: TColor);
     function ReadColor(const Section: string; const Ident: string; Default: TColor): TColor;
     procedure WriteFontStyle(const Section: string; const Ident: string; FontStyles: TFontStyles);
     function ReadFontStyle(const Section: string; const Ident: string; Default: TFontStyles): TFontStyles;
-    procedure WriteStrings(const Section: string; Items: TStrings; Compress: Boolean = False);
-    procedure ReadStrings(const Section: string; Items: TStrings; ItemsCompressed: Boolean = False);
+
+    procedure WriteStrings(const Section: string; Items: TStrings {$IFDEF DCC}; Compress: Boolean = False{$ENDIF});
+
+    procedure ReadStrings(const Section: string; Items: TStrings {$IFDEF DCC}; ItemsCompressed: Boolean = False{$ENDIF});
 
     procedure WriteBoundString(const Section, Ident, Value: string);
     function ReadBoundString(const Section, Ident, Default: string): string;
+    {$IFDEF DCC}
     procedure WriteInt64(const Section, Ident: string; const Value: Int64);
     function ReadInt64(const Section, Ident: string; const Default: Int64): Int64;
+    {$ENDIF}
     procedure WriteDotFloat(const Section, Ident: string; Value: Double);
     function ReadDotFloat(const Section, Name: string; Default: Double): Double;
 
@@ -51,14 +60,14 @@ implementation
 
 {$region ' ------------------------ IMP - TJppMemIniFile --------------------------- '}
 
-constructor TJppMemIniFile.Create(const FileName: string);
+constructor TJppMemIniFile.Create(const AFileName: string);
 begin
-  Create(Filename, nil);
+  Create(AFilename, nil);
 end;
 
-constructor TJppMemIniFile.Create(const FileName: string; const Encoding: TEncoding);
+constructor TJppMemIniFile.Create(const AFileName: string; const AEncoding: TEncoding);
 begin
-  inherited Create(FileName, Encoding);
+  inherited Create(AFileName, AEncoding);
   FLeftStringBound := '[';
   FRightStringBound := ']';
 end;
@@ -127,6 +136,7 @@ begin
   WriteString(Section, Ident, FontStylesToStr(FontStyles));
 end;
 
+{$IFDEF DCC}
 procedure TJppMemIniFile.WriteInt64(const Section, Ident: string; const Value: Int64);
 begin
   WriteString(Section, Ident, IntToStr(Value));
@@ -140,6 +150,7 @@ begin
   s := ReadString(Section, Ident, 'ERR');
   if TryStrToInt64(s, x) then Result := x else Result := Default;
 end;
+{$ENDIF}
 
 function TJppMemIniFile.ReadFontStyle(const Section: string; const Ident: string; Default: TFontStyles): TFontStyles;
 var
@@ -150,20 +161,24 @@ begin
   Result := StrToFontStyles(s);
 end;
 
-procedure TJppMemIniFile.WriteStrings(const Section: string; Items: TStrings; Compress: Boolean);
+procedure TJppMemIniFile.WriteStrings(const Section: string; Items: TStrings {$IFDEF DCC}; Compress: Boolean{$ENDIF});
 var
+  i: integer;
+  {$IFDEF DCC}
   s: string;
   StringStream: TStringStream;
   MemoryStream: TMemoryStream;
   Buffer: array[0..99] of Byte; //
-  i, k, xRead: integer;
+  k, xRead: integer;
+  {$ENDIF}
 begin
-  if not Compress then
+  {$IFDEF DCC}if not Compress then {$ENDIF}
   begin
     for i := 0 to Items.Count - 1 do
       WriteString(Section, 'Line_' + PadLeft(IntToStr(i + 1), 3, '0'), Items[i]);
   end
 
+  {$IFDEF DCC}
   else
 
   // compression
@@ -191,18 +206,22 @@ begin
     end;
 
   end;
+  {$ENDIF}
 
 
 end;
 
-procedure TJppMemIniFile.ReadStrings(const Section: string; Items: TStrings; ItemsCompressed: Boolean);
+procedure TJppMemIniFile.ReadStrings(const Section: string; Items: TStrings {$IFDEF DCC}; ItemsCompressed: Boolean{$ENDIF});
 var
   sl: TStringList;
+  i, xp: integer;
+  {$IFDEF DCC}
   ss: TStringStream;
   ms: TMemoryStream;
-  i, x, xp: integer;
+  x: integer;
   s, Hex: string;
   xb: Byte;
+  {$ENDIF}
 begin
   if SectionExists(Section) then
   begin
@@ -213,7 +232,7 @@ begin
       ReadSectionValues(Section, sl);
 
 
-      if not ItemsCompressed then
+      {$IFDEF DCC}if not ItemsCompressed then {$ENDIF}
       begin
         for i := 0 to sl.Count - 1 do
         begin
@@ -224,6 +243,7 @@ begin
         Items.Assign(sl);
       end
 
+      {$IFDEF DCC}
       else
 
 
@@ -272,7 +292,7 @@ begin
         end;
 
       end;
-
+      {$ENDIF}
 
     finally
       sl.Free;

@@ -4,15 +4,20 @@ unit JPP.StorageCtrl;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mod: 2018.06.08
+  Last mod: 2019.05.25
 }
+
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
+  {$IFDEF DCC}
   Winapi.Messages, Winapi.Windows,
-  System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Graphics,
+  System.SysUtils, System.Classes, System.Types, System.UITypes, Vcl.Graphics,
+  {$ELSE}
+  SysUtils, Classes, Graphics, LCLType, Types,
+  {$ENDIF}
 
   JPP.Types, JPP.Common;
 
@@ -65,7 +70,7 @@ type
     procedure SetByteValue2(const Value: Byte);
   protected
   public
-    constructor Create(Collection: TCollection); override;
+    constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
     property PointerValue1: Pointer read FPointerValue1 write SetPointerValue1 default nil;
     property PointerValue2: Pointer read FPointerValue2 write SetPointerValue2;
@@ -239,8 +244,8 @@ begin
     s := s + Sep + 'ColorValue2: ' + ColorToString(si.ColorValue2) + ENDL;
     s := s + Sep + 'ByteValue1: ' + IntToStr(si.ByteValue1) + ENDL;
     s := s + Sep + 'ByteValue2: ' + IntToStr(si.ByteValue2) + ENDL;
-    s := s + Sep + 'PointerValue1: ' + IntToStr(integer(si.PointerValue1)) + ENDL;
-    s := s + Sep + 'PointerValue2: ' + IntToStr(integer(si.PointerValue2)) + ENDL;
+    s := s + Sep + 'PointerValue1: ' + IntToStr({%H-}integer(si.PointerValue1)) + ENDL;
+    s := s + Sep + 'PointerValue2: ' + IntToStr({%H-}integer(si.PointerValue2)) + ENDL;
   end;
   Result := s;
 end;
@@ -249,7 +254,7 @@ end;
 
 
 {$region ' ------------------ TJppStorageCtrlItem - collection item ------------------- '}
-constructor TJppStorageCtrlItem.Create(Collection: TCollection);
+constructor TJppStorageCtrlItem.Create(ACollection: TCollection);
 begin
   inherited;
 
