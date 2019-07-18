@@ -3,6 +3,11 @@
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
 //{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
+{
+  Last mod: 12.07.2019
+    [+] SetItemColor, SetItemName
+}
+
 interface
 
 uses
@@ -140,12 +145,19 @@ type
     procedure EndUpdate(bCallOnChangeAfterUpdate: Boolean = True; bResetUpdatingState: Boolean = False);
     function UpdatingControl: Boolean;
 
+    procedure UnselectAll;
+    procedure InvertSelection;
+    procedure RemoveSelectedItems;
+
     procedure ShowColorDialog;
     procedure GetItemInfo(const Index: Integer; out ItemData: TJppColorListBoxItemData);
     function GetItemType(const Index: Integer): TJppColorListBoxItemType;
     function GetItemColor(const Index: Integer): TColor;
     function GetItemName(const Index: Integer): string;
     function GetColorIndex(const AColor: TColor; bFirst: Boolean = True): Integer;
+
+    function SetItemColor(const Index: integer; const cl: TColor): Boolean;
+    function SetItemName(const Index: integer; const NewColorName: string): Boolean;
 
     function IsSeparatorItem(const Index: Integer): Boolean;
     function IsColorItem(const Index: integer): Boolean;
@@ -170,6 +182,7 @@ type
 
     property SelectedColor: TColor read GetSelectedColor write SetSelectedColor;
 
+
     //property OnMeasureItem: TMeasureItemEvent read FOnMeasureItem write FOnMeasureItem;
     property Appearance: TJppColorListBoxAppearance read FAppearance write SetAppearance;
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
@@ -177,7 +190,9 @@ type
 
     property ColorListSet: TColorListSet read FColorListSet write SetColorListSet;
     property Options: TJppColorListBoxOptions read FOptions write SetOptions;
-    {$IFDEF DCC}property ColorDialogOptions: TColorDialogOptions read FColorDialogOptions write SetColorDialogOptions default [cdFullOpen, cdAnyColor];{$ENDIF}
+    {$IFDEF DCC}
+    property ColorDialogOptions: TColorDialogOptions read FColorDialogOptions write SetColorDialogOptions default [cdFullOpen, cdAnyColor];
+    {$ENDIF}
 
     property OnColorChanged: TNotifyEvent read FOnColorChanged write SetOnColorChanged;
     property OnSelectSeparatorItem: TJppColorControlSelectSeparator read FOnSelectSeparatorItem write SetOnSelectSeparatorItem;
@@ -428,8 +443,35 @@ begin
 end;
 
 
+function TJppCustomColorListBox.SetItemColor(const Index: integer; const cl: TColor): Boolean;
+var
+  ItemData: TJppColorListBoxItemData;
+begin
+  Result := False;
+  GetItemInfo(Index, ItemData);
+  if ItemData.ItemType <> clbitColor then Exit;
 
-  {$Region ' --------------------- Add & Insert ---------------------- '}
+  Items[Index] := ItemData.Name + '=' + ColorToRgbIntStr(ColorToRGB(cl), 3, '0', ',');
+  UpdateColorObject(Index, True);
+
+  Result := True;
+end;
+
+function TJppCustomColorListBox.SetItemName(const Index: integer; const NewColorName: string): Boolean;
+var
+  ItemData: TJppColorListBoxItemData;
+begin
+  Result := False;
+  GetItemInfo(Index, ItemData);
+  if ItemData.ItemType <> clbitColor then Exit;
+
+  Items[Index] := NewColorName + '=' + ColorToRgbIntStr(ColorToRGB(ItemData.Color), 3, '0', ',');
+  //UpdateColorObject(Index, True);
+
+  Result := True;
+end;
+
+{$Region ' --------------------- Add & Insert ---------------------- '}
 function TJppCustomColorListBox.AddChangeColorItem(bUseDefaultCaption: Boolean = True; ItemCaption: string = 'Select color...'): integer;
 begin
   if bUseDefaultCaption then ItemCaption := FAppearance.ChangeColorItem.Caption;
@@ -472,6 +514,8 @@ procedure TJppCustomColorListBox.InsertSeparatorItem(const Index: integer; const
 begin
   Items.Insert(Index, '-=' + ACaption);
 end;
+
+
 
 procedure TJppCustomColorListBox.AddColorsFromArray(const Arr: array of TColorArrayItem; GroupName: string = ''; bAddSeparator: Boolean = False);
 var
@@ -780,6 +824,8 @@ begin
   PropsChanged(Self);
 end;
 
+
+
 procedure TJppCustomColorListBox.SetNoneColor(const Value: TColor);
 begin
   if FNoneColor = Value then Exit;
@@ -889,6 +935,55 @@ begin
     if cltWeb216Safe in FColorListSet then AddColorsFromArray(Colors_Web_216_Safe, 'Web 216 safe colors', True);
     //if Color <> FNoneColor then SetSelectedColor(Color);
     //ShowMessage(ColorToRgbIntStr(Color));
+  finally
+    EndUpdate;
+  end;
+end;
+
+procedure TJppCustomColorListBox.RemoveSelectedItems;
+var
+  i: integer;
+begin
+  BeginUpdate;
+  try
+    for i := Items.Count - 1 downto 0 do
+      if Selected[i] then Items.Delete(i);
+  finally
+    EndUpdate;
+  end;
+end;
+
+procedure TJppCustomColorListBox.UnselectAll;
+var
+  i: integer;
+begin
+  BeginUpdate;
+  try
+
+    if MultiSelect then
+      for i := 0 to Items.Count - 1 do
+        Self.Selected[i] := False
+    else
+      if ItemIndex >= 0 then Selected[ItemIndex] := False;
+
+  finally
+    EndUpdate;
+  end;
+end;
+
+procedure TJppCustomColorListBox.InvertSelection;
+var
+  i: integer;
+begin
+  BeginUpdate;
+  try
+
+    if MultiSelect then
+      for i := 0 to Items.Count - 1 do
+        Selected[i] := not Selected[i]
+    else
+      if ItemIndex >= 0 then Selected[ItemIndex] := not Selected[ItemIndex];
+
   finally
     EndUpdate;
   end;
