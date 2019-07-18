@@ -13,11 +13,11 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.ExtCtrls, Vcl.StdCtrls, System.Actions, Vcl.ActnList, Vcl.Buttons, Vcl.Dialogs,
 
   // JPLib
-  JPL.Colors,
+  JPL.Strings, JPL.Colors,
 
   // JPPack units
   JPP.BasicSpeedButton, JPP.ColorComboBox, JPP.Panel, JPP.LinkLabel, JPP.PngButton, JPP.PngButton.ColorMaps, JPP.ColorListBox, JPP.BasicPanel,
-  JPP.DoubleLineLabel, JPP.DoubleLabel, JPP.PngCollection;
+  JPP.DoubleLineLabel, JPP.DoubleLabel, JPP.PngCollection, JPP.ColorSwatch, JPP.SimplePanel;
 
 
 
@@ -85,6 +85,13 @@ type
     JppDoubleLineLabel2: TJppDoubleLineLabel;
     btnToolbarAssignIcon: TJppBasicSpeedButton;
     JppPngCollection1: TJppPngCollection;
+    spn: TJppSimplePanel;
+    lbl4: TLabel;
+    JppColorSwatch1: TJppColorSwatch;
+    JppColorSwatch2: TJppColorSwatch;
+    cswe: TJppColorSwatchEx;
+    JppColorSwatch3: TJppColorSwatch;
+    JppColorSwatch4: TJppColorSwatch;
     procedure FormCreate(Sender: TObject);
     procedure ButtonClick(Sender: TObject);
     procedure actEscExecute(Sender: TObject);
@@ -94,6 +101,7 @@ type
     procedure ccbColorChanged(Sender: TObject);
     procedure clbColorChanged(Sender: TObject);
     procedure clbMeasureItem(Control: TWinControl; Index: Integer; var Height: Integer);
+    procedure JppColorSwatch1GetBottomColorStrValue(const AColor: TColor; var ColorStr, Prefix, Suffix: string);
     procedure SetActiveColor(const cl: TColor);
   end;
 
@@ -129,6 +137,9 @@ begin
   ccb.ButtonCopyColor.Appearance.Assign(ccb.ButtonChangeColor.Appearance);
   ccb.ButtonPasteColor.Appearance.Assign(ccb.ButtonChangeColor.Appearance);
 
+  cswe.ButtonCopyColor.Appearance.Assign(ccb.ButtonChangeColor.Appearance);
+  cswe.ButtonPasteColor.Appearance.Assign(ccb.ButtonChangeColor.Appearance);
+
   SetJppLinkLabelFonts(lblFugueIcons, 'Segoe UI', 12);
   SetJppLinkLabelFonts(lblPngComponents, 'Segoe UI', 10);
   SetJppLinkLabelFonts(lblLoadColorMap, 'Segoe UI', 12);
@@ -159,6 +170,7 @@ begin
 
   pnButtons.Appearance.Borders.Left.Pen.Color := cl2;
   pnButtons.Appearance.Borders.Right.Pen.Color := cl2;
+  spn.Appearance.BorderColor := cl2;
 
   cl2 := cl; //GetSimilarColor(cl, 20, True);
   pnButtons.Appearance.UpperGradient.ColorFrom := cl2;
@@ -215,6 +227,11 @@ end;
 procedure TFormMain.clbMeasureItem(Control: TWinControl; Index: Integer; var Height: Integer);
 begin
   if clb.IsSeparatorItem(Index) then Height := 22;
+end;
+
+procedure TFormMain.JppColorSwatch1GetBottomColorStrValue(const AColor: TColor; var ColorStr, Prefix, Suffix: string);
+begin
+  ColorStr := InsertNumSep(ColorStr, ' ', 2, 2);
 end;
 
 end.
