@@ -9,6 +9,9 @@ package JPPack;
 {$R '..\DCR\JppLinkLabel.dcr'}
 {$R '..\DCR\JppPanel.dcr'}
 {$R '..\DCR\JppTimer.dcr'}
+{$R '..\DCR\JppColorSwatch.dcr'}
+{$R '..\DCR\JppColorSwatchEx.dcr'}
+{$R '..\DCR\JppSimplePanel.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -68,6 +71,8 @@ contains
   JPP.PngCollection in '..\..\source\JPP.PngCollection.pas',
   JPP.DoubleLabel in '..\..\source\JPP.DoubleLabel.pas',
   JPP.DoubleLineLabel in '..\..\source\JPP.DoubleLineLabel.pas',
+  JPP.SimplePanel in '..\..\source\JPP.SimplePanel.pas',
+  JPP.ColorSwatch in '..\..\source\JPP.ColorSwatch.pas',
   LDPngFunctions in '..\..\source\LDPngFunctions.pas',
   JPP.Register in '..\..\source\JPP.Register.pas';
 

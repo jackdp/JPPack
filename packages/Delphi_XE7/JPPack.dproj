@@ -85,6 +85,9 @@
         <DCCReference Include="..\DCR\JppLinkLabel.dcr"/>
         <DCCReference Include="..\DCR\JppPanel.dcr"/>
         <DCCReference Include="..\DCR\JppTimer.dcr"/>
+        <DCCReference Include="..\DCR\JppColorSwatch.dcr"/>
+        <DCCReference Include="..\DCR\JppColorSwatchEx.dcr"/>
+        <DCCReference Include="..\DCR\JppSimplePanel.dcr"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vclimg.dcp"/>
@@ -113,6 +116,8 @@
         <DCCReference Include="..\..\source\JPP.PngCollection.pas"/>
         <DCCReference Include="..\..\source\JPP.DoubleLabel.pas"/>
         <DCCReference Include="..\..\source\JPP.DoubleLineLabel.pas"/>
+        <DCCReference Include="..\..\source\JPP.SimplePanel.pas"/>
+        <DCCReference Include="..\..\source\JPP.ColorSwatch.pas"/>
         <DCCReference Include="..\..\source\LDPngFunctions.pas"/>
         <DCCReference Include="..\..\source\JPP.Register.pas"/>
         <BuildConfiguration Include="Debug">

@@ -19,7 +19,11 @@ uses
 
 type
 
-  {$IFDEF FPC}TEllipsisPosition = (epNone, epPathEllipsis, epEndEllipsis, epWordEllipsis);{$ENDIF}
+
+  {$IFDEF FPC}
+  TVerticalAlignment = (taAlignTop, taAlignBottom, taVerticalCenter);
+  TEllipsisPosition = (epNone, epPathEllipsis, epEndEllipsis, epWordEllipsis);
+  {$ENDIF}
 
   TJppFocusRectType = (frtSystem, frtCustom, frtNone);
 
@@ -38,10 +42,34 @@ type
     destructor Destroy; override;
     procedure BeginUpdate;
     procedure EndUpdate(bCallOnChangeAfterUpdate: Boolean = True; bResetUpdatingState: Boolean = False);
-
     property OnChange: TNotifyEvent read FOnChange write SetOnChange;
   end;
   {$endregion TJppPersistent}
+
+
+  {$region ' ----------- TJppMargins -------------- '}
+  TJppMargins = class(TJppPersistent)
+  private
+    FLeft: integer;
+    FRight: integer;
+    FTop: integer;
+    FBottom: integer;
+    procedure SetLeft(const Value: integer);
+    procedure SetRight(const Value: integer);
+    procedure SetTop(const Value: integer);
+    procedure SetBottom(const Value: integer);
+  public
+    constructor Create(AOwner: TComponent);
+    destructor Destroy; override;
+    procedure Assign(Margins: TJppMargins); reintroduce;
+    procedure SetMargins(const xLeft, xRight, xTop, xBottom: integer);
+  published
+    property Left: integer read FLeft write SetLeft default 0;
+    property Right: integer read FRight write SetRight default 0;
+    property Top: integer read FTop write SetTop default 0;
+    property Bottom: integer read FBottom write SetBottom default 0;
+  end;
+  {$endregion TJppMargins}
 
 
   {$region ' --------- TJppTagExt ------------- '}
@@ -207,24 +235,20 @@ type
   TJppBorder = class(TJppPersistent)
   private
     FOwner: TComponent;
-    //FOnChange: TNotifyEvent;
     FColor: TColor;
     FWidth: integer;
     FVisible: Boolean;
     FStyle: TPenStyle;
-    //procedure SetOnChange(const Value: TNotifyEvent);
     procedure SetColor(const Value: TColor);
     procedure SetWidth(const Value: integer);
     procedure SetVisible(const Value: Boolean);
     procedure SetStyle(const Value: TPenStyle);
   protected
-    //procedure PropsChanged(Sender: TObject);
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
     procedure Assign(Border: TJppBorder); reintroduce;
   published
-    //property OnChange: TNotifyEvent read FOnChange write SetOnChange;
     property Color: TColor read FColor write SetColor default clSilver;
     property Width: integer read FWidth write SetWidth default 1;
     property Style: TPenStyle read FStyle write SetStyle default TPenStyle.psSolid;
@@ -334,6 +358,7 @@ constructor TJppPersistent.Create;
 begin
   inherited Create;
   FUpdateCounter := 0;
+  FOnChange := nil;
 end;
 
 destructor TJppPersistent.Destroy;
@@ -885,22 +910,12 @@ begin
   end;
 end;
 
-//procedure TJppBorder.PropsChanged(Sender: TObject);
-//begin
-//  if Assigned(FOnChange) then FOnChange(Self);
-//end;
-
 procedure TJppBorder.SetColor(const Value: TColor);
 begin
   if FColor = Value then Exit;
   FColor := Value;
   PropsChanged(Self);
 end;
-
-//procedure TJppBorder.SetOnChange(const Value: TNotifyEvent);
-//begin
-//  FOnChange := Value;
-//end;
 
 procedure TJppBorder.SetStyle(const Value: TPenStyle);
 begin
@@ -999,5 +1014,68 @@ end;
 
 
 
+
+{$region ' ------------------------- TJppMargins ---------------------- '}
+
+constructor TJppMargins.Create(AOwner: TComponent);
+begin
+  inherited Create;
+  FLeft := 0;
+  FRight := 0;
+  FTop := 0;
+  FBottom := 0;
+end;
+
+destructor TJppMargins.Destroy;
+begin
+  inherited;
+end;
+
+procedure TJppMargins.Assign(Margins: TJppMargins);
+begin
+  FLeft := Margins.Left;
+  FRight := Margins.Right;
+  FTop := Margins.Top;
+  FBottom := Margins.Bottom;
+end;
+
+procedure TJppMargins.SetLeft(const Value: integer);
+begin
+  if FLeft = Value then Exit;
+  FLeft := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppMargins.SetMargins(const xLeft, xRight, xTop, xBottom: integer);
+begin
+  FLeft := xLeft;
+  FRight := xRight;
+  FTop := xTop;
+  FBottom := xBottom;
+  PropsChanged(Self);
+end;
+
+procedure TJppMargins.SetRight(const Value: integer);
+begin
+  if FRight = Value then Exit;
+  FRight := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppMargins.SetTop(const Value: integer);
+begin
+  if FTop = Value then Exit;
+  FTop := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppMargins.SetBottom(const Value: integer);
+begin
+  if FBottom = Value then Exit;
+  FBottom := Value;
+  PropsChanged(Self);
+end;
+
+{$endregion TJppMargins}
 
 end.

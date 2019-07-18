@@ -8,11 +8,11 @@ uses
   {$IFDEF DCC}
   Winapi.Windows,
   System.SysUtils, System.Classes, System.UITypes,
-  Vcl.Controls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs; //, JPL.Math;
+  Vcl.Controls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs //, JPL.Math;
   {$ELSE}
-  SysUtils, Classes, Controls, Graphics, LCLType, LCLIntf; //, JPL.Math;
+  SysUtils, Classes, Controls, Graphics, LCLType, LCLIntf //, JPL.Math;
   {$ENDIF}
-
+  , JPP.Common;
 
 
 function FontStylesToStr(FontStyles: TFontStyles): string;
@@ -33,7 +33,6 @@ procedure DrawBottomBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean
 procedure DrawLeftBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = True);
 procedure DrawRightBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = True);
 
-//function GetPercentValue(PercentX, Percent100: integer): integer;
 
 function GetMiddlePosY(const R: TRect; const TextHeight: integer): integer;
 procedure DrawRectTopBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWidth: integer; PenStyle: TPenStyle = psSolid; ExtraSpace: integer = 0);
@@ -43,11 +42,22 @@ procedure DrawRectRightBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWi
 
 procedure DrawCenteredText(Canvas: TCanvas; Rect: TRect; const Text: string; DeltaX: integer = 0; DeltaY: integer = 0);
 
+procedure InflateRectEx(var ARect: TRect; const DeltaLeft, DeltaRight, DeltaTop, DeltaBottom: integer); overload;
+procedure InflateRectEx(var ARect: TRect; const Margins: TJppMargins); overload;
 
 
 implementation
 
 
+procedure InflateRectEx(var ARect: TRect; const DeltaLeft, DeltaRight, DeltaTop, DeltaBottom: integer);
+begin
+  ARect.Inflate(DeltaLeft, DeltaTop, DeltaRight, DeltaBottom);
+end;
+
+procedure InflateRectEx(var ARect: TRect; const Margins: TJppMargins); overload;
+begin
+  InflateRectEx(ARect, -Margins.Left, -Margins.Right, -Margins.Top, -Margins.Bottom);
+end;
 
 
 function GetMiddlePosY(const R: TRect; const TextHeight: integer): integer;
@@ -55,10 +65,6 @@ begin
   Result := R.Top + (R.Height div 2) - (TextHeight div 2);
 end;
 
-//function GetPercentValue(PercentX, Percent100: integer): integer;
-//begin
-//  Result := Round( (PercentX * Percent100) / 100 );
-//end;
 
 {$region '              Drawing procs                 '}
 

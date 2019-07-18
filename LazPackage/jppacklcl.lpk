@@ -8,12 +8,12 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <IncludeFiles Value="..\resources"/>
+        <IncludeFiles Value="..\resources;..\source"/>
         <OtherUnitFiles Value="..\src;..\source"/>
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="21">
+    <Files Count="23">
       <Item1>
         <Filename Value="..\source\JPP.Common.pas"/>
         <UnitName Value="JPP.Common"/>
@@ -99,6 +99,14 @@
         <Filename Value="..\source\JPP.ColorComboBox.pas"/>
         <UnitName Value="JPP.ColorComboBox"/>
       </Item21>
+      <Item22>
+        <Filename Value="..\source\JPP.ColorSwatch.pas"/>
+        <UnitName Value="JPP.ColorSwatch"/>
+      </Item22>
+      <Item23>
+        <Filename Value="..\source\JPP.SimplePanel.dcu"/>
+        <Type Value="Binary"/>
+      </Item23>
     </Files>
     <RequiredPkgs Count="1">
       <Item1>
