@@ -99,7 +99,7 @@ type
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
-    procedure Assign(A: TJppBasicSpeedButtonAppearance); reintroduce;
+    procedure Assign(A: TJppBasicSpeedButtonAppearance; bIgnoreShowCaption: Boolean = False); reintroduce;
   published
     property Normal: TJppBasicSpeedButtonStateParams read FNormal write SetNormal;
     property Hot: TJppBasicSpeedButtonStateParams read FHot write SetHot;
@@ -789,7 +789,7 @@ begin
   inherited;
 end;
 
-procedure TJppBasicSpeedButtonAppearance.Assign(A: TJppBasicSpeedButtonAppearance);
+procedure TJppBasicSpeedButtonAppearance.Assign(A: TJppBasicSpeedButtonAppearance; bIgnoreShowCaption: Boolean = False);
 begin
   Normal.BorderColor := A.Normal.BorderColor;
   Normal.BorderWidth := A.Normal.BorderWidth;
@@ -827,7 +827,7 @@ begin
   FGlyphDisabledBlendIntensity := A.GlyphDisabledBlendIntensity;
   FGlyphDisabledGrayscaleIntensity := A.GlyphDisabledGrayscaleIntensity;
 
-  ShowCaption := A.ShowCaption;
+  if not bIgnoreShowCaption then ShowCaption := A.ShowCaption;
 end;
 
 procedure TJppBasicSpeedButtonAppearance.PropsChanged(Sender: TObject);
