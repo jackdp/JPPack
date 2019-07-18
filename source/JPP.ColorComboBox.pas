@@ -118,6 +118,7 @@ type
     FOnGetItemGradientColors: TJppColorComboBoxGetItemGradientColors;
     FOnGetItemTextColor: TJppColorComboBoxGetItemTextColor;
     FOnGetNumericItemTextColor: TJppColorComboBoxGetNumericItemTextColor;
+    FButtonsAlignment: TVerticalAlignment;
     procedure ButtonCopyColorClick(Sender: TObject);
     procedure ButtonPasteColorClick(Sender: TObject);
     procedure ButtonChangeColorClick(Sender: TObject);
@@ -145,6 +146,8 @@ type
     procedure SetOnGetItemGradientColors(const Value: TJppColorComboBoxGetItemGradientColors);
     procedure SetOnGetItemTextColor(const Value: TJppColorComboBoxGetItemTextColor);
     procedure SetOnGetNumericItemTextColor(const Value: TJppColorComboBoxGetNumericItemTextColor);
+    procedure SetButtonsAlignment(const Value: TVerticalAlignment);
+    function GetButtonTopPosition(Button: TJppComboButton): integer;
   protected
     procedure SetParent(AParent: TWinControl); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -226,6 +229,7 @@ type
     property ButtonChangeColor: TJppComboButton read FButtonChangeColor;
     property ButtonCopyColor: TJppComboButton read FButtonCopyColor;
     property ButtonPasteColor: TJppComboButton read FButtonPasteColor;
+    property ButtonsAlignment: TVerticalAlignment read FButtonsAlignment write SetButtonsAlignment default taAlignTop;
 
     property Appearance: TJppColorComboBoxAppearance read FAppearance write SetAppearance;
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
@@ -333,6 +337,7 @@ type
     property ButtonChangeColor;
     property ButtonCopyColor;
     property ButtonPasteColor;
+    property ButtonsAlignment;
 
     property Appearance;
     property TagExt;
@@ -431,6 +436,7 @@ begin
   SetupButtonChangeColor;
   SetupButtonCopyColor;
   SetupButtonPasteColor;
+  FButtonsAlignment := taAlignTop;
 
   FOptions := [ccboAddOnSelectIfNotExists, ccboAddAtTop];
   {$IFDEF DCC}FColorDialogOptions := [cdFullOpen, cdAnyColor];{$ENDIF}
@@ -1063,6 +1069,7 @@ end;
 
 
   {$region ' ------------- TJppColorComboBoxEx.GetColorFromStr --------------- '}
+
 procedure TJppCustomColorComboBox.GetColorFromStr(sVal: string; var ColorName: string; var Color: TColor);
 var
   s: string;
@@ -1609,6 +1616,7 @@ begin
   FButtonChangeColor.FreeNotification(Self);
   FButtonChangeColor.OnClick := ButtonChangeColorClick;
   FButtonChangeColor.Height := Height;
+  //FButtonChangeColor.AutoWidth := False;
   FButtonChangeColor.Width := FButtonChangeColor.Height;
   FButtonChangeColor.Caption := '...';
   FButtonChangeColor.Appearance.Normal.BorderColor := GetSimilarColor(clBtnFace, 15, False);
@@ -1623,6 +1631,7 @@ begin
   FButtonCopyColor.Name := 'BtnCopyColor';
   FButtonCopyColor.FreeNotification(Self);
   FButtonCopyColor.OnClick := ButtonCopyColorClick;
+  //FButtonCopyColor.AutoWidth := False;
   FButtonCopyColor.Height := Height;
   FButtonCopyColor.Width := FButtonCopyColor.Height;
   FButtonCopyColor.Caption := 'C';
@@ -1638,6 +1647,7 @@ begin
   FButtonPasteColor.Name := 'BtnPasteColor';
   FButtonPasteColor.FreeNotification(Self);
   FButtonPasteColor.OnClick := ButtonPasteColorClick;
+  //FButtonPasteColor.AutoWidth := False;
   FButtonPasteColor.Height := Height;
   FButtonPasteColor.Width := FButtonPasteColor.Height;
   FButtonPasteColor.Caption := 'P';
@@ -1646,11 +1656,23 @@ begin
   FButtonPasteColor.OnVisibleChanged := ButtonPositionChanged;
 end;
 
+function TJppCustomColorComboBox.GetButtonTopPosition(Button: TJppComboButton): integer;
+begin
+  case FButtonsAlignment of
+    taVerticalCenter: Result := Top + (Height div 2) - (Button.Height div 2);
+    taAlignBottom: Result := (Top + Height) - Button.Height;
+  else
+    // taAlignTop
+    Result := Top;
+  end;
+end;
+
 procedure TJppCustomColorComboBox.SetButtonChangeColorPosition;
 begin
   if not Assigned(FButtonChangeColor) then Exit;
   FButtonChangeColor.Left := Left + Width + FButtonsSpacing;
-  FButtonChangeColor.Top := Top;
+  //FButtonChangeColor.Top := Top;
+  FButtonChangeColor.Top := GetButtonTopPosition(FButtonChangeColor);
 end;
 
 procedure TJppCustomColorComboBox.SetButtonCopyColorPosition;
@@ -1662,7 +1684,8 @@ begin
   else x := Left + Width;
   x := x + FButtonsSpacing;
   FButtonCopyColor.Left := x;
-  FButtonCopyColor.Top := Top;
+  //FButtonCopyColor.Top := Top;
+  FButtonCopyColor.Top := GetButtonTopPosition(FButtonCopyColor);
 end;
 
 procedure TJppCustomColorComboBox.SetButtonPasteColorPosition;
@@ -1675,7 +1698,15 @@ begin
   else x := Left + Width;
   x := x + FButtonsSpacing;
   FButtonPasteColor.Left := x;
-  FButtonPasteColor.Top := Top;
+  //FButtonPasteColor.Top := Top;
+  FButtonPasteColor.Top := GetButtonTopPosition(FButtonPasteColor);
+end;
+
+procedure TJppCustomColorComboBox.SetButtonsAlignment(const Value: TVerticalAlignment);
+begin
+  if FButtonsAlignment = Value then Exit;
+  FButtonsAlignment := Value;
+  SetButtonsPosition;
 end;
 
 procedure TJppCustomColorComboBox.SetButtonsPosition;
@@ -1722,9 +1753,7 @@ procedure TJppCustomColorComboBox.SetBounds(ALeft, ATop, AWidth, AHeight: Intege
 begin
   inherited SetBounds(ALeft, ATop, AWidth, AHeight);
   SetBoundLabelPosition(FBoundLabelPosition);
-  SetButtonChangeColorPosition;
-  SetButtonCopyColorPosition;
-  SetButtonPasteColorPosition;
+  SetButtonsPosition;
 end;
 
 
