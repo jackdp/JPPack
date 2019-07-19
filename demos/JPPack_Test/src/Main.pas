@@ -17,7 +17,7 @@ uses
 
   // JPPack units
   JPP.BasicSpeedButton, JPP.ColorComboBox, JPP.Panel, JPP.LinkLabel, JPP.PngButton, JPP.PngButton.ColorMaps, JPP.ColorListBox, JPP.BasicPanel,
-  JPP.DoubleLineLabel, JPP.DoubleLabel, JPP.PngCollection, JPP.ColorSwatch, JPP.SimplePanel;
+  JPP.DoubleLineLabel, JPP.DoubleLabel, JPP.PngCollection, JPP.ColorSwatch, JPP.SimplePanel, JPP.Edit;
 
 
 
@@ -85,13 +85,17 @@ type
     JppDoubleLineLabel2: TJppDoubleLineLabel;
     btnToolbarAssignIcon: TJppBasicSpeedButton;
     JppPngCollection1: TJppPngCollection;
-    spn: TJppSimplePanel;
+    spnColorSwatch: TJppSimplePanel;
     lbl4: TLabel;
     JppColorSwatch1: TJppColorSwatch;
     JppColorSwatch2: TJppColorSwatch;
     cswe: TJppColorSwatchEx;
     JppColorSwatch3: TJppColorSwatch;
     JppColorSwatch4: TJppColorSwatch;
+    spnEdit: TJppSimplePanel;
+    lbl5: TLabel;
+    JppEdit1: TJppEdit;
+    sbtnFlashEdit: TJppBasicSpeedButton;
     procedure FormCreate(Sender: TObject);
     procedure ButtonClick(Sender: TObject);
     procedure actEscExecute(Sender: TObject);
@@ -102,6 +106,7 @@ type
     procedure clbColorChanged(Sender: TObject);
     procedure clbMeasureItem(Control: TWinControl; Index: Integer; var Height: Integer);
     procedure JppColorSwatch1GetBottomColorStrValue(const AColor: TColor; var ColorStr, Prefix, Suffix: string);
+    procedure sbtnFlashEditClick(Sender: TObject);
     procedure SetActiveColor(const cl: TColor);
   end;
 
@@ -170,7 +175,8 @@ begin
 
   pnButtons.Appearance.Borders.Left.Pen.Color := cl2;
   pnButtons.Appearance.Borders.Right.Pen.Color := cl2;
-  spn.Appearance.BorderColor := cl2;
+  spnColorSwatch.Appearance.BorderColor := cl2;
+  spnEdit.Appearance.BorderColor := cl2;
 
   cl2 := cl; //GetSimilarColor(cl, 20, True);
   pnButtons.Appearance.UpperGradient.ColorFrom := cl2;
@@ -232,6 +238,11 @@ end;
 procedure TFormMain.JppColorSwatch1GetBottomColorStrValue(const AColor: TColor; var ColorStr, Prefix, Suffix: string);
 begin
   ColorStr := InsertNumSep(ColorStr, ' ', 2, 2);
+end;
+
+procedure TFormMain.sbtnFlashEditClick(Sender: TObject);
+begin
+  JppEdit1.FlashBackground;
 end;
 
 end.

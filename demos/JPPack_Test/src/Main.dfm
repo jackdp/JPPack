@@ -1169,7 +1169,6 @@ object FormMain: TFormMain
     Appearance.Borders.Top.Visible = False
     Appearance.Borders.Bottom.Pen.Color = clBtnShadow
     Appearance.Borders.Bottom.Visible = False
-    ExplicitHeight = 701
     object lbl1: TLabel
       Left = 68
       Top = 11
@@ -4240,11 +4239,9 @@ object FormMain: TFormMain
     Appearance.Borders.Top.Pen.Color = clBtnHighlight
     Appearance.Borders.Bottom.Pen.Color = clBtnShadow
     Appearance.DrawGradient = False
-    ExplicitTop = 31
-    ExplicitHeight = 701
     object lbl3: TLabel
       Left = 0
-      Top = 177
+      Top = 246
       Width = 238
       Height = 20
       Align = alTop
@@ -4252,7 +4249,13 @@ object FormMain: TFormMain
       AutoSize = False
       Caption = 'TJppColorListBox'
       Color = 15714469
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
       ParentColor = False
+      ParentFont = False
       Transparent = False
       Layout = tlCenter
       ExplicitLeft = -3
@@ -4260,7 +4263,7 @@ object FormMain: TFormMain
     end
     object clb: TJppColorListBox
       Left = 0
-      Top = 197
+      Top = 266
       Width = 238
       Height = 246
       Align = alTop
@@ -4701,9 +4704,9 @@ object FormMain: TFormMain
       Options = [clboAddOnSelectIfNotExists, clboAddAtTop]
       SelectedColor = clNone
       OnColorChanged = clbColorChanged
-      ExplicitTop = 20
+      ExplicitTop = 197
     end
-    object spn: TJppSimplePanel
+    object spnColorSwatch: TJppSimplePanel
       Left = 0
       Top = 0
       Width = 238
@@ -4724,7 +4727,13 @@ object FormMain: TFormMain
         AutoSize = False
         Caption = 'TJppColorSwatch / TJppColorSwatchEx'
         Color = 15714469
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
         ParentColor = False
+        ParentFont = False
         Transparent = False
         Layout = tlCenter
         ExplicitTop = 8
@@ -4960,6 +4969,88 @@ object FormMain: TFormMain
         Appearance.ColorRect.BorderColor = 11230358
         Appearance.ColorRect.BorderColorMixed = False
         SelectedColor = 8108137
+      end
+    end
+    object spnEdit: TJppSimplePanel
+      Left = 0
+      Top = 177
+      Width = 238
+      Height = 69
+      Align = alTop
+      ParentBackground = True
+      TabOrder = 2
+      Appearance.DrawTopBorder = False
+      Appearance.DrawLeftBorder = False
+      Appearance.DrawRightBorder = False
+      object lbl5: TLabel
+        Left = 0
+        Top = 0
+        Width = 238
+        Height = 20
+        Align = alTop
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 'TJppEdit'
+        Color = 15714469
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        Transparent = False
+        Layout = tlCenter
+        ExplicitTop = 8
+      end
+      object sbtnFlashEdit: TJppBasicSpeedButton
+        Left = 132
+        Top = 35
+        Width = 85
+        Height = 25
+        Caption = '<-- Flash edit'
+        Appearance.Normal.Color = 15066597
+        Appearance.Normal.FontColor = clWindowText
+        Appearance.Normal.BorderColor = clWindowFrame
+        Appearance.Normal.BorderWidth = 1
+        Appearance.Hot.Color = clHighlight
+        Appearance.Hot.FontColor = clHighlightText
+        Appearance.Hot.BorderColor = clHighlight
+        Appearance.Hot.BorderWidth = 1
+        Appearance.Down.Color = 11758628
+        Appearance.Down.FontColor = clHighlightText
+        Appearance.Down.BorderColor = 11758628
+        Appearance.Down.BorderWidth = 1
+        Appearance.Disabled.Color = 16250871
+        Appearance.Disabled.FontColor = clBtnShadow
+        Appearance.Disabled.BorderColor = clBtnShadow
+        Appearance.Disabled.BorderWidth = 1
+        OnClick = sbtnFlashEditClick
+      end
+      object JppEdit1: TJppEdit
+        Left = 10
+        Top = 39
+        Width = 104
+        Height = 21
+        EditLabel.Width = 46
+        EditLabel.Height = 13
+        EditLabel.Caption = 'TJppEdit:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 143934
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        LabelSpacing = 2
+        ParentFont = False
+        TabOrder = 0
+        Text = 'JppEdit1'
+        Appearance.NormalBgColor = 13431805
+        Appearance.NormalTextColor = 143934
+        Appearance.FocusedBgColor = 12348170
+        Appearance.FocusedTextColor = 16640981
+        Appearance.HotBgColor = 16640981
+        Appearance.HotTextColor = 5845764
+        TabOnEnter = False
       end
     end
   end
