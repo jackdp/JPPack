@@ -121,7 +121,6 @@ begin
   inherited Create;
   FTimer := TJppTimer.Create(AOwner);
   FTimer.Enabled := False;
-  FTimer.Interval := 20;
   FTimer.OnTimer := OnFlash;
   FTimer.OnRepeatCountLimitReached := RepeatCountReached;
   FFlashing := False;
@@ -129,6 +128,9 @@ begin
   FEnabled := True;
   FFlashColor := $007878FF;
   FFreeOnFlashFinished := True;
+  FFlashCount := 3;
+  FFlashInterval := 150;
+  FTimer.Interval := FFlashInterval;
 end;
 
 destructor TJppFlashBase.Destroy;
