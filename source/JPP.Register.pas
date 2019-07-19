@@ -11,7 +11,8 @@ uses
   JPP.ColorComboBox, JPP.ColorListBox, JPP.ColorSwatch,
   JPP.LinkLabel, JPP.Timer, JPP.StorageCtrl, JPP.StringStorageCtrl,
   JPP.FormIniStorage, JPP.PngCollection,
-  JPP.DoubleLineLabel, JPP.DoubleLabel
+  JPP.DoubleLineLabel, JPP.DoubleLabel,
+  JPP.Edit
   ;
 
 
@@ -36,7 +37,8 @@ begin
       TJppStringStorageCtrl,
       TJppFormIniStorage,
       TJppPngCollection,
-      TJppDoubleLineLabel, TJppDoubleLabel
+      TJppDoubleLineLabel, TJppDoubleLabel,
+      TJppEdit
     ]
   );
 end;

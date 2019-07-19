@@ -10,6 +10,7 @@ uses
     JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel, JPP.LinkLabel,
     JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.BasicPanel, JPP.Panel,
     JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
+    JPP.Edit,
     //JPP.PngButton, JPP.PngButton.ColorMaps,
     JPP.Types
     ;
@@ -39,6 +40,7 @@ begin
   RegisterComponents(JPPackPageName, [TJppColorComboBox]);
   RegisterComponents(JPPackPageName, [TJppSimplePanel]);
   RegisterComponents(JPPackPageName, [TJppColorSwatch, TJppColorSwatchEx]);
+  RegisterComponents(JPPackPageName, [TJppEdit]);
 
 
 end;
@@ -56,5 +58,6 @@ initialization
   {$I '../resources/TJppSimplePanel.lrs'}
   {$I '../resources/TJppColorSwatch.lrs'}
   {$I '../resources/TJppColorSwatchEx.lrs'}
+  {$I '../resources/TJppEdit.lrs'}
 
 end.

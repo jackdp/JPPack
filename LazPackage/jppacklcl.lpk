@@ -13,7 +13,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="23">
+    <Files Count="25">
       <Item1>
         <Filename Value="..\source\JPP.Common.pas"/>
         <UnitName Value="JPP.Common"/>
@@ -104,9 +104,17 @@
         <UnitName Value="JPP.ColorSwatch"/>
       </Item22>
       <Item23>
-        <Filename Value="..\source\JPP.SimplePanel.dcu"/>
-        <Type Value="Binary"/>
+        <Filename Value="..\source\JPP.Edit.pas"/>
+        <UnitName Value="JPP.Edit"/>
       </Item23>
+      <Item24>
+        <Filename Value="..\source\JPP.SimplePanel.pas"/>
+        <UnitName Value="JPP.SimplePanel"/>
+      </Item24>
+      <Item25>
+        <Filename Value="..\source\JPP.Flash.pas"/>
+        <UnitName Value="JPP.Flash"/>
+      </Item25>
     </Files>
     <RequiredPkgs Count="1">
       <Item1>
