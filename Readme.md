@@ -15,6 +15,7 @@
   1. [TJppLinkLabel](#tjpplinklabel)
   1. [TJppDoubleLineLabel](#tjppdoublelinelabel)
   1. [TJppDoubleLabel](#tjppdoublelabel)
+  1. [TJppEdit](#tjppedit)
   1. [TJppTimer](#tjpptimer)
   1. [TJppPngCollection](#tjpppngcollection)
   1. [TJppStorageCtrl](#tjppstoragectrl)
@@ -252,6 +253,18 @@ A simple label component composed of 2 captions: left (property `Caption`) and r
 
 The space between captions can be modified using the `Spacing` property.
 Based on **TJppDoubleLineLabel**.
+
+---
+
+### TJppEdit
+
+An edit component derived from `TCustomLabeledEdit`.
+
+Additional properties:
+* `Appearance`: Here you can set the background and font color for three states: Normal, Hot, Focused.
+* `Flash`: `FlashColor`, `FlashCount`, `FlashInterval`. To turn on flashing, call the `FlashBackground` method. This function can be used to indicate the user of an incorrect value.
+* **property** `ShowLabel`: `Boolean`
+* `TagExt`: `TJppTagExt`
 
 ---
 
