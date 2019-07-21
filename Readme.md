@@ -261,7 +261,7 @@ Based on **TJppDoubleLineLabel**.
 An edit component derived from `TCustomLabeledEdit`.
 
 Additional properties:
-* `Appearance`: Here you can set the background and font color for three states: Normal, Hot, Focused.
+* `Appearance`: Here you can set the background and font color for four states: Normal, Hot, Focused, Disabled.
 * `Flash`: `FlashColor`, `FlashCount`, `FlashInterval`. To turn on flashing, call the `FlashBackground` method. This function can be used to indicate the user of an incorrect value.
 * **property** `ShowLabel`: `Boolean`
 * `TagExt`: `TJppTagExt`
