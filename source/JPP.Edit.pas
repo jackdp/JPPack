@@ -31,12 +31,16 @@ type
     FFocusedTextColor: TColor;
     FHotBgColor: TColor;
     FHotTextColor: TColor;
+    FDisabledBgColor: TColor;
+    FDisabledTextColor: TColor;
     procedure SetNormalBgColor(const Value: TColor);
     procedure SetFocusedBgColor(const Value: TColor);
     procedure SetNormalTextColor(const Value: TColor);
     procedure SetFocusedTextColor(const Value: TColor);
     procedure SetHotBgColor(const Value: TColor);
     procedure SetHotTextColor(const Value: TColor);
+    procedure SetDisabledBgColor(const Value: TColor);
+    procedure SetDisabledTextColor(const Value: TColor);
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
@@ -47,6 +51,8 @@ type
     property FocusedTextColor: TColor read FFocusedTextColor write SetFocusedTextColor default clWindowText;
     property HotBgColor: TColor read FHotBgColor write SetHotBgColor default clWindow;
     property HotTextColor: TColor read FHotTextColor write SetHotTextColor default clWindowText;
+    property DisabledBgColor: TColor read FDisabledBgColor write SetDisabledBgColor default clWindow;
+    property DisabledTextColor: TColor read FDisabledTextColor write SetDisabledTextColor default clGrayText;
   end;
   {$endregion TJppCustomEditAppearance}
 
@@ -99,11 +105,13 @@ type
     {$IFDEF MSWINDOWS} procedure KeyPress(var Key: Char); override; {$ENDIF}
     procedure PropsChanged(Sender: TObject);
     procedure Loaded; override;
+    procedure CMEnabledchanged(var Message: TMessage); message CM_ENABLEDCHANGED;
     procedure ApplyAppearance;
+    property MouseOverControl: Boolean read FMouseOverControl;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    property MouseOverControl: Boolean read FMouseOverControl;
+    //property MouseOverControl: Boolean read FMouseOverControl;
     //property Color;
     procedure FlashBackground;
   protected
@@ -263,7 +271,12 @@ procedure TJppCustomEdit.ApplyAppearance;
 var
   BgColor, TextColor: TColor;
 begin
-  if Self.Focused then
+  if not Enabled then
+  begin
+    BgColor := FAppearance.DisabledBgColor;
+    TextColor := FAppearance.DisabledTextColor;
+  end
+  else if Self.Focused then
   begin
     BgColor := FAppearance.FocusedBgColor;
     TextColor := FAppearance.FocusedTextColor;
@@ -281,6 +294,12 @@ begin
 
   if Color <> BgColor then Color := BgColor;
   if Font.Color <> TextColor then Font.Color := TextColor;
+end;
+
+procedure TJppCustomEdit.CMEnabledchanged(var Message: TMessage);
+begin
+  inherited;
+  ApplyAppearance;
 end;
 
 procedure TJppCustomEdit.CMMouseEnter(var Message: TMessage);
@@ -379,6 +398,8 @@ begin
   FFocusedTextColor := clWindowText;
   FHotBgColor := clWindow;
   FHotTextColor := clWindowText;
+  FDisabledBgColor := clWindow;
+  FDisabledTextColor := clGrayText;
 end;
 
 destructor TJppCustomEditAppearance.Destroy;
@@ -390,6 +411,20 @@ procedure TJppCustomEditAppearance.SetNormalTextColor(const Value: TColor);
 begin
   if FNormalTextColor = Value then Exit;
   FNormalTextColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomEditAppearance.SetDisabledBgColor(const Value: TColor);
+begin
+  if FDisabledBgColor = Value then Exit;
+  FDisabledBgColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomEditAppearance.SetDisabledTextColor(const Value: TColor);
+begin
+  if FDisabledTextColor = Value then Exit;
+  FDisabledTextColor := Value;
   PropsChanged(Self);
 end;
 
