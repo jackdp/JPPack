@@ -183,12 +183,14 @@ type
     FOnGetTopColorStrValue: TOnGetColorStrValue;
     FOnGetBottomColorStrValue: TOnGetColorStrValue;
     FOnSelectedColorChange: TOnSelectedColorChange;
+    FOnSelectedColorChanged: TNotifyEvent;
     procedure SetAppearance(const Value: TJppColorSwatchAppearance);
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetSelectedColor(const Value: TColor);
     procedure SetOnGetTopColorStrValue(const Value: TOnGetColorStrValue);
     procedure SetOnGetBottomColorStrValue(const Value: TOnGetColorStrValue);
     procedure SetOnSelectedColorChange(const Value: TOnSelectedColorChange);
+    procedure SetOnSelectedColorChanged(const Value: TNotifyEvent);
   protected
     procedure DrawBackground(ARect: TRect); override;
     procedure DrawColorValue(ColorValue: TJppColorSwatchColorValue; ARect: TRect);
@@ -211,6 +213,7 @@ type
     property OnGetTopColorStrValue: TOnGetColorStrValue read FOnGetTopColorStrValue write SetOnGetTopColorStrValue;
     property OnGetBottomColorStrValue: TOnGetColorStrValue read FOnGetBottomColorStrValue write SetOnGetBottomColorStrValue;
     property OnSelectedColorChange: TOnSelectedColorChange read FOnSelectedColorChange write SetOnSelectedColorChange;
+    property OnSelectedColorChanged: TNotifyEvent read FOnSelectedColorChanged write SetOnSelectedColorChanged;
   published
   end;
   {$endregion}
@@ -288,6 +291,7 @@ type
     property OnGetTopColorStrValue;
     property OnGetBottomColorStrValue;
     property OnSelectedColorChange;
+    property OnSelectedColorChanged;
   end;
   {$endregion}
 
@@ -447,6 +451,7 @@ type
     property OnGetTopColorStrValue;
     property OnGetBottomColorStrValue;
     property OnSelectedColorChange;
+    property OnSelectedColorChanged;
     // Ex
     property BoundLabel;
     property BoundLabelPosition;
@@ -584,6 +589,9 @@ begin
   FAppearance.OnChange := PropsChanged;
 
   FSelectedColor := clSilver;
+
+  FOnSelectedColorChange := nil;
+  FOnSelectedColorChanged := nil;
 end;
 
 destructor TJppCustomColorSwatch.Destroy;
@@ -620,6 +628,11 @@ begin
   FOnSelectedColorChange := Value;
 end;
 
+procedure TJppCustomColorSwatch.SetOnSelectedColorChanged(const Value: TNotifyEvent);
+begin
+  FOnSelectedColorChanged := Value;
+end;
+
 procedure TJppCustomColorSwatch.SetSelectedColor(const Value: TColor);
 var
   NewColor: TColor;
@@ -631,6 +644,7 @@ begin
   FSelectedColor := NewColor;
 
   PropsChanged(Self);
+  if Assigned(FOnSelectedColorChanged) then FOnSelectedColorChanged(Self);
 end;
 
 procedure TJppCustomColorSwatch.SetTagExt(const Value: TJppTagExt);
@@ -762,6 +776,7 @@ begin
     Pen.Color := Brush.Color;
     Rectangle(ARect);
 
+    Brush.Style := bsClear;
     Font.Assign(ColorValue.Font);
     DrawCenteredText(Canvas, ARect, sText, 0, ColorValue.TextPosYDelta);
   end;
