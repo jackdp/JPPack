@@ -44,6 +44,7 @@ type
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
+    procedure Assign(Source: TJppCustomEditAppearance); reintroduce;
   published
     property NormalBgColor: TColor read FNormalBgColor write SetNormalBgColor default clWindow;
     property NormalTextColor: TColor read FNormalTextColor write SetNormalTextColor default clWindowText;
@@ -405,6 +406,18 @@ end;
 destructor TJppCustomEditAppearance.Destroy;
 begin
   inherited;
+end;
+
+procedure TJppCustomEditAppearance.Assign(Source: TJppCustomEditAppearance);
+begin
+  FNormalBgColor := Source.NormalBgColor;
+  FNormalTextColor := Source.NormalTextColor;
+  FFocusedBgColor := Source.FocusedBgColor;
+  FFocusedTextColor := Source.FocusedTextColor;
+  FHotBgColor := Source.HotBgColor;
+  FHotTextColor := Source.HotTextColor;
+  FDisabledBgColor := Source.DisabledBgColor;
+  FDisabledTextColor := Source.DisabledTextColor;
 end;
 
 procedure TJppCustomEditAppearance.SetNormalTextColor(const Value: TColor);
