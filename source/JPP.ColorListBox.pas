@@ -166,6 +166,7 @@ type
     function ColorExists(const AColor: TColor): Boolean;
 
     procedure AddColorsFromArray(const Arr: array of TColorArrayItem; GroupName: string = ''; bAddSeparator: Boolean = False);
+    procedure AddColorsFromColorListBox(clb: TJppCustomColorListBox; bAtTheEnd: Boolean = True);
 
     function AddColor(const AColor: TColor; const ColorName: string): Integer;
     procedure InsertColor(const Index: Integer; const AColor: TColor; const ColorName: string); overload;
@@ -542,7 +543,35 @@ begin
   end;
 end;
 
-  {$endregion Add & Insert}
+procedure TJppCustomColorListBox.AddColorsFromColorListBox(clb: TJppCustomColorListBox; bAtTheEnd: Boolean = True);
+var
+  i: integer;
+begin
+  BeginUpdate;
+  Items.BeginUpdate;
+  try
+
+    if bAtTheEnd then
+      for i := 0 to clb.Items.Count - 1 do
+      begin
+        Items.Add(clb.Items[i]);
+      end
+    else
+      for i := clb.Items.Count - 1 downto 0 do
+      begin
+        Items.Insert(0, clb.Items[i]);
+      end;
+
+
+    UpdateAllColorObjects;
+
+  finally
+    Items.EndUpdate;
+    EndUpdate;
+  end;
+end;
+
+{$endregion Add & Insert}
 
 
   {$Region ' ------------------- Get & Set Selected --------------------- '}
