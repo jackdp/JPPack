@@ -175,7 +175,10 @@ type
     procedure EndUpdate(bCallOnChangeAfterUpdate: Boolean = True; bResetUpdatingState: Boolean = False);
     function UpdatingControl: Boolean;
 
+    ////////////////////////////////////////////////////////////////////////////////////////
     procedure DrawItem(Index: Integer; Rect: TRect; State: TOwnerDrawState); override;
+    ////////////////////////////////////////////////////////////////////////////////////////
+
     //procedure MeasureItem(Index: Integer; var Height: Integer); override;
     procedure GetColorFromStr(sVal: string; var ColorName: string; var Color: TColor);
     function GetSelectedColor: TColor;
@@ -1079,6 +1082,8 @@ begin
   Color := FNoneColor;
 
   s := Trim(sVal);
+  xp := Pos('@@', s);
+  if xp > 0 then s := Copy(s, 1, xp - 1);
 
   xp := Pos('=', s);
   if xp <= 0 then Exit;
@@ -1100,10 +1105,37 @@ begin
 end;
 
 
-{$endregion}
+  {$endregion GetColorFromStr}
 
 
   {$region ' ------------------------------ TJppColorComboBoxEx.DrawItem ---------------------------------------------- '}
+
+procedure SplitStrToColors(s: string; out clFont, clBg, clBgTo: TColor);
+var
+  Arr: {$IFDEF FPC}specialize{$ENDIF} TArray<string>;
+  i, xp: integer;
+  sInd, sValue: string;
+  cl: TColor;
+begin
+  SplitStrToArray(s, Arr, '@');
+  clFont := clNone;
+  clBg := clNone;
+  clBgTo := clNone;
+  for i := 0 to High(Arr) do
+  begin
+    sInd := UpperCase(Arr[i]);
+    xp := Pos('=', sInd);
+    if xp = 0 then Continue;
+    sValue := Copy(sInd, xp + 1, Length(sInd));
+    sInd := Copy(sInd, 1, xp - 1);
+    if not TryGetColor(sValue, cl) then Continue;
+    if sInd = 'FONTCOLOR' then clFont := cl
+    else if sInd = 'BGCOLOR' then clBg := cl
+    else if sInd = 'BGCOLORTO' then clBgTo := cl;
+    //else if sInd = 'BORDERCOLOR' then
+  end;
+end;
+
 procedure TJppCustomColorComboBox.DrawItem(Index: Integer; Rect: TRect; State: TOwnerDrawState);
 {
   TOwnerDrawState = set of (odSelected, odGrayed, odDisabled, odChecked,
@@ -1113,9 +1145,9 @@ procedure TJppCustomColorComboBox.DrawItem(Index: Integer; Rect: TRect; State: T
 
 var
   //s,
-  sName: string;
+  sName, ItemStr, s2: string;
   sOut, sRgbInt, sRgbHex, sBgrHex, sUserColorStr: string;
-  y, xTextStart, xTextLeft, xTextWidth: integer;
+  y, xTextStart, xTextLeft, xTextWidth, xp: integer;
   ColorRect, OutTextRect: TRect;
   clBgFrom, clBgTo, clBackground, clText, clRectangle, clBorder: TColor;
   bPrevItemIsSeparator, bSeparatorItem, bChangeColorItem, bCanDrawDataSep: Boolean;
@@ -1124,7 +1156,8 @@ var
   grd: TJppGradientEx;
   Borders: TJppBorders;
   ItemData: TJppColorComboBoxItemData;
-
+  bCustomFontColor, bCustomBgColor, bCustomGradient: Boolean;
+  CustomFontColor, CustomBgColor, CustomBgColorTo: TColor;
 begin
 
   //////////////////////////////////////////////////////
@@ -1143,6 +1176,9 @@ begin
     Exit;
   end;
 
+  bCustomFontColor := False;
+  bCustomBgColor := False;
+  bCustomGradient := False;
 
 
   //s := ItemData.Name;
@@ -1151,6 +1187,23 @@ begin
   //bFocused := odFocused in State;
   bSelected := odSelected in State;
   sName := ItemData.Name;
+
+
+  ItemStr := Items[Index];
+  xp := Pos('@@', ItemStr);
+  if xp > 0 then
+  begin
+    s2 := Copy(ItemStr, xp + 2, Length(ItemStr));
+    ItemStr := Copy(ItemStr, 1, xp - 1);
+    SplitStrToColors(s2, CustomFontColor, CustomBgColor, CustomBgColorTo);
+    bCustomFontColor := CustomFontColor <> clNone;
+    bCustomBgColor := CustomBgColor <> clNone;
+    if bCustomBgColor then bCustomGradient := CustomBgColorTo <> clNone;
+  end;
+
+  xp := Pos('@@', sName);
+  if xp > 0 then sName := Copy(sName, 1, xp - 1);
+
 
   bPrevItemIsSeparator := False;
   if Index > 0 then bPrevItemIsSeparator := Self.IsSeparatorItem(Index - 1);
@@ -1174,17 +1227,25 @@ begin
       Pen.Style := psClear;
 
       // --------- Background color / gradient -------------
-      if FAppearance.SeparatorItem.Background.DrawGradient then
+      if FAppearance.SeparatorItem.Background.DrawGradient or bCustomGradient then
       begin
         grd := FAppearance.SeparatorItem.Background.Gradient;
-        clBgFrom := grd.ColorFrom;
-        clBgTo := grd.ColorTo;
+        if bCustomGradient then
+        begin
+          clBgFrom := CustomBgColor;
+          clBgTo := CustomBgColorTo;
+        end
+        else
+        begin
+          clBgFrom := grd.ColorFrom;
+          clBgTo := grd.ColorTo;
+        end;
         if Assigned(FOnGetItemGradientColors) then FOnGetItemGradientColors(Index, State, ItemData, clBgFrom, clBgTo);
         cyGradientFill(Self.Canvas, Rect, clBgFrom, clBgTo, grd.Orientation, grd.Balance, grd.AngleDegree, grd.BalanceMode, grd.MaxDegrade, grd.SpeedPercent);
       end
       else
       begin
-        clBackground := FAppearance.SeparatorItem.Background.Color;
+        if bCustomBgColor then clBackground := CustomBgColor else clBackground := FAppearance.SeparatorItem.Background.Color;
         if Assigned(FOnGetItemBackgroundColor) then FOnGetItemBackgroundColor(Index, State, ItemData, clBackground);
         Brush.Color := clBackground;
         Rectangle(Rect);
@@ -1200,15 +1261,13 @@ begin
         if Borders.Bottom.Visible then DrawRectBottomBorder(Self.Canvas, Rect, Borders.Bottom.Color, Borders.Bottom.Width, Borders.Bottom.Style, 1);
       end;
 
-
       // ---------- Caption --------------
       Brush.Style := bsClear;
-
 
       if sName <> '' then
       begin
         Font.Assign(FAppearance.SeparatorItem.Font);
-        clText := Font.Color;
+        if bCustomFontColor then clText := CustomFontColor else clText := Font.Color;
         if not Enabled then clText := FAppearance.SeparatorItem.DisabledFontColor;
         y := GetMiddlePosY(Rect, TextHeight(sName)) + FAppearance.SeparatorItem.TextPosDeltaY;
         if Assigned(FOnGetItemTextColor) then FOnGetItemTextColor(Index, State, ItemData, clText);
@@ -1220,8 +1279,7 @@ begin
           taLeftJustify: xTextLeft := FAppearance.SeparatorItem.CaptionMargin;
           taRightJustify: xTextLeft := Rect.Width - xTextWidth - FAppearance.SeparatorItem.CaptionMargin;
           taCenter: xTextLeft := (Rect.Width div 2) - (xTextWidth div 2);
-        else
-          xTextLeft := 10;
+          else xTextLeft := 10;
         end;
 
         TextOut(xTextLeft, y, sName);
@@ -1355,7 +1413,7 @@ begin
       Pen.Style := psClear;
 
       // --------- Background color / gradient -------------
-      if FAppearance.SelectedItem.Background.DrawGradient then
+      if FAppearance.SelectedItem.Background.DrawGradient or bCustomGradient then
       begin
         grd := FAppearance.SelectedItem.Background.Gradient;
         clBgFrom := grd.ColorFrom;
@@ -1387,6 +1445,7 @@ begin
 
     begin
       if not Enabled then Brush.Color := FAppearance.DisabledBackgroundColor;
+      if Enabled and bCustomBgColor then Brush.Color := CustomBgColor;
       clBackground := Brush.Color;
       if Assigned(FOnGetItemBackgroundColor) then FOnGetItemBackgroundColor(Index, State, ItemData, clBackground);
       Brush.Color := clBackground;
@@ -1427,12 +1486,11 @@ begin
         case FAppearance.ColorRectangle.BorderMode of
           bmAverageColor: clBorder := AvgColor(clRectangle, FAppearance.ColorRectangle.BorderColor);
           bmSimpleColor: clBorder := FAppearance.ColorRectangle.BorderColor;
-        else
-          clBorder := clGray;
+          else clBorder := clGray;
         end;
 
         if (not FAppearance.ColorRectangle.HideTopBorder) or (bPrevItemIsSeparator) then
-          DrawRectTopBorder(Self.Canvas, ColorRect, clBorder, FAppearance.ColorRectangle.BorderWidth, psSolid);
+            DrawRectTopBorder(Self.Canvas, ColorRect, clBorder, FAppearance.ColorRectangle.BorderWidth, psSolid);
         DrawRectBottomBorder(Self.Canvas, ColorRect, clBorder, FAppearance.ColorRectangle.BorderWidth, psSolid, 1);
         DrawRectLeftBorder(Self.Canvas, ColorRect, clBorder, FAppearance.ColorRectangle.BorderWidth, psSolid);
         DrawRectRightBorder(Self.Canvas, ColorRect, clBorder, FAppearance.ColorRectangle.BorderWidth, psSolid);
@@ -1482,7 +1540,7 @@ begin
 
       xTextLeft := xTextStart;
       Font.Assign(FAppearance.NumericFont);
-      clText := Font.Color;
+      if bCustomFontColor then clText := CustomFontColor else clText := Font.Color;
       if bSelected then clText := FAppearance.NumericFontSelectedColor;
       if not Enabled then clText := FAppearance.DisabledFontColor;
       if bSelected and (not Enabled) then clText := FAppearance.SelectedItem.DisabledFontColor;
@@ -1550,7 +1608,7 @@ begin
       end;
 
       Font.Assign(Self.Font);
-      clText := Font.Color;
+      if bCustomFontColor then clText := CustomFontColor else clText := Font.Color;
       if bSelected then clText := FAppearance.SelectedItem.FontColor;
       if not Enabled then clText := FAppearance.DisabledFontColor;
       if bSelected and (not Enabled) then clText := FAppearance.SelectedItem.DisabledFontColor;
@@ -1577,10 +1635,9 @@ begin
       if FAppearance.ShowColorName then sOut := sOut + FAppearance.DataSeparator + sName;
       sOut := TrimFromStart(sOut, FAppearance.DataSeparator);
 
-
       y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.TextPosDeltaY;
 
-      clText := Font.Color;
+      if bCustomFontColor then clText := CustomFontColor else clText := Font.Color;
       if bSelected then clText := FAppearance.SelectedItem.FontColor;
       if not Enabled then clText := FAppearance.DisabledFontColor;
       if bSelected and (not Enabled) then clText := FAppearance.SelectedItem.DisabledFontColor;
