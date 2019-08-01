@@ -98,6 +98,7 @@ type
     FOnGetItemGradientColors: TJppColorListBoxGetItemGradientColors;
     FOnGetItemTextColor: TJppColorListBoxGetItemTextColor;
     FOnGetNumericItemTextColor: TJppColorListBoxGetNumericItemTextColor;
+    {$IFDEF MSWINDOWS}FOnScroll: TNotifyEvent;{$ENDIF}
     //FOnMeasureItem: TMeasureItemEvent;
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetNoneColor(const Value: TColor);
@@ -127,10 +128,10 @@ type
     ///////////////////////////////////////////////////////////////////////////////////////////
     procedure GetColorFromStr(sVal: string; var ColorName: string; var AColor: TColor);
     procedure RecreateItems;
-    procedure Click; override;
+
 
   public
-
+    procedure Click; override;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
 
@@ -184,6 +185,8 @@ type
     procedure ScrollToLast;
     procedure ScrollToFirst;
 
+    {$IFDEF MSWINDOWS}procedure Scroll(var Msg: TMessage); message WM_VSCROLL;{$ENDIF}
+
 
     property SelectedColor: TColor read GetSelectedColor write SetSelectedColor;
 
@@ -210,6 +213,8 @@ type
     property OnGetItemGradientColors: TJppColorListBoxGetItemGradientColors read FOnGetItemGradientColors write SetOnGetItemGradientColors;
     property OnGetItemTextColor: TJppColorListBoxGetItemTextColor read FOnGetItemTextColor write SetOnGetItemTextColor;
     property OnGetNumericItemTextColor: TJppColorListBoxGetNumericItemTextColor read FOnGetNumericItemTextColor write SetOnGetNumericItemTextColor;
+
+    {$IFDEF MSWINDOWS}property OnScroll: TNotifyEvent read FOnScroll write FOnScroll;{$ENDIF}
   end;
   {$ENDREGION TJppCustomColorListBox}
 
@@ -299,6 +304,10 @@ type
     {$IFDEF FPC}
     property BorderSpacing;
     {$ENDIF}
+    {$IFDEF MSWINDOWS}property OnScroll;{$ENDIF}
+    property OnMouseWheel;
+    property OnMouseWheelUp;
+    property OnMouseWheelDown;
   end;
   {$ENDREGION TJppColorListBox}
 
@@ -350,6 +359,7 @@ begin
   FOnGetItemGradientColors := nil;
   FOnGetItemTextColor := nil;
   FOnGetNumericItemTextColor := nil;
+  {$IFDEF MSWINDOWS}FOnScroll := nil;{$ENDIF}
 
   FAppearance := TJppColorListBoxAppearance.Create(Self);
   FAppearance.OnChange := (*{$IFDEF FPC} @ {$ENDIF}*)PropsChanged;
@@ -846,6 +856,14 @@ begin
   if csLoading in ComponentState then Exit;
   Invalidate;
 end;
+
+{$IFDEF MSWINDOWS}
+procedure TJppCustomColorListBox.Scroll(var Msg: TMessage);
+begin
+  inherited;
+  if Assigned(FOnScroll) then FOnScroll(Self);
+end;
+{$ENDIF}
 
 procedure TJppCustomColorListBox.ScrollToFirst;
 begin
