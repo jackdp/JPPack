@@ -177,7 +177,7 @@ type
     function AddSeparatorItem(const ACaption: string): integer;
     procedure InsertSeparatorItem(const Index: integer; const ACaption: string);
 
-    function AsColorArray: TJppColorArray; // {$IFDEF FPC}specialize{$ENDIF} TArray<TColorArrayItem>;
+    function AsColorArray: TJppColorArray;
     procedure UpdateColorObject(const Index: Integer; bForce: Boolean = False);
     procedure UpdateAllColorObjects;
 
@@ -1070,7 +1070,7 @@ begin
   end;
 end;
 
-function TJppCustomColorListBox.AsColorArray: TJppColorArray; // {$IFDEF FPC}specialize{$ENDIF} TArray<TColorArrayItem>;
+function TJppCustomColorListBox.AsColorArray: TJppColorArray;
 var
   i: Integer;
   AColor: TColor;
@@ -1095,7 +1095,7 @@ end;
 
 procedure SplitStrToColors(s: string; out clFont, clBg, clBgTo: TColor);
 var
-  Arr: {$IFDEF FPC}specialize{$ENDIF} TArray<string>;
+  Arr: TArray<string>;
   i, xp: integer;
   sInd, sValue: string;
   cl: TColor;

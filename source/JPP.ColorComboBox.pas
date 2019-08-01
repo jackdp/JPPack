@@ -1112,7 +1112,7 @@ end;
 
 procedure SplitStrToColors(s: string; out clFont, clBg, clBgTo: TColor);
 var
-  Arr: {$IFDEF FPC}specialize{$ENDIF} TArray<string>;
+  Arr: TArray<string>;
   i, xp: integer;
   sInd, sValue: string;
   cl: TColor;
