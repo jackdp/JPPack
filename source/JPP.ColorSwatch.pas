@@ -201,7 +201,7 @@ type
     procedure Paint; override;
     procedure AdjustClientRect(var Rect: TRect); override;
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
-    property SelectedColor: TColor read FSelectedColor write SetSelectedColor default clSilver;
+
     function TopColorStr: string;
     function BottomColorStr: string;
   public
@@ -210,6 +210,7 @@ type
     property Canvas;
     property DockManager;
 
+    property SelectedColor: TColor read FSelectedColor write SetSelectedColor default clSilver;
     property OnGetTopColorStrValue: TOnGetColorStrValue read FOnGetTopColorStrValue write SetOnGetTopColorStrValue;
     property OnGetBottomColorStrValue: TOnGetColorStrValue read FOnGetBottomColorStrValue write SetOnGetBottomColorStrValue;
     property OnSelectedColorChange: TOnSelectedColorChange read FOnSelectedColorChange write SetOnSelectedColorChange;
