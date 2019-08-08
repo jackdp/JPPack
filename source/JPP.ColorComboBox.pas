@@ -1792,13 +1792,18 @@ end;
 
 procedure TJppCustomColorComboBox.ButtonPasteColorClick(Sender: TObject);
 var
-  x: integer;
+  //x: integer;
+  cl: TColor;
+  s: string;
 begin
-  if TryStrToInt(Clipboard.AsText, x) then
-  begin
-    SelectedColor := TColor(x);
-    if Assigned(OnChange) then OnChange(Self);
-  end;
+  s := Clipboard.AsText;
+  if TryDelphiIntStrToColor(s, cl) then SelectedColor := cl
+  else if JPL.Colors.TryGetColor(s, cl) then SelectedColor := cl;
+//  if TryStrToInt(Clipboard.AsText, x) then
+//  begin
+//    SelectedColor := TColor(x);
+//    if Assigned(OnChange) then OnChange(Self);
+//  end;
 end;
 
 procedure TJppCustomColorComboBox.ButtonPositionChanged(Sender: TObject);
