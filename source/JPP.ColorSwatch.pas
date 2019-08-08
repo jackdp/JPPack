@@ -726,7 +726,10 @@ begin
   if Appearance.DrawTopBorder then DrawTopBorder(Canvas, ARect, Canvas.Pen, False);
   if Appearance.DrawBottomBorder then DrawBottomBorder(Canvas, ARect, Canvas.Pen, False);
 end;
+  {$endregion DrawBorders}
 
+
+  {$Region ' ---------------- TJppCustomColorSwatch.DrawColorRect ---------------- '}
 procedure TJppCustomColorSwatch.DrawColorRect;
 var
   R: TRect;
@@ -752,7 +755,10 @@ begin
     Rectangle(R);
   end;
 end;
+  {$endregion TJppCustomColorSwatch.DrawColorRect}
 
+
+  {$Region ' ----------------- TJppCustomColorSwatch.DrawColorValue ------------------ '}
 procedure TJppCustomColorSwatch.DrawColorValue(ColorValue: TJppColorSwatchColorValue; ARect: TRect);
 var
   sColor, sPrefix, sSuffix, sText: string;
@@ -783,8 +789,8 @@ begin
   end;
 
 end;
+  {$endregion TJppCustomColorSwatch.DrawColorValue}
 
-{$endregion DrawBorders}
 
 
 {$endregion TJppCustomColorSwatch}
@@ -1312,7 +1318,7 @@ var
 begin
   s := Clipboard.AsText;
   if TryDelphiIntStrToColor(s, cl) then SelectedColor := cl
-  else if JPL.Colors.TryGetColor(Clipboard.AsText, cl) then SelectedColor := cl;
+  else if JPL.Colors.TryGetColor(s, cl) then SelectedColor := cl;
 //  if TryStrToInt(Clipboard.AsText, x) then
 //  begin
 //    SelectedColor := TColor(x);
