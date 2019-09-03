@@ -146,6 +146,7 @@ type
     procedure EndUpdate(bCallOnChangeAfterUpdate: Boolean = True; bResetUpdatingState: Boolean = False);
     function UpdatingControl: Boolean;
 
+    procedure SelectAll; override;
     procedure UnselectAll;
     procedure InvertSelection;
     procedure RemoveSelectedItems;
@@ -438,6 +439,7 @@ end;
 procedure TJppCustomColorListBox.BeginUpdate;
 begin
   Inc(FUpdateCounter);
+  Items.BeginUpdate;
 end;
 
 procedure TJppCustomColorListBox.EndUpdate(bCallOnChangeAfterUpdate, bResetUpdatingState: Boolean);
@@ -450,6 +452,7 @@ begin
   end;
 
   if (FUpdateCounter = 0) and bCallOnChangeAfterUpdate then PropsChanged(Self);
+  Items.EndUpdate;
 end;
 
 function TJppCustomColorListBox.UpdatingControl: Boolean;
@@ -877,6 +880,8 @@ begin
   TopIndex := Items.Count - 1;
 end;
 
+
+
 procedure TJppCustomColorListBox.SetAppearance(const Value: TJppColorListBoxAppearance);
 begin
   FAppearance := Value;
@@ -1021,6 +1026,20 @@ begin
   try
     for i := Items.Count - 1 downto 0 do
       if Selected[i] then Items.Delete(i);
+  finally
+    EndUpdate;
+  end;
+end;
+
+procedure TJppCustomColorListBox.SelectAll;
+var
+  i: integer;
+begin
+  if not MultiSelect then Exit;
+
+  BeginUpdate;
+  try
+    for i := 0 to Items.Count - 1 do Selected[i] := True;
   finally
     EndUpdate;
   end;
