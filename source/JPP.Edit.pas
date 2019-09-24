@@ -10,9 +10,9 @@ uses
   {$IFDEF DCC}
   Winapi.Messages,
   System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Controls, Vcl.Graphics, Vcl.ExtCtrls,
+  Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.ExtCtrls,
   {$ELSE}
-  SysUtils, Classes, Types, Controls, Graphics, ExtCtrls, LCLType, LCLIntf, Messages, LMessages,
+  SysUtils, Classes, Types, Controls, Graphics, StdCtrls, ExtCtrls, LCLType, LCLIntf, Messages, LMessages,
   {$ENDIF}
 
   JPP.Common, JPP.Flash
@@ -59,6 +59,7 @@ type
 
   TJppCustomEdit = class;
 
+  {$Region ' --- TJppFlashJppEdit --- '}
   TJppFlashJppEdit = class(TJppFlashBase) // nazwa TJppFlashEdit ju¿ jest zajêta
   private
     FEdit: TJppCustomEdit;
@@ -84,29 +85,42 @@ type
     property FlashInterval;
     property OnFlashFinished;
   end;
+  {$endregion TJppFlashJppEdit}
+
 
   {$region ' --- TJppCustomEdit --- '}
-  TJppCustomEdit = class(TCustomLabeledEdit)
+  TJppCustomEdit = class(TCustomEdit) // class(TCustomLabeledEdit)
   private
+    FBoundLabel: TJppControlBoundLabel;
     FMouseOverControl: Boolean;
     {$IFDEF MSWINDOWS} FTabOnEnter: Boolean; {$ENDIF}
     FTagExt: TJppTagExt;
     FShowLabel: Boolean;
     FAppearance: TJppCustomEditAppearance;
     FFlash: TJppFlashJppEdit;
+    FBoundLabelSpacing: Integer;
+    FBoundLabelPosition: TLabelPosition;
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetShowLabel(const Value: Boolean);
     procedure CMMouseEnter (var Message: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave (var Message: TMessage); message CM_MOUSELEAVE;
     procedure SetAppearance(const Value: TJppCustomEditAppearance);
     procedure SetFlash(const Value: TJppFlashJppEdit);
+    procedure SetBoundLabelPosition(const Value: TLabelPosition);
+    procedure SetBoundLabelSpacing(const Value: Integer);
+    procedure AdjustLabelBounds(Sender: TObject);
   protected
+    procedure SetParent(AParent: TWinControl); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure CMEnabledchanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+    procedure CMVisibleChanged(var Message: TMessage); message CM_VISIBLECHANGED;
+    procedure CMBiDiModeChanged(var Message: TMessage); message CM_BIDIMODECHANGED;
     procedure DoEnter; override;
     procedure DoExit; override;
     {$IFDEF MSWINDOWS} procedure KeyPress(var Key: Char); override; {$ENDIF}
     procedure PropsChanged(Sender: TObject);
     procedure Loaded; override;
-    procedure CMEnabledchanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+
     procedure ApplyAppearance;
     property MouseOverControl: Boolean read FMouseOverControl;
   public
@@ -115,7 +129,13 @@ type
     //property MouseOverControl: Boolean read FMouseOverControl;
     //property Color;
     procedure FlashBackground;
+    procedure SetupInternalLabel;
+    procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
   protected
+    property BoundLabel: TJppControlBoundLabel read FBoundLabel;
+    property BoundLabelPosition: TLabelPosition read FBoundLabelPosition write SetBoundLabelPosition default lpLeft;
+    property BoundLabelSpacing: Integer read FBoundLabelSpacing write SetBoundLabelSpacing default 4;
+
     property Appearance: TJppCustomEditAppearance read FAppearance write SetAppearance;
     {$IFDEF MSWINDOWS}
     property TabOnEnter: Boolean read FTabOnEnter write FTabOnEnter; // if True, after pressing the Enter key, the focus is moved to the next control
@@ -149,7 +169,7 @@ type
     property DragCursor;
     property DragKind;
     property DragMode;
-    property EditLabel;
+    //property EditLabel;
     property Enabled;
     property Font;
     property HideSelection;
@@ -157,8 +177,8 @@ type
     property ImeMode;
     property ImeName;
     {$ENDIF}
-    property LabelPosition;
-    property LabelSpacing;
+    //property LabelPosition;
+    //property LabelSpacing;
     property MaxLength;
     {$IFDEF DCC}
     property OEMConvert;
@@ -223,6 +243,10 @@ type
     property ShowLabel;
     property Flash;
     property TagExt;
+
+    property BoundLabel;
+    property BoundLabelPosition;
+    property BoundLabelSpacing;
   end;
   {$endregion TJppEdit}
 
@@ -235,6 +259,10 @@ implementation
 constructor TJppCustomEdit.Create(AOwner: TComponent);
 begin
   inherited;
+
+  FBoundLabelPosition := lpLeft;
+  FBoundLabelSpacing := 4;
+  SetupInternalLabel;
 
   FAppearance := TJppCustomEditAppearance.Create(AOwner);
   FAppearance.OnChange := PropsChanged;
@@ -259,7 +287,16 @@ begin
   inherited;
   Color := FAppearance.NormalBgColor;
   Font.Color := FAppearance.NormalTextColor;
-  EditLabel.Visible := FShowLabel;
+  //EditLabel.Visible := FShowLabel;
+end;
+
+procedure TJppCustomEdit.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if Operation = opRemove then
+  begin
+    if AComponent = FBoundLabel then FBoundLabel := nil;
+  end;
 end;
 
 procedure TJppCustomEdit.PropsChanged(Sender: TObject);
@@ -297,9 +334,16 @@ begin
   if Font.Color <> TextColor then Font.Color := TextColor;
 end;
 
+procedure TJppCustomEdit.CMBiDiModeChanged(var Message: TMessage);
+begin
+  inherited;
+  if FBoundLabel <> nil then FBoundLabel.BiDiMode := BiDiMode;
+end;
+
 procedure TJppCustomEdit.CMEnabledchanged(var Message: TMessage);
 begin
   inherited;
+  if FBoundLabel <> nil then FBoundLabel.Enabled := Enabled;
   ApplyAppearance;
 end;
 
@@ -320,6 +364,12 @@ begin
   inherited;
   FMouseOverControl := False;
   ApplyAppearance;
+end;
+
+procedure TJppCustomEdit.CMVisibleChanged(var Message: TMessage);
+begin
+  inherited;
+  if FBoundLabel <> nil then FBoundLabel.Visible := Visible;
 end;
 
 procedure TJppCustomEdit.DoEnter;
@@ -351,21 +401,74 @@ begin
   PropsChanged(Self);
 end;
 
+procedure TJppCustomEdit.AdjustLabelBounds(Sender: TObject);
+begin
+  SetBoundLabelPosition(FBoundLabelPosition);
+end;
+
+procedure TJppCustomEdit.SetBoundLabelPosition(const Value: TLabelPosition);
+var
+  P: TPoint;
+begin
+  if FBoundLabel = nil then Exit;
+  FBoundLabelPosition := Value;
+  case Value of
+    lpAbove: P := Point(Left, Top - FBoundLabel.Height - FBoundLabelSpacing);
+    lpBelow: P := Point(Left, Top + Height + FBoundLabelSpacing);
+    lpLeft : P := Point(Left - FBoundLabel.Width - FBoundLabelSpacing, Top + ((Height - FBoundLabel.Height) div 2));
+    lpRight: P := Point(Left + Width + FBoundLabelSpacing, Top + ((Height - FBoundLabel.Height) div 2));
+  end;
+
+  FBoundLabel.SetBounds({%H-}P.x, {%H-}P.y, FBoundLabel.Width, FBoundLabel.Height);
+  FBoundLabel.Visible := FShowLabel;
+end;
+
+procedure TJppCustomEdit.SetBoundLabelSpacing(const Value: Integer);
+begin
+  FBoundLabelSpacing := Value;
+  SetBoundLabelPosition(FBoundLabelPosition);
+end;
+
+procedure TJppCustomEdit.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  SetBoundLabelPosition(FBoundLabelPosition);
+end;
+
 procedure TJppCustomEdit.SetFlash(const Value: TJppFlashJppEdit);
 begin
   FFlash := Value;
 end;
 
+procedure TJppCustomEdit.SetParent(AParent: TWinControl);
+begin
+  inherited;
+  if FBoundLabel <> nil then
+  begin
+    FBoundLabel.Parent := AParent;
+    FBoundLabel.Visible := True;
+  end;
+end;
+
 procedure TJppCustomEdit.SetShowLabel(const Value: Boolean);
 begin
-  if EditLabel.Visible = Value then Exit;
+  if FBoundLabel.Visible = Value then Exit;
   FShowLabel := Value;
-  EditLabel.Visible := FShowLabel;
+  FBoundLabel.Visible := FShowLabel;
 end;
 
 procedure TJppCustomEdit.SetTagExt(const Value: TJppTagExt);
 begin
   FTagExt := Value;
+end;
+
+procedure TJppCustomEdit.SetupInternalLabel;
+begin
+  if Assigned(FBoundLabel) then Exit;
+  FBoundLabel := TJppControlBoundLabel.Create(Self);
+  FBoundLabel.FreeNotification(Self);
+  FBoundLabel.OnAdjustBounds := AdjustLabelBounds;
+  FBoundLabel.FocusControl := Self;
 end;
 
 {$IFDEF MSWINDOWS}
