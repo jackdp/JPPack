@@ -13,7 +13,7 @@ uses
   SysUtils, Messages, LMessages, LCLType, LCLIntf, Classes, Graphics, Controls, StdCtrls, ExtCtrls,
   {$ENDIF}
   JPL.Colors,
-  JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs;
+  JPP.Types, JPP.Graphics, JPP.Gradient, JPP.Common, JPP.Common.Procs;
 
 
 type
@@ -31,6 +31,7 @@ type
     FDrawLeftBorder: Boolean;
     FDrawRightBorder: Boolean;
     FBorderStyle: TPenStyle;
+    FBackroundColorTo: TColor;
     procedure SetOnChange(const Value: TNotifyEvent);
     procedure SetBackgroundColor(const Value: TColor);
     procedure SetBorderColor(const Value: TColor);
@@ -39,6 +40,7 @@ type
     procedure SetDrawLeftBorder(const Value: Boolean);
     procedure SetDrawRightBorder(const Value: Boolean);
     procedure SetBorderStyle(const Value: TPenStyle);
+    procedure SetBackroundColorTo(const Value: TColor);
   protected
     procedure PropsChanged(Sender: TObject);
   public
@@ -47,6 +49,7 @@ type
     procedure Assign(Source: TJppSimplePanelAppearance); reintroduce;
   published
     property BackgroundColor: TColor read FBackgroundColor write SetBackgroundColor default clBtnFace;
+    property BackroundColorTo: TColor read FBackroundColorTo write SetBackroundColorTo default clNone;
     property BorderColor: TColor read FBorderColor write SetBorderColor default clGray;
     property DrawTopBorder: Boolean read FDrawTopBorder write SetDrawTopBorder default True;
     property DrawBottomBorder: Boolean read FDrawBottomBorder write SetDrawBottomBorder default True;
@@ -69,11 +72,13 @@ type
     FOnPaint: TNotifyEvent;
     FOnVisibleChanging: TNotifyEvent;
     FOnAfterDrawBackground: TNotifyEvent;
-    {$IFDEF MSWINDOWS}FOnDragDropFiles: TProcOnOnDragDropFiles;{$ENDIF}
+    {$IFDEF MSWINDOWS}FOnDragDropFiles: TProcOnOnDragDropFiles;
+    FCaptionMargin: integer;{$ENDIF}
     procedure CMMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
     {$IFDEF MSWINDOWS}procedure CMDropFiles(var msg: TWMDropFiles); message WM_DROPFILES;{$ENDIF}
     procedure PropsChanged(Sender: TObject);
+    procedure SetCaptionMargin(const Value: integer);
   protected
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
@@ -92,6 +97,7 @@ type
     property OnPaint: TNotifyEvent read FOnPaint write FOnPaint;
     property OnVisibleChanging: TNotifyEvent read FOnVisibleChanging write FOnVisibleChanging;
     {$IFDEF MSWINDOWS}property OnDragDropFiles: TProcOnOnDragDropFiles read FOnDragDropFiles write FOnDragDropFiles;{$ENDIF}
+    property CaptionMargin: integer read FCaptionMargin write SetCaptionMargin default 6;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -135,6 +141,9 @@ type
     property BiDiMode;
 //    property Color;
     property Constraints;
+    property Caption;
+    property CaptionMargin;
+    {$IFDEF DCC}property ShowCaption;{$ENDIF}
     {$IFDEF DCC} property Ctl3D; {$ENDIF}
     property UseDockManager default True;
     property DockSite;
@@ -210,6 +219,7 @@ constructor TJppCustomBaseSimplePanel.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   BevelOuter := bvNone;
+  FCaptionMargin := 6;
 end;
 
 destructor TJppCustomBaseSimplePanel.Destroy;
@@ -224,6 +234,13 @@ end;
 
 procedure TJppCustomBaseSimplePanel.PropsChanged(Sender: TObject);
 begin
+  Invalidate;
+end;
+
+procedure TJppCustomBaseSimplePanel.SetCaptionMargin(const Value: integer);
+begin
+  if FCaptionMargin = Value then Exit;
+  FCaptionMargin := Value;
   Invalidate;
 end;
 
@@ -244,7 +261,8 @@ begin
   if Assigned(FOnAfterDrawBackground) then FOnAfterDrawBackground(Self);
 
   if (Caption <> '') {$IFDEF DELPHI2009_OR_ABOVE} and (ShowCaption) {$ENDIF}
-  then begin
+  then
+  begin
     TextRect := Rect;
     DrawCaption(TextRect);
   end;
@@ -258,8 +276,31 @@ begin
 end;
 
 procedure TJppCustomBaseSimplePanel.DrawCaption(aRect: TRect);
+var
+  x, y, tw, th: integer;
 begin
-  //
+  {$IFDEF DCC}if not ShowCaption then Exit;{$ENDIF}
+  if Caption = '' then Exit;
+
+  with Canvas do
+  begin
+    Font.Assign(Self.Font);
+    tw := TextWidth(Caption);
+    th := TextHeight(Caption);
+    case Alignment of
+      taLeftJustify: x := 0;
+      taCenter: x := (aRect.Width div 2) - tw div 2;
+      taRightJustify: x := aRect.Width - tw;
+    else
+      x := 0;
+    end;
+
+    if (Alignment = taLeftJustify) and (FCaptionMargin <> 0) then x := x + FCaptionMargin
+    else if (Alignment = taRightJustify) and (FCaptionMargin <> 0) then x := x - FCaptionMargin;
+
+    y := (aRect.Height div 2) - (th div 2);
+    TextOut(x, y, Caption);
+  end;
 end;
 
   {$endregion}
@@ -378,10 +419,18 @@ begin
     Exit;
   end;
 
-  Canvas.Brush.Style := bsClear;
   R := ARect;
-  Canvas.Brush.Color := Appearance.BackgroundColor;
-  Canvas.FillRect(R);
+
+  if Appearance.BackroundColorTo <> clNone then
+  begin
+    JppGradientFill(Canvas, R, Appearance.BackgroundColor, Appearance.BackroundColorTo, gtVertical);
+  end
+  else
+  begin
+    Canvas.Brush.Style := bsClear;
+    Canvas.Brush.Color := Appearance.BackgroundColor;
+    Canvas.FillRect(R);
+  end;
 
   DrawBorders(ARect);
 
@@ -422,6 +471,7 @@ begin
   FBorderStyle := psSolid;
 
   FBackgroundColor := clBtnFace;
+  FBackroundColorTo := clNone;
 end;
 
 destructor TJppSimplePanelAppearance.Destroy;
@@ -432,6 +482,7 @@ end;
 procedure TJppSimplePanelAppearance.Assign(Source: TJppSimplePanelAppearance);
 begin
   FBackgroundColor := Source.BackgroundColor;
+  FBackroundColorTo := Source.BackroundColorTo;
   FBorderColor := Source.BorderColor;
   FDrawTopBorder := Source.DrawTopBorder;
   FDrawBottomBorder := Source.DrawBottomBorder;
@@ -449,6 +500,13 @@ end;
 procedure TJppSimplePanelAppearance.SetBackgroundColor(const Value: TColor);
 begin
   FBackgroundColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppSimplePanelAppearance.SetBackroundColorTo(const Value: TColor);
+begin
+  if FBackroundColorTo = Value then Exit;
+  FBackroundColorTo := Value;
   PropsChanged(Self);
 end;
 
