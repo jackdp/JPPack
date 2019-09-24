@@ -36,6 +36,8 @@ type
     FShowAccelChar: Boolean;
     FRightCaptionPosDeltaY: ShortInt;
     FTagExt: TJppTagExt;
+    FLeftCaptionWidth: integer;
+    FLeftCaptionAlignment: TAlignment;
     procedure CMTextChanged(var Msg: TMessage); message CM_TEXTCHANGED;
     procedure SetRightCaption(Value: TCaption);
     procedure SetLayout(Value: TTextLayout);
@@ -50,6 +52,8 @@ type
     procedure SetShowAccelChar(const Value: Boolean);
     procedure SetRightCaptionPosDeltaY(const Value: ShortInt);
     procedure SetTagExt(const Value: TJppTagExt);
+    procedure SetLeftCaptionWidth(const Value: integer);
+    procedure SetLeftCaptionAlignment(const Value: TAlignment);
   protected
     procedure Paint; override;
   public
@@ -101,10 +105,14 @@ type
     property ShowAccelChar: Boolean read FShowAccelChar write SetShowAccelChar default False;
     property RightCaptionPosDeltaY: ShortInt read FRightCaptionPosDeltaY write SetRightCaptionPosDeltaY default 0;
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
+    property LeftCaptionWidth: integer read FLeftCaptionWidth write SetLeftCaptionWidth default -1;
+    // LeftCaptionAlignment is used when LeftCaptionWidth > 0
+    property LeftCaptionAlignment: TAlignment read FLeftCaptionAlignment write SetLeftCaptionAlignment default taLeftJustify;
   end;
 
 
 implementation
+
 
 
 constructor TJppDoubleLabel.Create(AOwner: TComponent);
@@ -117,6 +125,13 @@ begin
   FRightCaptionFont.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
   FRightCaptionColor := clNone;
   FRightCaptionBorderColor := clNone;
+
+//  FRightCaptionFont.Name := Self.Font.Name;
+//  FRightCaptionFont.Size := Self.Font.SIZE;
+  {$IFDEF MSWINDOWS}
+  FRightCaptionFont.Name := 'Segoe UI';
+  {$ENDIF}
+
   FSpacing := 6;
   FAutoWidth := True;
   FAutoHeight := True;
@@ -124,6 +139,9 @@ begin
   FShowAccelChar := False;
   FRightCaptionPosDeltaY := 0;
   FTagExt := TJppTagExt.Create(Self);
+
+  FLeftCaptionWidth := -1;
+  FLeftCaptionAlignment := taLeftJustify;
 end;
 
 destructor TJppDoubleLabel.Destroy;
@@ -136,7 +154,7 @@ end;
 procedure TJppDoubleLabel.Paint;
 var
   CaptionSize, RightCaptionSize: TSize;
-  CaptionRect, RightCaptionRect: TRect;
+  LeftCaptionRect, RightCaptionRect: TRect;
   CaptionTop, RightCaptionTop: Integer;
   Metric: TTextMetric;
   //X1, X2, Y: Integer;
@@ -144,6 +162,7 @@ var
   clBg, clPen: TColor;
   dtFormat: Cardinal;
   PosDeltaY: integer;
+  TextFormat: Cardinal;
 begin
   inherited;
 
@@ -199,9 +218,10 @@ begin
   end; // case
 
 
-  CaptionRect := Rect(0, CaptionTop, CaptionSize.CX, CaptionTop + CaptionSize.CY);
+  LeftCaptionRect := Rect(0, CaptionTop, CaptionSize.CX, CaptionTop + CaptionSize.CY);
+  if FLeftCaptionWidth > 0 then LeftCaptionRect.Width := FLeftCaptionWidth;
 
-  RightCaptionRect.Left := CaptionRect.Left + CaptionRect.Width + FSpacing;
+  RightCaptionRect.Left := LeftCaptionRect.Left + LeftCaptionRect.Width + FSpacing;
   RightCaptionRect.Top := RightCaptionTop;
   RightCaptionRect.Width := RightCaptionSize.cx;
   RightCaptionRect.Bottom := RightCaptionTop + xRightCaptionHeight + 0;
@@ -212,7 +232,7 @@ begin
   end;
 
   if FAutoHeight then
-    if CaptionRect.Height > RightCaptionRect.Height then Self.Height := CaptionRect.Height
+    if LeftCaptionRect.Height > RightCaptionRect.Height then Self.Height := LeftCaptionRect.Height
     else Self.Height := RightCaptionRect.Height;
 
   // draw:
@@ -227,9 +247,18 @@ begin
   // --------------------- Caption text ----------------------
   if Caption <> '' then
   begin
-    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(
-      Canvas.Handle, PChar(Caption), Length(Caption), CaptionRect, DT_LEFT or DT_END_ELLIPSIS or DT_EXPANDTABS or DT_NOCLIP
-    );
+    if FLeftCaptionWidth > 0 then
+    begin
+      case FLeftCaptionAlignment of
+        taLeftJustify: TextFormat := DT_LEFT;
+        taCenter: TextFormat := DT_CENTER;
+        taRightJustify: TextFormat := DT_RIGHT;
+      else TextFormat := DT_LEFT;
+      end;
+      TextFormat := TextFormat or DT_END_ELLIPSIS or DT_EXPANDTABS or DT_NOCLIP;
+    end
+    else TextFormat := DT_LEFT or DT_END_ELLIPSIS or DT_EXPANDTABS or DT_NOCLIP;
+    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(Canvas.Handle, PChar(Caption), Length(Caption), LeftCaptionRect, TextFormat);
   end;
 
   // ------------------ RightCaption text ------------------------
@@ -285,7 +314,7 @@ begin
   end; // with Canvas
 
 
-  if FAutoWidth then Self.Width := CaptionRect.Width + FSpacing + RightCaptionRect.Width;
+  if FAutoWidth then Self.Width := LeftCaptionRect.Width + FSpacing + RightCaptionRect.Width;
 
 end;
 
@@ -388,5 +417,19 @@ begin
   end;
 end;
 
+
+procedure TJppDoubleLabel.SetLeftCaptionAlignment(const Value: TAlignment);
+begin
+  if FLeftCaptionAlignment = Value then Exit;
+  FLeftCaptionAlignment := Value;
+  Invalidate;
+end;
+
+procedure TJppDoubleLabel.SetLeftCaptionWidth(const Value: integer);
+begin
+  if FLeftCaptionWidth = Value then Exit;
+  FLeftCaptionWidth := Value;
+  Invalidate;
+end;
 
 end.
