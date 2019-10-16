@@ -135,6 +135,7 @@ type
     FSpacing: Integer;
     FAutoWidth: Boolean;
     FAutoWidthMargin: ShortInt;
+    FAutoWidthRightJustify: Boolean;
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetOnMouseEnter(const Value: TNotifyEvent);
     procedure SetOnMouseLeave(const Value: TNotifyEvent);
@@ -148,6 +149,7 @@ type
     procedure SetSpacing(const Value: Integer);
     procedure SetAutoWidth(const Value: Boolean);
     procedure SetAutoWidthMargin(const Value: ShortInt);
+    procedure SetAutoWidthRightJustify(const Value: Boolean);
   protected
     procedure Paint; override;
     property ButtonState: TJppBasicSpeedButtonState read FButtonState;
@@ -178,6 +180,7 @@ type
     property Spacing: Integer read FSpacing write SetSpacing default 4;
     property AutoWidth: Boolean read FAutoWidth write SetAutoWidth default True;
     property AutoWidthMargin: ShortInt read FAutoWidthMargin write SetAutoWidthMargin default 6;
+    property AutoWidthRightJustify: Boolean read FAutoWidthRightJustify write SetAutoWidthRightJustify default False;
 
     property Action;
     property Align;
@@ -243,6 +246,7 @@ begin
 
   FAutoWidth := True;
   FAutoWidthMargin := 6;
+  FAutoWidthRightJustify := False;
 
   //Repaint;
 end;
@@ -386,6 +390,7 @@ var
   imgDisabled, imgHot: TPngImage;
   s: string;
   ButtonWidth: integer;
+  xw, dw: integer;
 
   procedure CopyDrawingParams(bsp: TJppBasicSpeedButtonStateParams);
   begin
@@ -537,11 +542,18 @@ begin
 
       if FAutoWidth then
       begin
+        xw := Width;
         Inc(ButtonWidth, Canvas.TextWidth(Caption));
-        Inc(ButtonWidth, FAutoWidthMargin + FAutoWidthMargin);
+        Inc(ButtonWidth, 2 * FAutoWidthMargin);
         if FMargin > 0 then Inc(ButtonWidth, FMargin);
         if ButtonWidth < 16 then ButtonWidth := 16;
         Self.Width := ButtonWidth;
+
+        if FAutoWidthRightJustify then
+        begin
+          dw := Width - xw;
+          Self.Left := Left - dw;
+        end;
       end;
 
       PaintRect := Rect(TextPos.X, TextPos.Y, Width, Height);
@@ -582,6 +594,13 @@ procedure TJppBasicSpeedButton.SetAutoWidthMargin(const Value: ShortInt);
 begin
   if FAutoWidthMargin = Value then Exit;
   FAutoWidthMargin := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicSpeedButton.SetAutoWidthRightJustify(const Value: Boolean);
+begin
+  if FAutoWidthRightJustify = Value then Exit;
+  FAutoWidthRightJustify := Value;
   PropsChanged(Self);
 end;
 
