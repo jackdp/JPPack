@@ -38,6 +38,8 @@ type
     FTagExt: TJppTagExt;
     FLeftCaptionWidth: integer;
     FLeftCaptionAlignment: TAlignment;
+    FRightCaptionPrefix: string;
+    FRightCaptionPostfix: string;
     procedure CMTextChanged(var Msg: TMessage); message CM_TEXTCHANGED;
     procedure SetRightCaption(Value: TCaption);
     procedure SetLayout(Value: TTextLayout);
@@ -54,6 +56,9 @@ type
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetLeftCaptionWidth(const Value: integer);
     procedure SetLeftCaptionAlignment(const Value: TAlignment);
+    procedure SetRightCaptionPrefix(const Value: string);
+    procedure SetRightCaptionPostfix(const Value: string);
+    function FullRightCaptionText: string;
   protected
     procedure Paint; override;
   public
@@ -108,6 +113,8 @@ type
     property LeftCaptionWidth: integer read FLeftCaptionWidth write SetLeftCaptionWidth default -1;
     // LeftCaptionAlignment is used when LeftCaptionWidth > 0
     property LeftCaptionAlignment: TAlignment read FLeftCaptionAlignment write SetLeftCaptionAlignment default taLeftJustify;
+    property RightCaptionPrefix: string read FRightCaptionPrefix write SetRightCaptionPrefix;
+    property RightCaptionPostfix: string read FRightCaptionPostfix write SetRightCaptionPostfix;
   end;
 
 
@@ -151,6 +158,11 @@ begin
   inherited;
 end;
 
+function TJppDoubleLabel.FullRightCaptionText: string;
+begin
+  Result := FRightCaptionPrefix + FRightCaption + FRightCaptionPostfix;
+end;
+
 procedure TJppDoubleLabel.Paint;
 var
   CaptionSize, RightCaptionSize: TSize;
@@ -163,6 +175,7 @@ var
   dtFormat: Cardinal;
   PosDeltaY: integer;
   TextFormat: Cardinal;
+  s: string;
 begin
   inherited;
 
@@ -174,7 +187,7 @@ begin
   CaptionSize := Canvas.TextExtent(Caption);
 
   Canvas.Font.Assign(FRightCaptionFont);
-  RightCaptionSize := Canvas.TextExtent(FRightCaption);
+  RightCaptionSize := Canvas.TextExtent(FullRightCaptionText);
   xRightCaptionHeight := RightCaptionSize.cy;
 
   Canvas.Font.Assign(Font);
@@ -309,12 +322,13 @@ begin
 
     if not FShowAccelChar then dtFormat := dtFormat + DT_NOPREFIX;
 
-    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(Canvas.Handle, PChar(FRightCaption), Length(FRightCaption), RightCaptionRect, dtFormat);
+    s := FullRightCaptionText;
+    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(Canvas.Handle, PChar(s), Length(s), RightCaptionRect, dtFormat);
 
   end; // with Canvas
 
 
-  if FAutoWidth then Self.Width := LeftCaptionRect.Width + FSpacing + RightCaptionRect.Width;
+  if FAutoWidth and (Align <> alTop) and (Align <> alBottom) then Self.Width := LeftCaptionRect.Width + FSpacing + RightCaptionRect.Width;
 
 end;
 
@@ -363,6 +377,20 @@ procedure TJppDoubleLabel.SetRightCaptionPosDeltaY(const Value: ShortInt);
 begin
   if FRightCaptionPosDeltaY = Value then Exit;
   FRightCaptionPosDeltaY := Value;
+  Invalidate;
+end;
+
+procedure TJppDoubleLabel.SetRightCaptionPostfix(const Value: string);
+begin
+  if FRightCaptionPostfix = Value then Exit;
+  FRightCaptionPostfix := Value;
+  Invalidate;
+end;
+
+procedure TJppDoubleLabel.SetRightCaptionPrefix(const Value: string);
+begin
+  if FRightCaptionPrefix = Value then Exit;
+  FRightCaptionPrefix := Value;
   Invalidate;
 end;
 
