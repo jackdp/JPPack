@@ -1,4 +1,4 @@
-# JPPack
+﻿# JPPack
 
 **A small collection of VCL/LCL components for Delphi XE2 - 10.3 Rio and Lazarus**
 
@@ -17,6 +17,7 @@
   1. [TJppDoubleLabel](#tjppdoublelabel)
   1. [TJppEdit](#tjppedit)
   1. [TJppTimer](#tjpptimer)
+  1. [TJppBrushStyleComboBox](#tjppbrushstylecombobox)
   1. [TJppPngCollection](#tjpppngcollection)
   1. [TJppStorageCtrl](#tjppstoragectrl)
   1. [TJppStringStorageCtrl](#tjppstringstoragectrl)
@@ -24,14 +25,13 @@
 - [Installation](#installation)
 - [License](#license)
 
-
 ---
 
 ## Overview
 
 **JPPack** is a small collection of VCL components for Delphi and LCL components for Lazarus.
 Supported Delphi versions: **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**.
-**Lazarus**: 2.0.3 (FPC 3.3.1).
+**Lazarus**: 2.0.7 (FPC 3.3.1).
 
 <p align="center">
 <img src="docs/img/JPPack.png">
@@ -135,7 +135,6 @@ A highly customizable *ComboBox* displaying a list of predefined and/or user-def
 <img src="./docs/img/TJppColorComboBox_5.png">
 </p>
 
-
 The `TJppColorComboBox` has 4 built-in components: one label and 3 buttons to change, copy and paste color.
 
 Colors can be displayed in three formats: **RGB Int** (eg. 051,102,255), **RGB Hex** (eg. #3366FF), and **BGR Hex** (eg. $00FF6633). If you need to display the color in a different format, you can do this in the `OnGetColorStrValue` event handler.
@@ -193,7 +192,6 @@ If you want to display the color code in some other format, you can do it in the
 
 `BoundLabel` is a standard label (`TCustomLabel` descendant) and can be displayed on the left, right, above or below the component. The buttons are inherited from the `TJppBasicSpeedButton` class, so you can freely set the colors for all button states (normal, hot, down, disabled) and the PNG icon.
 
-
 ---
 
 ### TJppLinkLabel
@@ -207,6 +205,7 @@ Label with additional fonts (`TFont`) for 5 states: *normal*, *visited-normal*, 
 ### TJppDoubleLineLabel
 
 A label component composed of 3 parts:
+
 1. Left caption (property `Caption`)
 2. Right caption (property `RightCaption`)
 3. Line drawn between the captions.
@@ -222,18 +221,19 @@ Based on **TPegtopLineLabel** from **Pegtop Common Components** written by Jens 
 </p>
 
 My modifications:
-* **TPegtopLineLabel** renamed to **TJppDoubleLineLabel**
-* `Annex` renamed to `RightCaption`
-* RightCaptionFont
-* LinePosDeltaY
-* LineSizeDeltaX1
-* LineSizeDeltaX2
-* RightCaptionColor
-* RightCaptionBorderColor
-* AutoHeight
-* RightCaptionPosDeltaY
-* TagExt
-* Added prefixes `Jpp`
+
+- **TPegtopLineLabel** renamed to **TJppDoubleLineLabel**
+- `Annex` renamed to `RightCaption`
+- RightCaptionFont
+- LinePosDeltaY
+- LineSizeDeltaX1
+- LineSizeDeltaX2
+- RightCaptionColor
+- RightCaptionBorderColor
+- AutoHeight
+- RightCaptionPosDeltaY
+- TagExt
+- Added prefixes `Jpp`
 
 The `RightCaption` has its own font, background and border color.
 The `RightCaption` can be positioned vertically by `RightCaptionPosDeltaY`.
@@ -258,29 +258,49 @@ Based on **TJppDoubleLineLabel**.
 
 ### TJppEdit
 
-An edit component derived from `TCustomLabeledEdit`.
+An edit component derived from `TCustomEdit`.
 
 Additional properties:
-* `Appearance`: Here you can set the background and font color for four states: Normal, Hot, Focused, Disabled.
-* `Flash`: `FlashColor`, `FlashCount`, `FlashInterval`. To turn on flashing, call the `FlashBackground` method. This function can be used to indicate the user of an incorrect value.
-* **property** `ShowLabel`: `Boolean`
-* `TagExt`: `TJppTagExt`
+
+- `Appearance`: Here you can set the background and font color for four states: Normal, Hot, Focused, Disabled.
+- `BoundLabel`: Internal label
+- `Flash`: `FlashColor`, `FlashCount`, `FlashInterval`. To turn on flashing, call the `FlashBackground` method. This function can be used to indicate the user of an incorrect value.
+- **property** `ShowLabel`: `Boolean`
+- `TagExt`: `TJppTagExt`
+
+---
+
+### TJppBrushStyleComboBox
+
+A highly customizable combo box with a list of brush styles.
+
+<p align="center">
+<img src="./docs/img/TJppBrushStyleComboBox.png">
+</p>
+
+Current style can be read/set using the `Selected` property.
+
+The brush style display name can be changed in the `OnGetDisplayName` event handler.
+
+The *TJppBrushStyleComboBox* has a built-in label (`BoundLabel`).
 
 ---
 
 ### TJppTimer
 
 A standard `TTimer` component with a few additional properties and methods:
+
 1. `RepeatCountLimit` property.
 Here you can set how many times the time interval specified in the `Interval` property can be reached. The value `0` means no limit.
 1. `Counter` property.
-Each time the time interval specified in the `Interval` property expires, the` Counter` property is incremented by 1. When the `Counter` reaches the value of `RepeatCountLimit`, the timer is stopped and the `OnRepeatCountLimitReached` event handler is triggered (if assigned).
+Each time the time interval specified in the `Interval` property expires, the `Counter` property is incremented by 1. When the `Counter` reaches the value of `RepeatCountLimit`, the timer is stopped and the `OnRepeatCountLimitReached` event handler is triggered (if assigned).
 1. `ClearCounterOnStart` property. If is set to `True`, then the `Start` method resets the `Counter`.
 1. `Start` method. Sets `Enabled` to `True`. If `ClearCounterOnStart` is set to `True` then the `Start` sets the `Counter` property to `0`.
 1. `Stop` method. Sets the `Enabled` to `False`.
 1. `OnRepeatCountLimitReached` event - fired when the `Counter` reaches the value of `RepeatCountLimit`.
 
 Example: Displaying the counter every one second. Display the message after 10 seconds and switch off of the `Timer`.
+
 ```delphi
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -324,18 +344,22 @@ begin
   end;
 end;
 ```
+
 The `AddPngImage` method adds a **copy** of the PNG image, so you are responsible for freeing the `Png` object in the above example.
 
 To retrieve a PNG image from a collection, you can use the methods: `GetPngImage`, `GetPngImageByName` or `Items[Index].PngImage`.
 
 There are additional properties associated with each PNG image in the collection:
+
 ```delphi
   Name: string;
   Description: string;
   Tag: integer;
   Enabled: Boolean
 ```
+
 And read only properties:
+
 ```delphi
   Width: integer;
   Height: integer;
@@ -348,6 +372,7 @@ The **TPngImage** objects are created automatically when creating collection ite
   // Improperly
   if JppPngCollection.Items[0].PngImage <> nil then ... // <-- Always returns True
 ```
+
 ```delphi
   // Properly
   if not JppPngCollection.Items[0].PngImage.Empty then ... // OK, image assigned
@@ -358,6 +383,7 @@ The **TPngImage** objects are created automatically when creating collection ite
 ### TJppStorageCtrl
 
 `TJppStorageCtrl` is a non-visual component that allows you to store information of different types in the collection. Each item of the collection stores the following data:
+
 - 4 String values,
 - 2 Integer values,
 - 2 Int64 values,
@@ -371,15 +397,19 @@ Items are accesible from the **Object Inspector** using `StorageCollection` prop
 The values of each item of the collection, except pointers, can also be set in the *Object Inspector*. Pointer values can only be set in the code and they are initialized by default to `nil`.
 
 To acces the collection items in the code you can use the `Items` property, eg:
+
 ```delphi
 JppStorageCtrl.Items[0].IntValue1 := 1;
 JppStorageCtrl.Items[0].PointerValue1 := SomePointer;
 ```
+
 But, since `Items` is set as the **default** property, you can write it simply:
+
 ```delphi
 JppStorageCtrl[0].IntValue1 := 1;
 JppStorageCtrl[0].PointerValue1 := SomePointer;
 ```
+
 This component can be useful if you want to have access to some global data, and you do not want to create global variables.
 
 I sometimes use this component in the early stages of writing applications. In later stages, a definitely better way to store and manage data is to design specialized records, classes, arrays, generic/pointer containers, etc.
@@ -389,6 +419,7 @@ I sometimes use this component in the early stages of writing applications. In l
 ### TJppStringStorageCtrl
 
 A non-visual component that allows you to store collection of strings with additional data. Each item of the collection has the following properties:
+
 ```delphi
   ItemName: string;
   Value: string;
@@ -412,12 +443,12 @@ Property | Default value
 `TagExt.PointerValue` | **`nil`**
 `TagExt.DateValue` | `Now`
 
-
 ## Installation
 
 ### Delphi
 
 Before installing the **JPPack** package, you must first install 2 another packages:
+
 1. **JPLib** from https://github.com/jackdp/JPLib
 1. **PngComponents** from https://bitbucket.org/uweraabe/pngcomponents
 You can use *PngComponents* ver. 1.4.1 package from the [3rd-party](3rd-party) folder. I tested *JPPack* with this version and it looks like everything works OK.
@@ -430,6 +461,7 @@ Go to the subfolder with the name of your Delphi version (eg `Delphi_XE7` for XE
 You can also compile package for **Win64** target.
 
 After installing the package, it is best to add the `source` folder to the **library path**:
+
 1. Select menu `Tools` --> `Options`.
 1. In the tree view on the left, go to `Environment Options` --> `Delphi Options` --> `Library`.
 1. In the **Library path** combo box (on the right), add `;` (semicolon) and the path to the `source` directory.

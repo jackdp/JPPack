@@ -13,7 +13,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="25">
+    <Files Count="26">
       <Item1>
         <Filename Value="..\source\JPP.Common.pas"/>
         <UnitName Value="JPP.Common"/>
@@ -115,6 +115,10 @@
         <Filename Value="..\source\JPP.Flash.pas"/>
         <UnitName Value="JPP.Flash"/>
       </Item25>
+      <Item26>
+        <Filename Value="..\source\JPP.BrushStyleComboBox.pas"/>
+        <UnitName Value="JPP.BrushStyleComboBox"/>
+      </Item26>
     </Files>
     <RequiredPkgs Count="1">
       <Item1>

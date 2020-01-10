@@ -10,7 +10,8 @@ interface
 uses
   JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.Gradient, JPP.Graphics, JPP.Types, LazJPPackRegister, JPP.DoubleLineLabel, JPP.LinkLabel, JPP.MemIniFile, 
   JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.BasicPanel, JPP.Panel, JPP.BasicSpeedButton, LDPngFunctions, 
-  JPP.ColorControls.Common, JPP.ColorListBox, JPP.ColorComboBox, JPP.ColorSwatch, JPP.Edit, JPP.SimplePanel, JPP.Flash, LazarusPackageIntf;
+  JPP.ColorControls.Common, JPP.ColorListBox, JPP.ColorComboBox, JPP.ColorSwatch, JPP.Edit, JPP.SimplePanel, JPP.Flash, JPP.BrushStyleComboBox, 
+  LazarusPackageIntf;
 
 implementation
 

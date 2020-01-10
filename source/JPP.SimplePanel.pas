@@ -72,8 +72,8 @@ type
     FOnPaint: TNotifyEvent;
     FOnVisibleChanging: TNotifyEvent;
     FOnAfterDrawBackground: TNotifyEvent;
-    {$IFDEF MSWINDOWS}FOnDragDropFiles: TProcOnOnDragDropFiles;
-    FCaptionMargin: integer;{$ENDIF}
+    {$IFDEF MSWINDOWS}FOnDragDropFiles: TProcOnOnDragDropFiles;{$ENDIF}
+    FCaptionMargin: integer;
     procedure CMMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
     {$IFDEF MSWINDOWS}procedure CMDropFiles(var msg: TWMDropFiles); message WM_DROPFILES;{$ENDIF}

@@ -76,6 +76,7 @@ contains
   JPP.ColorSwatch in '..\..\source\JPP.ColorSwatch.pas',
   JPP.Edit in '..\..\source\JPP.Edit.pas',
   JPP.Flash in '..\..\source\JPP.Flash.pas',
+  JPP.BrushStyleComboBox in '..\..\source\JPP.BrushStyleComboBox.pas',
   LDPngFunctions in '..\..\source\LDPngFunctions.pas',
   JPP.Register in '..\..\source\JPP.Register.pas';
 

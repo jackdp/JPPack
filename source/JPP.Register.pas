@@ -12,7 +12,8 @@ uses
   JPP.LinkLabel, JPP.Timer, JPP.StorageCtrl, JPP.StringStorageCtrl,
   JPP.FormIniStorage, JPP.PngCollection,
   JPP.DoubleLineLabel, JPP.DoubleLabel,
-  JPP.Edit
+  JPP.Edit,
+  JPP.BrushStyleComboBox
   ;
 
 
@@ -38,7 +39,8 @@ begin
       TJppFormIniStorage,
       TJppPngCollection,
       TJppDoubleLineLabel, TJppDoubleLabel,
-      TJppEdit
+      TJppEdit,
+      TJppBrushStyleComboBox
     ]
   );
 end;
