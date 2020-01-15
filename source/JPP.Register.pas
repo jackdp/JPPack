@@ -13,7 +13,7 @@ uses
   JPP.FormIniStorage, JPP.PngCollection,
   JPP.DoubleLineLabel, JPP.DoubleLabel,
   JPP.Edit,
-  JPP.BrushStyleComboBox
+  JPP.BrushStyleComboBox, JPP.PenStyleComboBox
   ;
 
 
@@ -40,7 +40,7 @@ begin
       TJppPngCollection,
       TJppDoubleLineLabel, TJppDoubleLabel,
       TJppEdit,
-      TJppBrushStyleComboBox
+      TJppBrushStyleComboBox, TJppPenStyleComboBox
     ]
   );
 end;

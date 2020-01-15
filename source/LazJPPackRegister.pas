@@ -11,7 +11,7 @@ uses
     JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.BasicPanel, JPP.Panel,
     JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
     JPP.Edit,
-    JPP.BrushStyleComboBox,
+    JPP.BrushStyleComboBox, JPP.PenStyleComboBox,
     //JPP.PngButton, JPP.PngButton.ColorMaps,
     JPP.Types
     ;
@@ -42,7 +42,7 @@ begin
   RegisterComponents(JPPackPageName, [TJppSimplePanel]);
   RegisterComponents(JPPackPageName, [TJppColorSwatch, TJppColorSwatchEx]);
   RegisterComponents(JPPackPageName, [TJppEdit]);
-  RegisterComponents(JPPackPageName, [TJppBrushStyleComboBox]);
+  RegisterComponents(JPPackPageName, [TJppBrushStyleComboBox, TJppPenStyleComboBox]);
 
 
 end;

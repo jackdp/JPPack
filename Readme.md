@@ -1,4 +1,4 @@
-﻿# JPPack
+# JPPack
 
 **A small collection of VCL/LCL components for Delphi XE2 - 10.3 Rio and Lazarus**
 
@@ -18,6 +18,7 @@
   1. [TJppEdit](#tjppedit)
   1. [TJppTimer](#tjpptimer)
   1. [TJppBrushStyleComboBox](#tjppbrushstylecombobox)
+  1. [TJppPenStyleComboBox](#tjpppenstylecombobox)
   1. [TJppPngCollection](#tjpppngcollection)
   1. [TJppStorageCtrl](#tjppstoragectrl)
   1. [TJppStringStorageCtrl](#tjppstringstoragectrl)
@@ -283,6 +284,22 @@ Current style can be read/set using the `Selected` property.
 The brush style display name can be changed in the `OnGetDisplayName` event handler.
 
 The *TJppBrushStyleComboBox* has a built-in label (`BoundLabel`).
+
+---
+
+### TJppPenStyleComboBox
+
+A highly customizable combo box with a list of pen styles.
+
+<p align="center">
+<img src="./docs/img/TJppPenStyleComboBox.png">
+</p>
+
+Current style can be read/set using the `Selected` property.
+
+The pen style display name can be changed in the `OnGetDisplayName` event handler.
+
+The *TJppPenStyleComboBox* has a built-in label (`BoundLabel`).
 
 ---
 
