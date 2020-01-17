@@ -6,6 +6,7 @@
 - [Components](#components)
   1. [TJppPanel](#tjpppanel)
   1. [TJppBasicPanel](#tjppbasicpanel)
+  1. [TJppSimplePanel](#tjppsimplepanel)
   1. [TJppPngButton (Delphi only)](#tjpppngbutton)
   1. [TJppBasicPngButton (Delphi only)](#tjppbasicpngbutton)
   1. [TJppBasicSpeedButton](#tjppbasicspeedbutton)
@@ -30,9 +31,11 @@
 
 ## Overview
 
-**JPPack** is a small collection of VCL components for Delphi and LCL components for Lazarus.
-Supported Delphi versions: **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**.
-**Lazarus**: 2.0.7 (FPC 3.3.1).
+**JPPack** is a small collection of VCL components for Delphi and LCL components for [Lazarus](https://www.lazarus-ide.org/) and [CodeTyphon](https://pilotlogic.com/).
+
+Supported Delphi versions: **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**.  
+**Lazarus**: Required FPC version 3.0.2 or newer.  
+**CodeTyphon**: Tested on CodeTyphon 7.00
 
 <p align="center">
 <img src="docs/img/JPPack.png">
@@ -83,6 +86,14 @@ Moreover, the `TJppPanel` has a built-in support for the unlimited collection of
 ### TJppBasicPanel
 
 A truncated version of the `TJppPanel`. It does not have built-in collections of captions, vertical lines, horizontal lines, and horizontal bars.
+
+---
+
+### TJppSimplePanel
+
+A truncated version of the `TJppBasicPanel`. It has only one gradient, all borders have the same color (`Appearance.BorderColor`), but each border can be hidden/shown (`Appearance`: `DrawTopBorder`, `DrawBottomBorder`, `DrawLeftBorder`, `DrawRightBorder`).
+
+This panel is great for creating a basic window layout.
 
 ---
 
@@ -483,13 +494,21 @@ After installing the package, it is best to add the `source` folder to the **lib
 1. In the tree view on the left, go to `Environment Options` --> `Delphi Options` --> `Library`.
 1. In the **Library path** combo box (on the right), add `;` (semicolon) and the path to the `source` directory.
 
-If you want to install the **JPPack** in Delphi 2009 and Delphi XE, remove *unit scopes* (eg. `Winapi.Windows` -> `Windows`, `System.SysUtils` -> `SysUtils`) and try compiling. Perhaps it will be necessary to comment out some properties, but there should be no major problems.
+If you want to install the **JPPack** in Delphi 2009/2010/XE, remove *unit scopes* (eg. `Winapi.Windows` -> `Windows`, `System.SysUtils` -> `SysUtils`) and try compiling. Perhaps it will be necessary to comment out some properties, but there should be no major problems.
 
 ### Lazarus
 
-To install, you need a several units from my **JPLib** library from https://github.com/jackdp/JPLib.
+~~To install, you need a several units from my **JPLib** library from https://github.com/jackdp/JPLib.~~  
+First, you must install the **JPLib** package from https://github.com/jackdp/JPLib
 
-Open package file (`LazPackage\jppacklcl.lpk`) in the Lazarus IDE. Click button `Compile` then `Use`->`Install` and rebuild IDE.
+Open package file (`packages\Lazarus\jppacklcl.lpk`) in the Lazarus IDE. Click button `Compile` then `Use`->`Install` and rebuild IDE.
+All components you can find ont the **JPPackLCL** page in the *Component Palette*.
+
+### CodeTyphon
+
+Install the **JPLib** package from https://github.com/jackdp/JPLib
+
+Open package file (`packages\CodeTyphon\jppacklcl.ctpkg`) in the Typhon IDE. Click button `Compile package` (2-nd button on the toolbar) then click the 3-rd button, select `Install` and rebuild IDE.
 All components you can find ont the **JPPackLCL** page in the *Component Palette*.
 
 ## License
