@@ -1,7 +1,14 @@
 unit JPP.ColorSwatch;
 
-{$IFDEF FPC} {$mode delphi} {$ENDIF}
-//{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{
+  Jacek Pazera
+  http://www.pazera-software.com
+  https://github.com/jackdp
+  Last mods:
+    2020.01.16 - FPC 3.0.2 compatibility
+}
+
+{$IFDEF FPC} {$mode delphi} {$I JppFPC.inc} {$ENDIF}
 
 interface
 
@@ -282,7 +289,10 @@ type
     {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
     {$IFDEF DCC} property Touch; {$ENDIF}
     property DoubleBuffered;
+    {$IFDEF DCC}property ParentDoubleBuffered;{$ENDIF}
+    {$IFDEF FPC}{$IFDEF HAS_WINCONTROL_WITH_PARENTDOUBLEBUFFERED}
     property ParentDoubleBuffered;
+    {$ENDIF}{$ENDIF}
     {$IFDEF FPC}
     property BorderSpacing;
     property ChildSizing;
@@ -442,7 +452,10 @@ type
     {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
     {$IFDEF DCC} property Touch; {$ENDIF}
     property DoubleBuffered;
+    {$IFDEF DCC}property ParentDoubleBuffered;{$ENDIF}
+    {$IFDEF FPC}{$IFDEF HAS_WINCONTROL_WITH_PARENTDOUBLEBUFFERED}
     property ParentDoubleBuffered;
+    {$ENDIF}{$ENDIF}
     {$IFDEF FPC}
     property BorderSpacing;
     property ChildSizing;
@@ -583,7 +596,10 @@ end;
 constructor TJppCustomColorSwatch.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  {$IFDEF DCC}ParentBackground := False;{$ENDIF}
+  {$IFDEF FPC}{$IFDEF HAS_PANEL_WITH_PARENTBACKGROUND}
   ParentBackground := False;
+  {$ENDIF}{$ENDIF}
 
   FTagExt := TJppTagExt.Create(Self);
   FAppearance := TJppColorSwatchAppearance.Create(Self);

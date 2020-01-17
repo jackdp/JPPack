@@ -2,7 +2,7 @@ unit JPP.MemIniFile deprecated 'Use JPL.MemIniFile instead';
 
 
 
-{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{$IFDEF FPC} {$mode objfpc}{$H+} {$I JppFPC.inc} {$ENDIF}
 
 interface
 
@@ -13,7 +13,7 @@ uses
   {$ELSE}
   SysUtils, Classes, IniFiles, Graphics,
   {$ENDIF}
-  JPL.Strings, JPL.Colors, JPL.Math, JPL.Conversion,
+  JPL.Strings, JPL.Colors, {JPL.Math,} JPL.Conversion,
   JPP.Common.Procs
   ;
 
@@ -103,7 +103,14 @@ end;
 
 constructor TJppMemIniFile.Create(const AFileName: string; const AEncoding: TEncoding);
 begin
-  inherited Create(AFileName, AEncoding);
+  {$IFDEF DCC}inherited Create(AFileName, AEncoding);{$ENDIF}
+  {$IFDEF FPC}
+    {$IFDEF HAS_INIFILE_WITH_ENCODING}
+    inherited Create(AFileName, AEncoding);
+    {$ELSE}
+    inherited Create(AFileName);
+    {$ENDIF}
+  {$ENDIF}
   FLeftStringBound := '[';
   FRightStringBound := ']';
   FCurrentSection := 'MAIN';

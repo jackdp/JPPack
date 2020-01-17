@@ -1,6 +1,14 @@
 unit JPP.Panel;
 
-{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{
+  Jacek Pazera
+  http://www.pazera-software.com
+  https://github.com/jackdp
+  Last mods:
+    2020.01.16 - FPC 3.0.2 compatibility
+}
+
+{$IFDEF FPC} {$mode objfpc}{$H+} {$I JppFPC.inc} {$ENDIF}
 
 {$IFDEF VER200}
   {$DEFINE DELPHI2009_OR_ABOVE}
@@ -508,7 +516,10 @@ type
     {$IFDEF DCC}property Locked;{$ENDIF}
     {$IFDEF DELPHI2009_OR_ABOVE} property Padding; {$ENDIF}
     property ParentBiDiMode;
+    {$IFDEF DCC}property ParentBackground default false;{$ENDIF}
+    {$IFDEF FPC}{$IFDEF HAS_PANEL_WITH_PARENTBACKGROUND}
     property ParentBackground default false;
+    {$ENDIF}{$ENDIF}
 //    property ParentColor;
     {$IFDEF DCC}property ParentCtl3D;{$ENDIF}
     property ParentFont;
@@ -734,7 +745,8 @@ end;
 constructor TJppCustomPanel.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  ParentBackground := False;  // TJvGifAnimator needs this!
+  {$IFDEF DCC}ParentBackground := False;{$ENDIF}  // TJvGifAnimator needs this!
+  {$IFDEF FPC}{$IFDEF HAS_PANEL_WITH_PARENTBACKGROUND}ParentBackground := False;{$ENDIF}{$ENDIF}
 
   FTagExt := TJppTagExt.Create(Self);
   FAppearance := TJppPanelAppearance.Create(Self);
@@ -793,7 +805,10 @@ end;
 
 procedure TJppCustomPanel.GradientChanged(Sender: TObject);
 begin
+  {$IFDEF DCC}if (csDesigning in ComponentState) and (not (csLoading in ComponentState)) and ParentBackground then ParentBackground := False;{$ENDIF}
+  {$IFDEF FPC}{$IFDEF HAS_PANEL_WITH_PARENTBACKGROUND}
   if (csDesigning in ComponentState) and (not (csLoading in ComponentState)) and ParentBackground then ParentBackground := False;
+  {$ENDIF}{$ENDIF}
   Invalidate;
 end;
 
@@ -894,6 +909,7 @@ var
 
 begin
 
+  {$IFDEF DCC}
   if ParentBackground then
   begin
     DrawHorizontalBars(ARect);
@@ -903,6 +919,19 @@ begin
     DrawBorders(ARect);
     Exit;
   end;
+  {$ENDIF}
+
+  {$IFDEF FPC}{$IFDEF HAS_PANEL_WITH_PARENTBACKGROUND}
+  if ParentBackground then
+  begin
+    DrawHorizontalBars(ARect);
+    DrawVerticalLines(ARect);
+    DrawHorizontalLines(ARect);
+    DrawCaptions(ARect);
+    DrawBorders(ARect);
+    Exit;
+  end;
+  {$ENDIF}{$ENDIF}
 
   {$IFDEF DCC}bVclStyle := Assigned(TStyleManager.ActiveStyle) and (TStyleManager.ActiveStyle.Name <> 'Windows');{$ENDIF}
 

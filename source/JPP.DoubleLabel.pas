@@ -266,7 +266,9 @@ begin
         taLeftJustify: TextFormat := DT_LEFT;
         taCenter: TextFormat := DT_CENTER;
         taRightJustify: TextFormat := DT_RIGHT;
+      {$IFDEF DCC}
       else TextFormat := DT_LEFT;
+      {$ENDIF}
       end;
       TextFormat := TextFormat or DT_END_ELLIPSIS or DT_EXPANDTABS or DT_NOCLIP;
     end
@@ -313,7 +315,7 @@ begin
     dtFormat := DT_LEFT or DT_NOCLIP;
 
     {$IFDEF MSWINDOWS}
-    case FEllipsisPosition of
+    {%H-}case FEllipsisPosition of
       epPathEllipsis: dtFormat := dtFormat or DT_PATH_ELLIPSIS;
       epEndEllipsis: dtFormat := dtFormat or DT_END_ELLIPSIS;
       epWordEllipsis: dtFormat := dtFormat or DT_WORD_ELLIPSIS;

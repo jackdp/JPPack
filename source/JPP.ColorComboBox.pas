@@ -1,7 +1,14 @@
 unit JPP.ColorComboBox;
 
-{$IFDEF FPC} {$mode delphi} {$ENDIF}
-//{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{
+  Jacek Pazera
+  http://www.pazera-software.com
+  https://github.com/jackdp
+  Last mods:
+    2020.01.16 - FPC 3.0.2 compatibility
+}
+
+{$IFDEF FPC} {$mode delphi} {$I JppFPC.inc} {$ENDIF}
 
 interface
 
@@ -292,7 +299,10 @@ type
     property ParentBiDiMode;
     property ParentColor;
     {$IFDEF DCC}property ParentCtl3D;{$ENDIF}
+    {$IFDEF DCC}property ParentDoubleBuffered;{$ENDIF}
+    {$IFDEF FPC}{$IFDEF HAS_WINCONTROL_WITH_PARENTDOUBLEBUFFERED}
     property ParentDoubleBuffered;
+    {$ENDIF}{$ENDIF}
     property ParentFont;
     property ParentShowHint;
     property PopupMenu;

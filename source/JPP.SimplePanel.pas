@@ -1,6 +1,14 @@
 unit JPP.SimplePanel;
 
-{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{
+  Jacek Pazera
+  http://www.pazera-software.com
+  https://github.com/jackdp
+  Last mods:
+    2020.01.16 - FPC 3.0.2 compatibility
+}
+
+{$IFDEF FPC} {$mode objfpc}{$H+} {$I JppFPC.inc} {$ENDIF}
 
 interface
 
@@ -156,7 +164,10 @@ type
     {$IFDEF DCC} property Locked; {$ENDIF}
     {$IFDEF DELPHI2009_OR_ABOVE} property Padding; {$ENDIF}
     property ParentBiDiMode;
+    {$IFDEF DCC}property ParentBackground default false;{$ENDIF}
+    {$IFDEF FPC}{$IFDEF HAS_PANEL_WITH_PARENTBACKGROUND}
     property ParentBackground default false;
+    {$ENDIF}{$ENDIF}
     {$IFDEF DCC} property ParentCtl3D; {$ENDIF}
     property ParentFont;
     property ParentShowHint;
@@ -201,7 +212,10 @@ type
     {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
     {$IFDEF DCC} property Touch; {$ENDIF}
     property DoubleBuffered;
+    {$IFDEF DCC}property ParentDoubleBuffered;{$ENDIF}
+    {$IFDEF FPC}{$IFDEF HAS_WINCONTROL_WITH_PARENTDOUBLEBUFFERED}
     property ParentDoubleBuffered;
+    {$ENDIF}{$ENDIF}
     {$IFDEF FPC}
     property BorderSpacing;
     property ChildSizing;
@@ -366,7 +380,10 @@ end;
 constructor TJppCustomSimplePanel.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  {$IFDEF DCC}ParentBackground := False;{$ENDIF}
+  {$IFDEF FPC}{$IFDEF HAS_PANEL_WITH_PARENTBACKGROUND}
   ParentBackground := False;
+  {$ENDIF}{$ENDIF}
 
   FTagExt := TJppTagExt.Create(Self);
   FAppearance := TJppSimplePanelAppearance.Create(Self);
@@ -413,11 +430,21 @@ var
   R: TRect;
 begin
 
+  {$IFDEF DCC}
   if ParentBackground then
   begin
     DrawBorders(ARect);
     Exit;
   end;
+  {$ENDIF}
+
+  {$IFDEF FPC}{$IFDEF HAS_PANEL_WITH_PARENTBACKGROUND}
+  if ParentBackground then
+  begin
+    DrawBorders(ARect);
+    Exit;
+  end;
+  {$ENDIF}{$ENDIF}
 
   R := ARect;
 

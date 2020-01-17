@@ -4,10 +4,11 @@ unit JPP.StringStorageCtrl;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mod: 2019.05.25
+  Last mods:
+    2020.01.16 - FPC 3.0.2 compatibility
 }
 
-{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{$IFDEF FPC} {$mode objfpc}{$H+} {$I JppFPC.inc} {$ENDIF}
 
 interface
 
@@ -250,8 +251,17 @@ begin
       GetNameValuePairs(sl); // tak na wszelki wypadek
     end;
 
+    {$IFDEF DCC}
     sl.WriteBOM := True;
     sl.SaveToFile(FileName, Encoding);
+    {$ENDIF}
+
+    {$IFDEF FPC}
+      {$IFDEF HAS_TSTRINGS_WRITEBOM}sl.WriteBOM := True;{$ENDIF}
+      {$IFDEF HAS_SAVE_WITH_ENCODING}sl.SaveToFile(FileName, Encoding);{$ELSE}sl.SaveToFile(FileName);{$ENDIF}
+    {$ENDIF}
+
+
 
   finally
     sl.Free;
