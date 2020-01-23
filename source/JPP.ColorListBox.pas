@@ -9,7 +9,8 @@
     2020.01.16 - FPC 3.0.2 compatibility
 }
 
-{$IFDEF FPC} {$mode delphi} {$I JppFPC.inc} {$ENDIF}
+{$IFDEF FPC} {$mode delphi} {$ENDIF}
+{$I JPPack.inc}
 
 
 interface

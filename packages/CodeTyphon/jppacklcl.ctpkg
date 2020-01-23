@@ -126,6 +126,9 @@
     </Files>
     <RequiredPkgs>
       <Item>
+        <PackageName Value="LazIGDIPlus"/>
+      </Item>
+      <Item>
         <PackageName Value="jplib"/>
       </Item>
     </RequiredPkgs>

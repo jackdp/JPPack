@@ -8,7 +8,8 @@ unit JPP.BrushStyleComboBox;
     2020.01.16 - FPC 3.0.2 compatibility
 }
 
-{$IFDEF FPC} {$mode delphi} {$I JppFPC.inc} {$ENDIF}
+{$IFDEF FPC} {$mode delphi} {$ENDIF}
+{$I JPPack.inc}
 
 interface
 
@@ -22,15 +23,16 @@ uses
   SysUtils, Classes, Types, Controls, StdCtrls, Graphics, Dialogs, Buttons, Clipbrd, ExtCtrls, LCLType, LCLIntf, Messages, LMessages,
   {$ENDIF}
 
-  JPL.Strings, JPL.Conversion,
-  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.Graphics
-  ;
+  JPL.Strings,
+  JPP.Common;
 
 
 type
 
   TJppBrushStyleComboBoxGetDisplayName = procedure(BrushStyle: TBrushStyle; var BrushStyleName: string) of object;
 
+
+  {$region ' ---------- TJppBrushStyleComboAppearance ----------- '}
   TJppBrushStyleComboAppearance = class(TJppPersistent)
   private
     FOwner: TComponent;
@@ -76,6 +78,7 @@ type
     property TextMargin: integer read FTextMargin write SetTextMargin default 8;
     {$IFDEF DCC}property DisableFocusRect: Boolean read FDisableFocusRect write SetDisableFocusRect default False;{$ENDIF}
   end;
+  {$endregion TJppBrushStyleComboAppearance}
 
 
   {$region ' ----------- TJppCustomBrushStyleComboBox ---------- '}
@@ -89,14 +92,12 @@ type
     FAppearance: TJppBrushStyleComboAppearance;
     FSelected: TBrushStyle;
     FOnGetDisplayName: TJppBrushStyleComboBoxGetDisplayName;
-    //FOnSelectChangeColorItem: TJppColorControlSelectChangeColor;
     procedure SetBoundLabelPosition(const Value: TLabelPosition);
     procedure SetBoundLabelSpacing(const Value: Integer);
     procedure AdjustLabelBounds(Sender: TObject);
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetAppearance(const Value: TJppBrushStyleComboAppearance);
     procedure SetOnGetDisplayName(const Value: TJppBrushStyleComboBoxGetDisplayName);
-    //procedure SetOnSelectChangeColorItem(const Value: TJppColorControlSelectChangeColor);
   protected
     procedure SetParent(AParent: TWinControl); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -303,6 +304,7 @@ end;
 
 function StrToBrushStyle(const BrushStyleName: string; Default: TBrushStyle = bsSolid): TBrushStyle;
 begin
+  Result := Default;
   if not TryStrToBrushStyle(BrushStyleName, Result) then Result := Default;
 end;
 
@@ -427,6 +429,7 @@ var
   bsItem: TBrushStyle;
 begin
   Result := -1;
+  bsItem := bsSolid;
   for i := 0 to Items.Count - 1 do
   begin
     if not TryGetItemBrushStyle(i, bsItem) then Continue;
@@ -453,12 +456,11 @@ end;
 
 procedure TJppCustomBrushStyleComboBox.Change;
 var
-  s: string;
   bs: TBrushStyle;
 begin
+  bs := bsSolid;
   if ItemIndex >= 0 then
   begin
-    s := Items[ItemIndex];
     if not TryGetItemBrushStyle(ItemIndex, bs) then Exit;
     SetSelectedBrushStyle(bs);
   end;
@@ -583,6 +585,7 @@ begin
     else cl := FAppearance.Color;
 
     Brush.Color := cl;
+    bs := bsSolid;
     if not TryGetItemBrushStyle(Index, bs) then bs := bsSolid;
     Brush.Style := bs;
     Pen.Style := psSolid;

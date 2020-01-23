@@ -13,7 +13,8 @@ uses
   JPP.Timer, JPP.BasicPanel, JPP.Panel, JPP.BasicSpeedButton, LDPngFunctions, 
   JPP.ColorControls.Common, JPP.ColorListBox, JPP.ColorComboBox, 
   JPP.ColorSwatch, JPP.Edit, JPP.SimplePanel, JPP.Flash, 
-  JPP.BrushStyleComboBox, JPP.PenStyleComboBox, LazarusPackageIntf;
+  JPP.BrushStyleComboBox, JPP.PenStyleComboBox, JPP.GPHatchStyleComboBox, 
+  LazarusPackageIntf;
 
 implementation
 

@@ -114,6 +114,7 @@
         <DCCReference Include="vclimg.dcp"/>
         <DCCReference Include="JPLib.dcp"/>
         <DCCReference Include="PngComponents.dcp"/>
+        <DCCReference Include="IGDIPlusMod.dcp"/>
         <DCCReference Include="..\..\source\JPP.Types.pas"/>
         <DCCReference Include="..\..\source\JPP.Common.pas"/>
         <DCCReference Include="..\..\source\JPP.Common.Procs.pas"/>
@@ -141,6 +142,8 @@
         <DCCReference Include="..\..\source\JPP.ColorSwatch.pas"/>
         <DCCReference Include="..\..\source\JPP.Edit.pas"/>
         <DCCReference Include="..\..\source\JPP.Flash.pas"/>
+        <DCCReference Include="..\..\source\JPP.BrushStyleComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.PenStyleComboBox.pas"/>
         <DCCReference Include="..\..\source\LDPngFunctions.pas"/>
         <DCCReference Include="..\..\source\JPP.Register.pas"/>
         <BuildConfiguration Include="Debug">

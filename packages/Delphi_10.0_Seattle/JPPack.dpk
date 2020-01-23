@@ -41,12 +41,15 @@ package JPPack;
 {$LIBSUFFIX 'Seattle'}
 {$IMPLICITBUILD ON}
 
+{$I ..\..\source\JPPack.inc}
+
 requires
   vcl,
   rtl,
   vclimg,
   JPLib,
-  PngComponents;
+  PngComponents,
+  IGDIPlusMod;
 
 contains
   JPP.Types in '..\..\source\JPP.Types.pas',
@@ -78,6 +81,9 @@ contains
   JPP.Flash in '..\..\source\JPP.Flash.pas',
   JPP.BrushStyleComboBox in '..\..\source\JPP.BrushStyleComboBox.pas',
   JPP.PenStyleComboBox in '..\..\source\JPP.PenStyleComboBox.pas',
+  {$IFDEF USE_GDIPLUS_CONTROLS}
+  JPP.GPHatchStyleComboBox in '..\..\source\JPP.GPHatchStyleComboBox.pas',
+  {$ENDIF}
   LDPngFunctions in '..\..\source\LDPngFunctions.pas',
   JPP.Register in '..\..\source\JPP.Register.pas';
 

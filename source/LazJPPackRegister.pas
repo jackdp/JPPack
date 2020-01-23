@@ -1,6 +1,8 @@
 unit LazJPPackRegister;
 
 {$mode objfpc}{$H+}
+{$WARN 5023 off : Unit "$1" not used in $2}
+{$I JPPack.inc}
 
 interface
 
@@ -12,6 +14,9 @@ uses
     JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
     JPP.Edit,
     JPP.BrushStyleComboBox, JPP.PenStyleComboBox,
+    {$IFDEF USE_GDIPLUS_CONTROLS}
+    JPP.GPHatchStyleComboBox,
+    {$ENDIF}
     //JPP.PngButton, JPP.PngButton.ColorMaps,
     JPP.Types
     ;
@@ -43,6 +48,10 @@ begin
   RegisterComponents(JPPackPageName, [TJppColorSwatch, TJppColorSwatchEx]);
   RegisterComponents(JPPackPageName, [TJppEdit]);
   RegisterComponents(JPPackPageName, [TJppBrushStyleComboBox, TJppPenStyleComboBox]);
+
+  {$IFDEF USE_GDIPLUS_CONTROLS}
+  RegisterComponents(JPPackPageName, [TJppGPHatchStyleComboBox]);
+  {$ENDIF}
 
 
 end;

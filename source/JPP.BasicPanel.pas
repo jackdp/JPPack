@@ -8,7 +8,8 @@ unit JPP.BasicPanel;
     2020.01.16 - FPC 3.0.2 compatibility
 }
 
-{$IFDEF FPC} {$mode objfpc}{$H+} {$I JppFPC.inc} {$ENDIF}
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{$I JPPack.inc}
 
 interface
 

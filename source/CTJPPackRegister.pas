@@ -1,6 +1,7 @@
 unit CTJPPackRegister;
 
 {$mode objfpc}{$H+}
+{$I JPPack.inc}
 
 interface
 
@@ -12,6 +13,9 @@ uses
     JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
     JPP.Edit,
     JPP.BrushStyleComboBox, JPP.PenStyleComboBox,
+    {$IFDEF USE_GDIPLUS_CONTROLS}
+    JPP.GPHatchStyleComboBox,
+    {$ENDIF}
     //JPP.PngButton, JPP.PngButton.ColorMaps,
     JPP.Types
     ;
@@ -44,6 +48,9 @@ begin
   RegisterComponents(JPPackPageName, [TJppEdit]);
   RegisterComponents(JPPackPageName, [TJppBrushStyleComboBox, TJppPenStyleComboBox]);
 
+  {$IFDEF USE_GDIPLUS_CONTROLS}
+  RegisterComponents(JPPackPageName, [TJppGPHatchStyleComboBox]);
+  {$ENDIF}
 
 end;
 

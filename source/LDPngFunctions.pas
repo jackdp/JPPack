@@ -326,7 +326,7 @@ end;
 
 
 {$IFDEF FPC}
-{ TODO : Implement MakeImageBlended }
+{ DONE : Implement MakeImageBlended }
 procedure MakeImageBlended(const Image: TPngImage; Amount: Byte = 127);
 var
   PngTmp: TPngImage;

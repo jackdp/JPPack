@@ -2,7 +2,8 @@ unit JPP.MemIniFile deprecated 'Use JPL.MemIniFile instead';
 
 
 
-{$IFDEF FPC} {$mode objfpc}{$H+} {$I JppFPC.inc} {$ENDIF}
+{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{$I JPPack.inc}
 
 interface
 

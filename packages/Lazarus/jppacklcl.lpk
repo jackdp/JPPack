@@ -13,7 +13,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="27">
+    <Files Count="28">
       <Item1>
         <Filename Value="..\..\source\JPP.Common.pas"/>
         <UnitName Value="JPP.Common"/>
@@ -123,14 +123,21 @@
         <Filename Value="..\..\source\JPP.PenStyleComboBox.pas"/>
         <UnitName Value="JPP.PenStyleComboBox"/>
       </Item27>
+      <Item28>
+        <Filename Value="..\..\source\JPP.GPHatchStyleComboBox.pas"/>
+        <UnitName Value="JPP.GPHatchStyleComboBox"/>
+      </Item28>
     </Files>
-    <RequiredPkgs Count="2">
+    <RequiredPkgs Count="3">
       <Item1>
-        <PackageName Value="jplib"/>
+        <PackageName Value="LazIGDIPlus"/>
       </Item1>
       <Item2>
-        <PackageName Value="LCLBase"/>
+        <PackageName Value="jplib"/>
       </Item2>
+      <Item3>
+        <PackageName Value="LCLBase"/>
+      </Item3>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>

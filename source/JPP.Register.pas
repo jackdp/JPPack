@@ -1,5 +1,7 @@
 unit JPP.Register;
 
+{$I JPPack.inc}
+
 interface
 
 uses
@@ -14,6 +16,9 @@ uses
   JPP.DoubleLineLabel, JPP.DoubleLabel,
   JPP.Edit,
   JPP.BrushStyleComboBox, JPP.PenStyleComboBox
+  {$IFDEF USE_GDIPLUS_CONTROLS}
+  , JPP.GPHatchStyleComboBox
+  {$ENDIF}
   ;
 
 
@@ -41,6 +46,9 @@ begin
       TJppDoubleLineLabel, TJppDoubleLabel,
       TJppEdit,
       TJppBrushStyleComboBox, TJppPenStyleComboBox
+      {$IFDEF USE_GDIPLUS_CONTROLS}
+      , TJppGPHatchStyleComboBox
+      {$ENDIF}
     ]
   );
 end;
