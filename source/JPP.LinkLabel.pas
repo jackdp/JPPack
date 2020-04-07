@@ -390,29 +390,32 @@ end;
 
 procedure TJppCustomLinkLabel.SetFontVisitedHot(const Value: TFont);
 begin
-  FFontVisitedHot := Value;
+  //FFontVisitedHot := Value;
+  if Assigned(FFontVisitedHot) and Assigned(Value) then FFontVisitedHot.Assign(Value);
 end;
 
 procedure TJppCustomLinkLabel.SetFontDisabled(const Value: TFont);
 begin
-  FFontDisabled := Value;
+  //FFontDisabled := Value;
+  if Assigned(FFontDisabled) and Assigned(Value) then FFontDisabled.Assign(Value);
 end;
 
 procedure TJppCustomLinkLabel.SetFontHot(const Value: TFont);
 begin
-  FFontHot := Value;
+  //FFontHot := Value;
+  if Assigned(FFontHot) and Assigned(Value) then FFontHot.Assign(Value);
 end;
-
 
 procedure TJppCustomLinkLabel.SetFontNormal(const Value: TFont);
 begin
-  FFontNormal := Value;
+  //FFontNormal := Value;
+  if Assigned(FFontNormal) and Assigned(Value) then FFontNormal.Assign(Value);
 end;
-
 
 procedure TJppCustomLinkLabel.SetFontVisitedNormal(const Value: TFont);
 begin
-  FFontVisitedNormal := Value;
+  //FFontVisitedNormal := Value;
+  if Assigned(FFontVisitedNormal) and Assigned(Value) then FFontVisitedNormal.Assign(Value);
 end;
 
 procedure TJppCustomLinkLabel.SetTagExt(const Value: TJppTagExt);
