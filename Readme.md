@@ -17,6 +17,9 @@
   1. [TJppDoubleLineLabel](#tjppdoublelinelabel)
   1. [TJppDoubleLabel](#tjppdoublelabel)
   1. [TJppEdit](#tjppedit)
+  1. [TJppEditEx](#tjppeditex)
+  1. [TJppComboBox](#tjppcombobox)
+  1. [TJppGPHatchStyleComboBox](#tjppgphatchstylecombobox)
   1. [TJppTimer](#tjpptimer)
   1. [TJppBrushStyleComboBox](#tjppbrushstylecombobox)
   1. [TJppPenStyleComboBox](#tjpppenstylecombobox)
@@ -37,9 +40,9 @@ Supported Delphi versions: **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**,
 **Lazarus**: Required FPC version 3.0.2 or newer.  
 **CodeTyphon**: Tested on CodeTyphon 7.00
 
-<p align="center">
-<img src="docs/img/JPPack.png">
-</p>
+
+![JPPack demo app main window](./docs/img/JPPack.png)
+
 
 These components were created within a few years, they were repeatedly modified, improved, and extended with the functions needed in the implementation of specific projects. Generally, there is a small chaos, but I think everything works OK (I hope!).
 
@@ -236,13 +239,17 @@ My modifications:
 
 - **TPegtopLineLabel** renamed to **TJppDoubleLineLabel**
 - `Annex` renamed to `RightCaption`
-- RightCaptionFont
+- AutoHeight
+- DisabledLineColor
 - LinePosDeltaY
 - LineSizeDeltaX1
 - LineSizeDeltaX2
+- RightCaptionFont
 - RightCaptionColor
+- RightCaptionDisabledColor
 - RightCaptionBorderColor
-- AutoHeight
+- RightCaptionDisabledBorderColor
+- RightCaptionDisabledTextColor
 - RightCaptionPosDeltaY
 - TagExt
 - Added prefixes `Jpp`
@@ -276,9 +283,38 @@ Additional properties:
 
 - `Appearance`: Here you can set the background and font color for four states: Normal, Hot, Focused, Disabled.
 - `BoundLabel`: Internal label
+- `BoundControl1`, `BoundControl2`: You can bound 2 external components (eg. CheckBox on the left and Buttton on the right).
 - `Flash`: `FlashColor`, `FlashCount`, `FlashInterval`. To turn on flashing, call the `FlashBackground` method. This function can be used to indicate the user of an incorrect value.
-- **property** `ShowLabel`: `Boolean`
+- `ShowLabel`: `Boolean`
 - `TagExt`: `TJppTagExt`
+
+---
+
+### TJppEditEx
+
+Currently **only for Delphi**.  
+Similar to `TJppEdit`, but also has the ability to define border colors.
+
+---
+
+### TJppComboBox
+
+An edit component derived from `TCustomEdit`.
+
+Additional properties:
+
+- `BoundLabel`: Internal label
+- `BoundControl1`, `BoundControl2`: You can bound 2 external components (eg. CheckBox on the left and Buttton on the right).
+- `Flash`: `FlashColor`, `FlashCount`, `FlashInterval`. To turn on flashing, call the `FlashBackground` method. This function can be used to indicate the user of an incorrect value.
+- `ShowLabel`: `Boolean`
+- `TagExt`: `TJppTagExt`
+
+---
+
+### TJppGPHatchStyleComboBox
+
+**Windows only**  
+GDI+ hatch style selector.
 
 ---
 
@@ -352,7 +388,8 @@ end;
 
 ### TJppPngCollection
 
-A non-visual component that can store any number of PNG images. Unlike **TImageList**, each image can have a different size. Images are stored internally as PNG, not bitmaps, which reduces the size of the DFM file. Of course, assuming that PNG images are compressed.
+A non-visual component that can store any number of PNG images. Can be associated with an external **TImage** component.  
+Unlike **TImageList**, each image can have a different size. Images are stored internally as PNG, not bitmaps, which reduces the size of the DFM file. Of course, assuming that PNG images are compressed.
 
 PNG images can be added in the **Object Inspector** or in the code using `AddPngImage`, `AddImageFromFile` or `Items.Insert` methods:
 
@@ -475,11 +512,12 @@ Property | Default value
 
 ### Delphi
 
-Before installing the **JPPack** package, you must first install 2 another packages:
+Before installing the **JPPack** package, you must first install 3 another packages:
 
 1. **JPLib** from https://github.com/jackdp/JPLib
 1. **PngComponents** from https://bitbucket.org/uweraabe/pngcomponents
 You can use *PngComponents* ver. 1.4.1 package from the [3rd-party](3rd-party) folder. I tested *JPPack* with this version and it looks like everything works OK.
+1. **IGDIPlusMod** from https://github.com/jackdp/IGDIPlusMod
 
 If you have installed the **PNG Components** using the **GetIt Package Manager**, you will probably have to change the name `PngComponents` to `PngComponentsD` in the **JPPack.dpk** file.
 
@@ -498,15 +536,16 @@ If you want to install the **JPPack** in Delphi 2009/2010/XE, remove *unit scope
 
 ### Lazarus
 
-~~To install, you need a several units from my **JPLib** library from https://github.com/jackdp/JPLib.~~  
-First, you must install the **JPLib** package from https://github.com/jackdp/JPLib
+First, install the **JPLib** package from https://github.com/jackdp/JPLib  
+On Windows, also install the **IGDIPlusMod** from https://github.com/jackdp/IGDIPlusMod
 
 Open package file (`packages\Lazarus\jppacklcl.lpk`) in the Lazarus IDE. Click button `Compile` then `Use`->`Install` and rebuild IDE.
 All components you can find ont the **JPPackLCL** page in the *Component Palette*.
 
 ### CodeTyphon
 
-Install the **JPLib** package from https://github.com/jackdp/JPLib
+Install the **JPLib** package from https://github.com/jackdp/JPLib  
+On Windows, also install the **IGDIPlusMod** from https://github.com/jackdp/IGDIPlusMod
 
 Open package file (`packages\CodeTyphon\jppacklcl.ctpkg`) in the Typhon IDE. Click button `Compile package` (2-nd button on the toolbar) then click the 3-rd button, select `Install` and rebuild IDE.
 All components you can find ont the **JPPackLCL** page in the *Component Palette*.
