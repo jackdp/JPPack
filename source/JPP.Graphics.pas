@@ -188,7 +188,7 @@ end;
 
 function RectWidth(R: TRect): integer;
 begin
-  Result := R.Left - R.Right;
+  Result := R.Right - R.Left; // R.Left - R.Right;
 end;
 
 function RectHeight(R: TRect): integer;
