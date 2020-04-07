@@ -299,7 +299,7 @@ Similar to `TJppEdit`, but also has the ability to define border colors.
 
 ### TJppComboBox
 
-An edit component derived from `TCustomEdit`.
+An edit component derived from `TCustomComboBox`.
 
 Additional properties:
 
