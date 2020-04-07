@@ -13,7 +13,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="28">
+    <Files Count="29">
       <Item1>
         <Filename Value="..\..\source\JPP.Common.pas"/>
         <UnitName Value="JPP.Common"/>
@@ -127,6 +127,10 @@
         <Filename Value="..\..\source\JPP.GPHatchStyleComboBox.pas"/>
         <UnitName Value="JPP.GPHatchStyleComboBox"/>
       </Item28>
+      <Item29>
+        <Filename Value="..\..\source\JPP.ComboBox.pas"/>
+        <UnitName Value="JPP.ComboBox"/>
+      </Item29>
     </Files>
     <RequiredPkgs Count="3">
       <Item1>

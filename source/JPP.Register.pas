@@ -14,7 +14,8 @@ uses
   JPP.LinkLabel, JPP.Timer, JPP.StorageCtrl, JPP.StringStorageCtrl,
   JPP.FormIniStorage, JPP.PngCollection,
   JPP.DoubleLineLabel, JPP.DoubleLabel,
-  JPP.Edit,
+  JPP.Edit, JPP.EditEx,
+  JPP.ComboBox,
   JPP.BrushStyleComboBox, JPP.PenStyleComboBox
   {$IFDEF USE_GDIPLUS_CONTROLS}
   , JPP.GPHatchStyleComboBox
@@ -25,7 +26,7 @@ uses
 
 procedure Register;
 
-  
+
 implementation
 
 
@@ -39,12 +40,13 @@ begin
       TJppColorComboBox, TJppColorListBox, TJppColorSwatch, TJppColorSwatchEx,
       TJppLinkLabel,
       TJppTimer,
-      TJppStorageCtrl, 
+      TJppStorageCtrl,
       TJppStringStorageCtrl,
       TJppFormIniStorage,
       TJppPngCollection,
       TJppDoubleLineLabel, TJppDoubleLabel,
-      TJppEdit,
+      TJppEdit, TJppEditEx,
+      TJppComboBox,
       TJppBrushStyleComboBox, TJppPenStyleComboBox
       {$IFDEF USE_GDIPLUS_CONTROLS}
       , TJppGPHatchStyleComboBox

@@ -46,6 +46,7 @@
         <Cfg_2>true</Cfg_2>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
+        <SanitizedProjectName>JPPack</SanitizedProjectName>
         <DCC_Description>JPPack VCL Components</DCC_Description>
         <DCC_E>false</DCC_E>
         <DCC_F>false</DCC_F>
@@ -57,7 +58,6 @@
         <DllSuffix>XE7</DllSuffix>
         <GenDll>true</GenDll>
         <GenPackage>true</GenPackage>
-        <SanitizedProjectName>JPPack</SanitizedProjectName>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=;CFBundleName=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
@@ -107,6 +107,7 @@
         <DCCReference Include="..\DCR\JppColorSwatchEx.dcr"/>
         <DCCReference Include="..\DCR\JppSimplePanel.dcr"/>
         <DCCReference Include="..\DCR\JppEdit.dcr"/>
+        <DCCReference Include="..\DCR\JppEditEx.dcr"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vclimg.dcp"/>
@@ -139,6 +140,7 @@
         <DCCReference Include="..\..\source\JPP.SimplePanel.pas"/>
         <DCCReference Include="..\..\source\JPP.ColorSwatch.pas"/>
         <DCCReference Include="..\..\source\JPP.Edit.pas"/>
+        <DCCReference Include="..\..\source\JPP.EditEx.pas"/>
         <DCCReference Include="..\..\source\JPP.Flash.pas"/>
         <DCCReference Include="..\..\source\JPP.BrushStyleComboBox.pas"/>
         <DCCReference Include="..\..\source\JPP.PenStyleComboBox.pas"/>

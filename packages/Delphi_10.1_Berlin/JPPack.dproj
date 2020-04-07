@@ -23,12 +23,19 @@
         <CfgParent>Base</CfgParent>
         <Cfg_1>true</Cfg_1>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Base>true</Base>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
         <Base>true</Base>
         <CfgParent>Base</CfgParent>
         <Cfg_2>true</Cfg_2>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
+        <SanitizedProjectName>JPPack</SanitizedProjectName>
         <DCC_Description>JPPack VCL Components</DCC_Description>
         <DCC_E>false</DCC_E>
         <DCC_F>false</DCC_F>
@@ -40,13 +47,12 @@
         <DllSuffix>Berlin</DllSuffix>
         <GenDll>true</GenDll>
         <GenPackage>true</GenPackage>
-        <SanitizedProjectName>JPPack</SanitizedProjectName>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=;CFBundleName=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_UsePackage>rtl;vclimg;vcl;PngComponents;JPLib;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+        <DCC_UsePackage>rtl;vclimg;vcl;PngComponents;JPLib;IGDIPlusMod;$(DCC_UsePackage)</DCC_UsePackage>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(ModuleName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
@@ -56,6 +62,9 @@
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(ModuleName)</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -74,11 +83,16 @@
         <DCCReference Include="..\DCR\JppLinkLabel.dcr"/>
         <DCCReference Include="..\DCR\JppPanel.dcr"/>
         <DCCReference Include="..\DCR\JppTimer.dcr"/>
+        <DCCReference Include="..\DCR\JppColorSwatch.dcr"/>
+        <DCCReference Include="..\DCR\JppColorSwatchEx.dcr"/>
+        <DCCReference Include="..\DCR\JppSimplePanel.dcr"/>
+        <DCCReference Include="..\DCR\JppEdit.dcr"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vclimg.dcp"/>
         <DCCReference Include="JPLib.dcp"/>
         <DCCReference Include="PngComponents.dcp"/>
+        <DCCReference Include="IGDIPlusMod.dcp"/>
         <DCCReference Include="..\..\source\JPP.Types.pas"/>
         <DCCReference Include="..\..\source\JPP.Common.pas"/>
         <DCCReference Include="..\..\source\JPP.Common.Procs.pas"/>
@@ -102,6 +116,13 @@
         <DCCReference Include="..\..\source\JPP.PngCollection.pas"/>
         <DCCReference Include="..\..\source\JPP.DoubleLabel.pas"/>
         <DCCReference Include="..\..\source\JPP.DoubleLineLabel.pas"/>
+        <DCCReference Include="..\..\source\JPP.SimplePanel.pas"/>
+        <DCCReference Include="..\..\source\JPP.ColorSwatch.pas"/>
+        <DCCReference Include="..\..\source\JPP.Edit.pas"/>
+        <DCCReference Include="..\..\source\JPP.Flash.pas"/>
+        <DCCReference Include="..\..\source\JPP.BrushStyleComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.PenStyleComboBox.pas"/>
+        <DCCReference Include="..\..\source\LDPngFunctions.pas"/>
         <DCCReference Include="..\..\source\JPP.Register.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
@@ -125,10 +146,7 @@
                 </Source>
             </Delphi.Personality>
             <Platforms>
-                <Platform value="Android">False</Platform>
                 <Platform value="Win32">True</Platform>
-                <Platform value="iOSDevice32">False</Platform>
-                <Platform value="iOSSimulator">False</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>

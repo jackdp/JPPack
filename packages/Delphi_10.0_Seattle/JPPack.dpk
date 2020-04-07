@@ -13,6 +13,7 @@ package JPPack;
 {$R '..\DCR\JppColorSwatchEx.dcr'}
 {$R '..\DCR\JppSimplePanel.dcr'}
 {$R '..\DCR\JppEdit.dcr'}
+{$R '..\DCR\JppEditEx.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -78,6 +79,8 @@ contains
   JPP.SimplePanel in '..\..\source\JPP.SimplePanel.pas',
   JPP.ColorSwatch in '..\..\source\JPP.ColorSwatch.pas',
   JPP.Edit in '..\..\source\JPP.Edit.pas',
+  JPP.EditEx in '..\..\source\JPP.EditEx.pas',
+  JPP.ComboBox in '..\..\source\JPP.ComboBox.pas',
   JPP.Flash in '..\..\source\JPP.Flash.pas',
   JPP.BrushStyleComboBox in '..\..\source\JPP.BrushStyleComboBox.pas',
   JPP.PenStyleComboBox in '..\..\source\JPP.PenStyleComboBox.pas',
