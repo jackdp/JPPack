@@ -24,7 +24,7 @@ uses
   SysUtils, Classes, Types, Controls, Graphics, StdCtrls, ExtCtrls, LCLType, LCLIntf, Messages, LMessages,
   {$ENDIF}
 
-  JPP.Common, JPP.Flash
+  JPP.Common, JPP.Common.Procs, JPP.Flash
   ;
 
 
@@ -98,7 +98,7 @@ type
 
 
   {$region ' --- TJppCustomEdit --- '}
-  TJppCustomEdit = class(TCustomEdit) // class(TCustomLabeledEdit)
+  TJppCustomEdit = class(TCustomEdit)
   private
     FBoundLabel: TJppControlBoundLabel;
     FMouseOverControl: Boolean;
@@ -109,6 +109,8 @@ type
     FFlash: TJppFlashJppEdit;
     FBoundLabelSpacing: Integer;
     FBoundLabelPosition: TLabelPosition;
+    FBoundControl2: TJppBoundControl;
+    FBoundControl1: TJppBoundControl;
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetShowLabel(const Value: Boolean);
     procedure CMMouseEnter (var Message: TMessage); message CM_MOUSEENTER;
@@ -118,10 +120,13 @@ type
     procedure SetBoundLabelPosition(const Value: TLabelPosition);
     procedure SetBoundLabelSpacing(const Value: Integer);
     procedure AdjustLabelBounds(Sender: TObject);
+    procedure SetBoundControl1(const Value: TJppBoundControl);
+    procedure SetBoundControl2(const Value: TJppBoundControl);
+    procedure WMWindowPosChanged(var Message: TWMWindowPosChanged); message WM_WINDOWPOSCHANGED;
   protected
     procedure SetParent(AParent: TWinControl); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-    procedure CMEnabledchanged(var Message: TMessage); message CM_ENABLEDCHANGED;
+    procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
     procedure CMVisibleChanged(var Message: TMessage); message CM_VISIBLECHANGED;
     procedure CMBiDiModeChanged(var Message: TMessage); message CM_BIDIMODECHANGED;
     procedure DoEnter; override;
@@ -132,14 +137,23 @@ type
 
     procedure ApplyAppearance;
     property MouseOverControl: Boolean read FMouseOverControl;
+
+    procedure SetBoundControlPosition(BoundCtrl: TJppBoundControl);
+    procedure SetupBoundControl1(Sender: TObject);
+    procedure SetupBoundControl2(Sender: TObject);
+    procedure BoundControl1Changed(Sender: TObject);
+    procedure BoundControl2Changed(Sender: TObject);
+
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    //property MouseOverControl: Boolean read FMouseOverControl;
-    //property Color;
     procedure FlashBackground;
     procedure SetupInternalLabel;
     procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
+
+    procedure UpdateBoundControl1Pos;
+    procedure UpdateBoundControl2Pos;
+    procedure UpdateBoundControlsPos;
   protected
     property BoundLabel: TJppControlBoundLabel read FBoundLabel;
     property BoundLabelPosition: TLabelPosition read FBoundLabelPosition write SetBoundLabelPosition default lpLeft;
@@ -152,12 +166,19 @@ type
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
     property ShowLabel: Boolean read FShowLabel write SetShowLabel default True;
     property Flash: TJppFlashJppEdit read FFlash write SetFlash;
+
+    property BoundControl1: TJppBoundControl read FBoundControl1 write SetBoundControl1;
+    property BoundControl2: TJppBoundControl read FBoundControl2 write SetBoundControl2;
   end;
   {$endregion TJppCustomEdit}
 
 
   {$region ' --- TJppEdit --- '}
   TJppEdit = class(TJppCustomEdit)
+  public
+    property MouseOverControl;
+  published
+    property Align;
     property Alignment;
     property Anchors;
     property AutoSelect;
@@ -169,29 +190,32 @@ type
     property BevelOuter;
     {$ENDIF}
     property BiDiMode;
+    {$IFDEF FPC}property BorderSpacing;{$ENDIF}
     property BorderStyle;
     property CharCase;
     //property Color;  Use Appearance.NormalBgColor instead
     property Constraints;
+    property Cursor;
     {$IFDEF DCC} property Ctl3D; {$ENDIF}
     property DoubleBuffered;
     property DragCursor;
     property DragKind;
     property DragMode;
-    //property EditLabel;
     property Enabled;
     property Font;
+    property Height;
+    property HelpContext;
+    property HelpKeyword;
+    property HelpType;
     property HideSelection;
+    property Hint;
     {$IFDEF DCC}
     property ImeMode;
     property ImeName;
     {$ENDIF}
-    //property LabelPosition;
-    //property LabelSpacing;
+    property Left;
     property MaxLength;
-    {$IFDEF DCC}
-    property OEMConvert;
-    {$ENDIF}
+    {$IFDEF DCC}property OEMConvert;{$ENDIF}
     property NumbersOnly;
     property ParentBiDiMode;
     property ParentColor;
@@ -206,50 +230,54 @@ type
     property PopupMenu;
     property ReadOnly;
     property ShowHint;
+    {$IFDEF DCC}{$IF RTLVersion > 23}property StyleElements;{$IFEND}{$ENDIF}
     property TabOrder;
     property TabStop;
+    property Tag;
     property Text;
     property TextHint;
-    {$IFDEF DCC} property Touch; {$ENDIF}
+    property Top;
+    {$IFDEF DCC}property Touch;{$ENDIF}
     property Visible;
-    {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
+    property Width;
+
+    // --------- Events ----------
     property OnChange;
+    {$IFDEF FPC}property OnChangeBounds;{$ENDIF}
     property OnClick;
     property OnContextPopup;
     property OnDblClick;
     property OnDragDrop;
     property OnDragOver;
+    {$IFDEF FPC}property OnEditingDone;{$ENDIF}
     property OnEndDock;
     property OnEndDrag;
     property OnEnter;
     property OnExit;
-    {$IFDEF DCC}
-    property OnGesture;
-    {$ENDIF}
+    {$IFDEF DCC}property OnGesture;{$ENDIF}
     property OnKeyDown;
     property OnKeyPress;
     property OnKeyUp;
-    {$IFDEF DCC}
-    property OnMouseActivate;
-    {$ENDIF}
+    {$IFDEF DCC}property OnMouseActivate;{$ENDIF}
     property OnMouseDown;
     property OnMouseEnter;
     property OnMouseLeave;
     property OnMouseMove;
     property OnMouseUp;
-    property OnStartDock;
-    property OnStartDrag;
     {$IFDEF FPC}
-    property BorderSpacing;
-    property EchoMode;
-    property OnEditingDone;
     property OnMouseWheel;
     property OnMouseWheelDown;
     property OnMouseWheelUp;
+    {$ENDIF}
+    property OnResize;
+    property OnStartDock;
+    property OnStartDrag;
+    {$IFDEF FPC}
+    property EchoMode;
     property OnUTF8KeyPress;
     {$ENDIF}
-    // jp
-    property MouseOverControl; // <-- public (not published)
+
+    // --------- Custom Properties ---------
     property Appearance;
     {$IFDEF MSWINDOWS} property TabOnEnter; {$ENDIF}
     property ShowLabel;
@@ -259,6 +287,9 @@ type
     property BoundLabel;
     property BoundLabelPosition;
     property BoundLabelSpacing;
+
+    property BoundControl1;
+    property BoundControl2;
   end;
   {$endregion TJppEdit}
 
@@ -284,6 +315,14 @@ begin
   FTagExt := TJppTagExt.Create(Self);
   FShowLabel := True;
   FMouseOverControl := False;
+
+  FBoundControl1 := TJppBoundControl.Create(Self);
+  FBoundControl1.OnChange := SetupBoundControl1;
+  FBoundControl1.OnBoundControlChanged := BoundControl1Changed;
+
+  FBoundControl2 := TJppBoundControl.Create(Self);
+  FBoundControl2.OnChange := SetupBoundControl2;
+  FBoundControl2.OnBoundControlChanged := BoundControl2Changed;
 end;
 
 destructor TJppCustomEdit.Destroy;
@@ -291,6 +330,8 @@ begin
   FAppearance.Free;
   FTagExt.Free;
   FFlash.Free;
+  FBoundControl1.Free;
+  FBoundControl2.Free;
   inherited;
 end;
 
@@ -307,7 +348,9 @@ begin
   inherited Notification(AComponent, Operation);
   if Operation = opRemove then
   begin
-    if AComponent = FBoundLabel then FBoundLabel := nil;
+    if AComponent = FBoundLabel then FBoundLabel := nil
+    else if AComponent = FBoundControl1.BoundControl then FBoundControl1.BoundControl := nil
+    else if AComponent = FBoundControl2.BoundControl then FBoundControl2.BoundControl := nil;
   end;
 end;
 
@@ -346,13 +389,25 @@ begin
   if Font.Color <> TextColor then Font.Color := TextColor;
 end;
 
+procedure TJppCustomEdit.BoundControl1Changed(Sender: TObject);
+begin
+  if not Assigned(FBoundControl1.BoundControl) then Exit;
+  FBoundControl1.BoundControl.FreeNotification(Self);
+end;
+
+procedure TJppCustomEdit.BoundControl2Changed(Sender: TObject);
+begin
+  if not Assigned(FBoundControl2.BoundControl) then Exit;
+  FBoundControl2.BoundControl.FreeNotification(Self);
+end;
+
 procedure TJppCustomEdit.CMBiDiModeChanged(var Message: TMessage);
 begin
   inherited;
   if FBoundLabel <> nil then FBoundLabel.BiDiMode := BiDiMode;
 end;
 
-procedure TJppCustomEdit.CMEnabledchanged(var Message: TMessage);
+procedure TJppCustomEdit.CMEnabledChanged(var Message: TMessage);
 begin
   inherited;
   if FBoundLabel <> nil then FBoundLabel.Enabled := Enabled;
@@ -418,6 +473,21 @@ begin
   SetBoundLabelPosition(FBoundLabelPosition);
 end;
 
+procedure TJppCustomEdit.SetBoundControl1(const Value: TJppBoundControl);
+begin
+  FBoundControl1 := Value;
+end;
+
+procedure TJppCustomEdit.SetBoundControl2(const Value: TJppBoundControl);
+begin
+  FBoundControl2 := Value;
+end;
+
+procedure TJppCustomEdit.SetBoundControlPosition(BoundCtrl: TJppBoundControl);
+begin
+  SetBoundedCtrlPos(Self, BoundCtrl, True);
+end;
+
 procedure TJppCustomEdit.SetBoundLabelPosition(const Value: TLabelPosition);
 var
   P: TPoint;
@@ -474,6 +544,16 @@ begin
   FTagExt := Value;
 end;
 
+procedure TJppCustomEdit.SetupBoundControl1(Sender: TObject);
+begin
+  SetBoundControlPosition(FBoundControl1);
+end;
+
+procedure TJppCustomEdit.SetupBoundControl2(Sender: TObject);
+begin
+  SetBoundControlPosition(FBoundControl2);
+end;
+
 procedure TJppCustomEdit.SetupInternalLabel;
 begin
   if Assigned(FBoundLabel) then Exit;
@@ -481,6 +561,28 @@ begin
   FBoundLabel.FreeNotification(Self);
   FBoundLabel.OnAdjustBounds := AdjustLabelBounds;
   FBoundLabel.FocusControl := Self;
+end;
+
+procedure TJppCustomEdit.UpdateBoundControl1Pos;
+begin
+  SetupBoundControl1(Self);
+end;
+
+procedure TJppCustomEdit.UpdateBoundControl2Pos;
+begin
+  SetupBoundControl2(Self);
+end;
+
+procedure TJppCustomEdit.UpdateBoundControlsPos;
+begin
+  UpdateBoundControl1Pos;
+  UpdateBoundControl2Pos;
+end;
+
+procedure TJppCustomEdit.WMWindowPosChanged(var Message: TWMWindowPosChanged);
+begin
+  inherited;
+  UpdateBoundControlsPos;
 end;
 
 {$IFDEF MSWINDOWS}
