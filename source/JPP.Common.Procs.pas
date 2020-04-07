@@ -8,9 +8,9 @@ uses
   {$IFDEF DCC}
   Winapi.Windows,
   System.SysUtils, System.Classes, System.UITypes,
-  Vcl.Controls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs //, JPL.Math;
+  Vcl.Forms, Vcl.Controls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs //, JPL.Math;
   {$ELSE}
-  SysUtils, Classes, Controls, Graphics, LCLType, LCLIntf //, JPL.Math;
+  Forms, SysUtils, Classes, Controls, Graphics, LCLType, LCLIntf //, JPL.Math;
   {$ENDIF}
   , JPP.Common;
 
@@ -45,8 +45,123 @@ procedure DrawCenteredText(Canvas: TCanvas; Rect: TRect; const Text: string; Del
 procedure InflateRectEx(var ARect: TRect; const DeltaLeft, DeltaRight, DeltaTop, DeltaBottom: integer); overload;
 procedure InflateRectEx(var ARect: TRect; const Margins: TJppMargins); overload;
 
+function GetFontName(const FontNameArray: array of string): string;
+
+procedure SetBoundedCtrlPos(MainControl: TControl; BoundCtrl: TJppBoundControl; UpdateParent: Boolean = True);
+
 
 implementation
+
+uses
+  JPL.Strings;
+
+
+procedure SetBoundedCtrlPos(MainControl: TControl; BoundCtrl: TJppBoundControl; UpdateParent: Boolean = True);
+var
+  Ctrl: TControl;
+begin
+  if not Assigned(BoundCtrl.BoundControl) then Exit;
+  Ctrl := BoundCtrl.BoundControl;
+  if UpdateParent then
+     if Ctrl.Parent <> MainControl.Parent then Ctrl.Parent := MainControl.Parent;
+
+  case BoundCtrl.ControlPos of
+
+    // ------------------- RIGHT ---------------------
+    bcpRightTop:
+      begin
+        Ctrl.Left := MainControl.Left + MainControl.Width + BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top + BoundCtrl.DeltaPosY;
+      end;
+
+    bcpRightBottom:
+      begin
+        Ctrl.Left := MainControl.Left + MainControl.Width + BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top - (Ctrl.Height - MainControl.Height) + BoundCtrl.DeltaPosY;
+      end;
+
+    bcpRightCenter:
+      begin
+        Ctrl.Left := MainControl.Left + MainControl.Width + BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top + (MainControl.Height div 2) - (Ctrl.Height div 2) + BoundCtrl.DeltaPosY;
+      end;
+
+    // --------------------- LEFT --------------------
+    bcpLeftTop:
+      begin
+        Ctrl.Left := MainControl.Left - Ctrl.Width - BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top + BoundCtrl.DeltaPosY;
+      end;
+
+    bcpLeftBottom:
+      begin
+        Ctrl.Left := MainControl.Left - Ctrl.Width - BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top - (Ctrl.Height - MainControl.Height) + BoundCtrl.DeltaPosY;
+      end;
+
+    bcpLeftCenter:
+      begin
+        Ctrl.Left := MainControl.Left - Ctrl.Width - BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top + (MainControl.Height div 2) - (Ctrl.Height div 2) + BoundCtrl.DeltaPosY;
+      end;
+
+    // ------------------- ABOVE ---------------------
+    bcpAboveLeft:
+      begin
+        Ctrl.Left := MainControl.Left + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top - Ctrl.Height - BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
+      end;
+
+    bcpAboveCenter:
+      begin
+        Ctrl.Left := MainControl.Left + (MainControl.Width div 2) - (Ctrl.Width div 2) + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top - Ctrl.Height - BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
+      end;
+
+    bcpAboveRight:
+      begin
+        Ctrl.Left := MainControl.Left + MainControl.Width - Ctrl.Width + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top - Ctrl.Height - BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
+      end;
+
+    // -------------------- BELOW ----------------------
+    bcpBelowLeft:
+      begin
+        Ctrl.Left := MainControl.Left + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top + MainControl.Height + BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
+      end;
+
+    bcpBelowCenter:
+      begin
+        Ctrl.Left := MainControl.Left + (MainControl.Width div 2) - (Ctrl.Width div 2) + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top + MainControl.Height + BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
+      end;
+
+    bcpBelowRight:
+      begin
+        Ctrl.Left := MainControl.Left + MainControl.Width - Ctrl.Width + BoundCtrl.DeltaPosX;
+        Ctrl.Top := MainControl.Top + MainControl.Height + BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
+      end;
+
+
+  end; // case
+end;
+
+function GetFontName(const FontNameArray: array of string): string;
+var
+  FontName: string;
+  i: integer;
+begin
+  for i := Low(FontNameArray) to High(FontNameArray) do
+  begin
+    FontName := FontNameArray[i];
+    if Screen.Fonts.IndexOf(FontName) > 0 then
+    begin
+      Result := FontName;
+      Break;
+    end;
+  end;
+end;
 
 
 procedure InflateRectEx(var ARect: TRect; const DeltaLeft, DeltaRight, DeltaTop, DeltaBottom: integer);

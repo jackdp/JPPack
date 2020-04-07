@@ -157,6 +157,45 @@ type
   {$endregion TJppControlBoundLabel}
 
 
+  TJppBoundControlPos = (
+    bcpLeftTop, bcpLeftBottom, bcpLeftCenter,
+    bcpAboveLeft, bcpAboveCenter, bcpAboveRight,
+    bcpRightTop, bcpRightBottom, bcpRightCenter,
+    bcpBelowLeft, bcpBelowCenter, bcpBelowRight
+  );
+
+  {$Region ' --- TJppBoundControl --- '}
+  TJppBoundControl = class(TJppPersistent)
+  private
+    FOwner: TComponent;
+    FBoundControl: TControl;
+    FSpacing: integer;
+    FControlPos: TJppBoundControlPos;
+    FDeltaPosX: integer;
+    FDeltaPosY: integer;
+    FOnBoundControlChanged: TNotifyEvent;
+    procedure SetBoundControl(const Value: TControl);
+    procedure SetSpacing(const Value: integer);
+    procedure SetControlPos(const Value: TJppBoundControlPos);
+    procedure SetDeltaPosX(const Value: integer);
+    procedure SetDeltaPosY(const Value: integer);
+    procedure SetOnBoundControlChanged(const Value: TNotifyEvent);
+  protected
+    procedure Notification(AComponent: TComponent; Operation: TOperation);
+  public
+    constructor Create(AOwner: TComponent);
+    destructor Destroy; override;
+  published
+    property BoundControl: TControl read FBoundControl write SetBoundControl;
+    property Spacing: integer read FSpacing write SetSpacing default 3;
+    property ControlPos: TJppBoundControlPos read FControlPos write SetControlPos default bcpRightTop;
+    property DeltaPosX: integer read FDeltaPosX write SetDeltaPosX default 0;
+    property DeltaPosY: integer read FDeltaPosY write SetDeltaPosY default 0;
+    property OnBoundControlChanged: TNotifyEvent read FOnBoundControlChanged write SetOnBoundControlChanged;
+  end;
+  {$endregion TJppBoundControl}
+
+
   {$region ' ---------- TJppGradient -------------- '}
   TJppGradient = class(TJppPersistent)
   private
@@ -502,6 +541,75 @@ begin
 end;
 {$endregion TJppControlBoundLabel}
 
+
+{$Region ' ----------------------------- TJppBoundControl ---------------------------- '}
+
+constructor TJppBoundControl.Create(AOwner: TComponent);
+begin
+  inherited Create;
+  FOwner := AOwner;
+  FBoundControl := nil;
+  FSpacing := 3;
+  FControlPos := bcpRightTop;
+  FDeltaPosX := 0;
+  FDeltaPosY := 0;
+  FOnBoundControlChanged := nil;
+end;
+
+destructor TJppBoundControl.Destroy;
+begin
+  inherited;
+end;
+
+
+procedure TJppBoundControl.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  //inherited;
+  if Operation = opRemove then
+    if AComponent = FBoundControl then FBoundControl := nil;
+end;
+
+procedure TJppBoundControl.SetBoundControl(const Value: TControl);
+begin
+  FBoundControl := Value;
+  if Assigned(FOnBoundControlChanged) then FOnBoundControlChanged(Self);
+  if Assigned(FBoundControl) then PropsChanged(Self);
+end;
+
+
+procedure TJppBoundControl.SetControlPos(const Value: TJppBoundControlPos);
+begin
+  //if FControlPos = Value then Exit;
+  FControlPos := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBoundControl.SetDeltaPosX(const Value: integer);
+begin
+  //if FDeltaPosX = Value then Exit;
+  FDeltaPosX := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBoundControl.SetDeltaPosY(const Value: integer);
+begin
+  //if FDeltaPosY = Value then Exit;
+  FDeltaPosY := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBoundControl.SetOnBoundControlChanged(const Value: TNotifyEvent);
+begin
+  FOnBoundControlChanged := Value;
+end;
+
+procedure TJppBoundControl.SetSpacing(const Value: integer);
+begin
+  //if FSpacing = Value then Exit;
+  FSpacing := Value;
+  PropsChanged(Self);
+end;
+{$endregion TJppBoundControl}
 
 {$region ' ---------------------- TJppGradient --------------------------- '}
 
