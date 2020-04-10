@@ -4,8 +4,10 @@ unit JPP.PenStyleComboBox;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
+
   Last mods:
     2020.01.16 - FPC 3.0.2 compatibility
+    2020.04.10 - Anchored controls
 }
 
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
@@ -24,7 +26,7 @@ uses
   {$ENDIF}
 
   JPL.Strings, JPL.Conversion,
-  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.Graphics
+  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Graphics
   ;
 
 
@@ -32,6 +34,7 @@ type
 
   TJppPenStyleComboBoxGetDisplayName = procedure(PenStyle: TPenStyle; var PenStyleName: string) of object;
 
+  {$region ' --- TJppPenStyleComboAppearance --- '}
   TJppPenStyleComboAppearance = class(TJppPersistent)
   private
     FOwner: TComponent;
@@ -80,6 +83,7 @@ type
     property TextMargin: integer read FTextMargin write SetTextMargin default 8;
     {$IFDEF DCC}property DisableFocusRect: Boolean read FDisableFocusRect write SetDisableFocusRect default False;{$ENDIF}
   end;
+  {$endregion TJppPenStyleComboAppearance}
 
 
   {$region ' ----------- TJppCustomPenStyleComboBox ---------- '}
@@ -93,12 +97,14 @@ type
     FAppearance: TJppPenStyleComboAppearance;
     FSelected: TPenStyle;
     FOnGetDisplayName: TJppPenStyleComboBoxGetDisplayName;
+    FAnchoredControls: TJppAnchoredControls;
     procedure SetBoundLabelPosition(const Value: TLabelPosition);
     procedure SetBoundLabelSpacing(const Value: Integer);
     procedure AdjustLabelBounds(Sender: TObject);
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetAppearance(const Value: TJppPenStyleComboAppearance);
     procedure SetOnGetDisplayName(const Value: TJppPenStyleComboBoxGetDisplayName);
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure SetParent(AParent: TWinControl); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -148,6 +154,7 @@ type
 
     property Appearance: TJppPenStyleComboAppearance read FAppearance write SetAppearance;
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
 
     property OnGetDisplayName: TJppPenStyleComboBoxGetDisplayName read FOnGetDisplayName write SetOnGetDisplayName;
 
@@ -238,6 +245,7 @@ type
 
     property Appearance;
     property TagExt;
+    property AnchoredControls;
 
     property OnGetDisplayName;
     {$IFDEF FPC}
@@ -339,6 +347,7 @@ begin
   FOnGetDisplayName := nil;
 
   FTagExt := TJppTagExt.Create(Self);
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
 
   Style := csOwnerDrawVariable;
   DropDownCount := 16;
@@ -362,9 +371,9 @@ destructor TJppCustomPenStyleComboBox.Destroy;
 begin
   FAppearance.Free;
   FTagExt.Free;
+  FAnchoredControls.Free;
   inherited;
 end;
-
 
   {$endregion Create / Destroy}
 
@@ -374,6 +383,33 @@ begin
   inherited Loaded;
 end;
 
+procedure TJppCustomPenStyleComboBox.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
+procedure TJppCustomPenStyleComboBox.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited SetBounds(ALeft, ATop, AWidth, AHeight);
+  SetBoundLabelPosition(FBoundLabelPosition);
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppCustomPenStyleComboBox.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FBoundLabel then FBoundLabel := nil
+        else if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
 
 procedure TJppCustomPenStyleComboBox.SetParent(AParent: TWinControl);
 begin
@@ -386,7 +422,6 @@ begin
   end;
 
 end;
-
 
 procedure TJppCustomPenStyleComboBox.BeginUpdate;
 begin
@@ -517,7 +552,6 @@ begin
   end;
 end;
 
-
 procedure TJppCustomPenStyleComboBox.SetAppearance(const Value: TJppPenStyleComboAppearance);
 begin
   FAppearance := Value;
@@ -640,13 +674,6 @@ end;
 
   {$region ' --------- internal controls ------------- '}
 
-
-procedure TJppCustomPenStyleComboBox.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
-begin
-  inherited SetBounds(ALeft, ATop, AWidth, AHeight);
-  SetBoundLabelPosition(FBoundLabelPosition);
-end;
-
 procedure TJppCustomPenStyleComboBox.SetupInternalLabel;
 begin
   if Assigned(FBoundLabel) then Exit;
@@ -716,16 +743,6 @@ begin
   end;
 end;
 {$ENDIF}
-
-procedure TJppCustomPenStyleComboBox.Notification(AComponent: TComponent; Operation: TOperation);
-begin
-  inherited Notification(AComponent, Operation);
-  if Operation = opRemove then
-  begin
-    if AComponent = FBoundLabel then FBoundLabel := nil
-  end;
-end;
-
 
   {$endregion internal controls}
 

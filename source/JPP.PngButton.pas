@@ -16,7 +16,7 @@ uses
   {$ENDIF}
 
   JPL.Colors, JPL.Strings,
-  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.Graphics, JPP.Gradient, JPP.PngButton.ColorMaps
+  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Graphics, JPP.Gradient, JPP.PngButton.ColorMaps
   ;
 
 
@@ -152,6 +152,7 @@ type
     FTagExt: TJppTagExt;
     FAppearance: TJppButtonAppearance;
     FColorMapType: TJppPngButtonColorMapType;
+    FAnchoredControls: TJppAnchoredControls;
     function PngImageStored: Boolean;
     procedure SetPngImage(const Value: TPngImage);
     procedure SetPngOptions(const Value: TPngOptions);
@@ -163,6 +164,7 @@ type
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetAppearance(const Value: TJppButtonAppearance);
     procedure SetColorMapType(const Value: TJppPngButtonColorMapType);
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
     //property Glyph stored False;
     //property NumGlyphs stored False;
   protected
@@ -170,9 +172,11 @@ type
     {$IFDEF DCC} procedure SetButtonStyle(ADefault: Boolean); override; {$ENDIF}
     procedure PropsChanged(Sender: TObject);
     procedure Paint;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
     procedure ApplyColorMap(ColorMap: TJppPngButtonColorMap);
     procedure SaveColorMapToIniFile(FileName: string; Section: string = COLORMAP_DEFAULT_INI_SECTION; Format: TJppPngButtonIniColorFormat = icfDefault);
     procedure LoadColorMapFromIniFile(FileName: string; Section: string = COLORMAP_DEFAULT_INI_SECTION; Format: TJppPngButtonIniColorFormat = icfDefault);
@@ -184,6 +188,7 @@ type
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
     property Appearance: TJppButtonAppearance read FAppearance write SetAppearance;
     property ColorMapType: TJppPngButtonColorMapType read FColorMapType write SetColorMapType default cmtCustom;
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   end;
   {$endregion TJppPngButton}
 
@@ -784,6 +789,7 @@ begin
   FAppearance := TJppButtonAppearance.Create(Self);
   FAppearance.OnChange := PropsChanged;
   FColorMapType := cmtCustom;
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
 
   bOver := False;
 end;
@@ -794,9 +800,37 @@ begin
   FCanvas.Free;
   FTagExt.Free;
   FAppearance.Free;
+  FAnchoredControls.Free;
   inherited Destroy;
 end;
   {$endregion Create & Destroy}
+
+
+procedure TJppPngButton.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
+procedure TJppPngButton.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppPngButton.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited;
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
 
 
   {$region ' ---------------------- Color Maps -------------------------- '}
@@ -828,6 +862,7 @@ begin
   ColorMap.LoadFromIniFile(FileName, Section, Format);
   ApplyColorMap(ColorMap);
 end;
+
 
 procedure TJppPngButton.ApplyColorMap(ColorMap: TJppPngButtonColorMap);
 begin
@@ -930,7 +965,8 @@ procedure TJppPngButton.SetTagExt(const Value: TJppTagExt);
 begin
   FTagExt := Value;
 end;
-  {$endregion misc}
+
+{$endregion misc}
 
   {$region ' -------------------------------------- CNDrawItem --------------------------------------- '}
 procedure TJppPngButton.CNDrawItem(var Message: TWMDrawItem);

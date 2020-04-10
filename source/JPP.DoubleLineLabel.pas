@@ -3,7 +3,6 @@ unit JPP.DoubleLineLabel;
 {
   Jacek Pazera
   https://github.com/jackdp
-  Last mod: 2019.05.25
 
   A label component composed of 3 parts:
   1. Left caption (property Caption)
@@ -82,12 +81,15 @@ unit JPP.DoubleLineLabel;
 interface
 
 uses
-  {$IFDEF MSWINDOWS}Windows,{$ENDIF} Messages, Classes, Graphics, Controls, StdCtrls, JPP.Common {$IFDEF FPC}, LCLType, Types, LCLIntf{$ENDIF};
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF} Messages, Classes, Graphics, Controls, StdCtrls, {$IFDEF DCC}{$IF CompilerVersion >= 23}UItypes,{$IFEND}{$ENDIF}
+  JPP.Common, JPP.AnchoredControls {$IFDEF FPC}, LCLType, Types, LCLIntf{$ENDIF};
 
 type
   TJppDoubleLabelLineStyle = (dllsNone, dllsSolid, dllsDash, dllsDot);
 
   TJppDoubleLabelLineEvent = procedure(Sender: TObject; Canvas: TCanvas; X1, X2, Y: Integer) of object;
+
+  { TJppDoubleLineLabel }
 
   TJppDoubleLineLabel = class(TGraphicControl)
   private
@@ -112,6 +114,7 @@ type
     FRightCaptionDiabledBorderColor: TColor;
     FRightCaptionDisabledColor: TColor;
     FDisabledLineColor: TColor;
+    FAnchoredControls: TJppAnchoredControls;
     procedure CMTextChanged(var Msg: TMessage); message CM_TEXTCHANGED;
     procedure SetRightCaption(Value: TCaption);
     procedure SetLayout(Value: TTextLayout);
@@ -134,12 +137,15 @@ type
     procedure SetRightCaptionDisabledColor(const Value: TColor);
     procedure SetRightCaptionDisabledTextColor(const Value: TColor);
     procedure SetDisabledLineColor(const Value: TColor);
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure Paint; override;
     procedure PaintLine(X1, X2, Y: Integer); virtual;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
   published
     property RightCaption: TCaption read FRightCaption write SetRightCaption;
     property Layout: TTextLayout read FLayout write SetLayout default tlTop;
@@ -197,6 +203,8 @@ type
     property RightCaptionDisabledTextColor: TColor read FRightCaptionDisabledTextColor write SetRightCaptionDisabledTextColor default clGrayText;
     property RightCaptionDisabledColor: TColor read FRightCaptionDisabledColor write SetRightCaptionDisabledColor default clNone;
     property RightCaptionDiabledBorderColor: TColor read FRightCaptionDiabledBorderColor write SetRightCaptionDiabledBorderColor default clNone;
+
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   end;
 
 
@@ -230,13 +238,42 @@ begin
   FRightCaptionDisabledTextColor := clGrayText;
   FRightCaptionDisabledColor := clNone;
   FRightCaptionDiabledBorderColor := clNone;
+
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
 end;
 
 destructor TJppDoubleLineLabel.Destroy;
 begin
   FRightCaptionFont.Free;
   FTagExt.Free;
+  FAnchoredControls.Free;
   inherited;
+end;
+
+procedure TJppDoubleLineLabel.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
+procedure TJppDoubleLineLabel.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited;
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
+
+procedure TJppDoubleLineLabel.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
 end;
 
 procedure TJppDoubleLineLabel.Paint;

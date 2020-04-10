@@ -1,4 +1,4 @@
-unit JPP.ComboBox;
+unit JPP.ComboBoxEx;
 
 {
   Jacek Pazera
@@ -17,9 +17,9 @@ uses
   {$IFDEF DCC}
   Winapi.Messages,
   System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.ExtCtrls,
+  Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls,
   {$ELSE}
-  SysUtils, Classes, Types, Controls, Graphics, StdCtrls, ExtCtrls, LCLType, LCLIntf, Messages, LMessages,
+  SysUtils, Classes, Types, Controls, Graphics, StdCtrls, ExtCtrls, ComCtrls, LCLType, LCLIntf, Messages, LMessages,
   {$ENDIF}
 
   JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Flash
@@ -28,17 +28,17 @@ uses
 
 type
 
-  TJppCustomComboBox = class;
+  TJppCustomComboBoxEx = class;
 
-  {$Region ' --- TJppFlashJppComboBox --- '}
-  TJppFlashJppComboBox = class(TJppFlashBase)
+  {$Region ' --- TJppFlashJppComboBoxEx --- '}
+  TJppFlashJppComboBoxEx = class(TJppFlashBase)
   private
-    FEdit: TJppCustomComboBox;
+    FEdit: TJppCustomComboBoxEx;
   protected
     procedure FlashColorChanged(Sender: TObject; const AColor: TColor);
     procedure FlashFinished(Sender: TObject);
   public
-    constructor Create(Edit: TJppCustomComboBox);
+    constructor Create(Edit: TJppCustomComboBoxEx);
   published
     property Enabled;
     property FlashColor;
@@ -46,18 +46,18 @@ type
     property FlashInterval;
     property OnFlashFinished;
   end;
-  {$endregion TJppFlashJppComboBox}
+  {$endregion TJppFlashJppComboBoxEx}
 
 
-  {$region ' --- TJppCustomComboBox --- '}
-  TJppCustomComboBox = class(TCustomComboBox)
+  {$region ' --- TJppCustomComboBoxEx --- '}
+  TJppCustomComboBoxEx = class(TCustomComboBoxEx)
   private
     FBoundLabel: TJppControlBoundLabel;
     FMouseOverControl: Boolean;
     {$IFDEF MSWINDOWS} FTabOnEnter: Boolean; {$ENDIF}
     FTagExt: TJppTagExt;
     FShowLabel: Boolean;
-    FFlash: TJppFlashJppComboBox;
+    FFlash: TJppFlashJppComboBoxEx;
     FBoundLabelSpacing: Integer;
     FBoundLabelPosition: TLabelPosition;
     FAnchoredControls: TJppAnchoredControls;
@@ -65,7 +65,7 @@ type
     procedure SetShowLabel(const Value: Boolean);
     procedure CMMouseEnter (var Message: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave (var Message: TMessage); message CM_MOUSELEAVE;
-    procedure SetFlash(const Value: TJppFlashJppComboBox);
+    procedure SetFlash(const Value: TJppFlashJppComboBoxEx);
     procedure SetBoundLabelPosition(const Value: TLabelPosition);
     procedure SetBoundLabelSpacing(const Value: Integer);
     procedure AdjustLabelBounds(Sender: TObject);
@@ -78,17 +78,21 @@ type
     procedure CMBiDiModeChanged(var Message: TMessage); message CM_BIDIMODECHANGED;
     procedure DoEnter; override;
     procedure DoExit; override;
-    {$IFDEF MSWINDOWS} procedure KeyPress(var Key: Char); override; {$ENDIF}
+
     procedure PropsChanged(Sender: TObject);
     procedure Loaded; override;
 
     property MouseOverControl: Boolean read FMouseOverControl;
+
+    function GetItemHt: Integer; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure FlashBackground;
     procedure SetupInternalLabel;
     procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
+
+    {$IFDEF MSWINDOWS} procedure KeyPress(var Key: Char); override; {$ENDIF}
   protected
     property BoundLabel: TJppControlBoundLabel read FBoundLabel;
     property BoundLabelPosition: TLabelPosition read FBoundLabelPosition write SetBoundLabelPosition default lpLeft;
@@ -99,27 +103,33 @@ type
     {$ENDIF}
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
     property ShowLabel: Boolean read FShowLabel write SetShowLabel default True;
-    property Flash: TJppFlashJppComboBox read FFlash write SetFlash;
+    property Flash: TJppFlashJppComboBoxEx read FFlash write SetFlash;
     property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   end;
-  {$endregion TJppCustomComboBox}
+  {$endregion TJppCustomComboBoxEx}
 
 
-  {$region ' --- TJppComboBox --- '}
-  TJppComboBox = class(TJppCustomComboBox)
+  {$region ' --- TJppComboBoxEx --- '}
+  TJppComboBoxEx = class(TJppCustomComboBoxEx)
   public
     property MouseOverControl;
   published
+
+    property Style;
+    property StyleEx;
+
+    property Action;
     property Align;
     {$IFDEF DCC}property AlignWithMargins;{$ENDIF}
     property Anchors;
+    property AutoCompleteOptions default [acoAutoAppend];
     {$IFDEF FPC}property ArrowKeysTraverseList;{$ENDIF}
-    property AutoComplete;
+//    property AutoComplete;
     {$IFDEF FPC}property AutoCompleteText;{$ENDIF}
-    {$IFDEF DCC}property AutoCloseUp;{$ENDIF}
-    {$IFDEF DCC}property AutoCompleteDelay;{$ENDIF}
-    property AutoDropDown;
-    property AutoSize;
+//    {$IFDEF DCC}property AutoCloseUp;{$ENDIF}
+//    {$IFDEF DCC}property AutoCompleteDelay;{$ENDIF}
+//    property AutoDropDown;
+//    property AutoSize;
     {$IFDEF DCC}
     property BevelEdges;
     property BevelInner;
@@ -129,7 +139,7 @@ type
     property BiDiMode;
     {$IFDEF FPC}property BorderSpacing;{$ENDIF}
     {$IFDEF FPC}property BorderStyle;{$ENDIF}
-    property CharCase;
+//    property CharCase;
     property Color;
     property Constraints;
     {$IFDEF DCC} property Ctl3D; {$ENDIF}
@@ -147,6 +157,7 @@ type
     property HelpKeyword;
     property HelpType;
     property Hint;
+    property Images;
     {$IFDEF DCC}
     property ImeMode;
     property ImeName;
@@ -154,6 +165,7 @@ type
     property ItemHeight;
     property ItemIndex;
     property Items;
+    property ItemsEx;
     {$IFDEF FPC}property ItemWidth;{$ENDIF}
     property Left;
     {$IFDEF DCC}property Margins;{$ENDIF}
@@ -173,33 +185,35 @@ type
     property PopupMenu;
     {$IFDEF FPC}property ReadOnly;{$ENDIF}
     property ShowHint;
-    property Sorted;
-    property Style;
+//    property Sorted;
+
     {$IFDEF DCC}{$IF RTLVersion > 23}property StyleElements;{$IFEND}{$ENDIF}
     property TabOrder;
     property TabStop;
     property Tag;
     property Text;
-    {$IFDEF DCC}property TextHint;{$ENDIF}
+//    {$IFDEF DCC}property TextHint;{$ENDIF}
     property Top;
     {$IFDEF DCC} property Touch; {$ENDIF}
     property Visible;
     property Width;
 
     // -------- Events ----------
+    property OnBeginEdit;
     property OnChange;
     {$IFDEF FPC}property OnChangeBounds;{$ENDIF}
     property OnClick;
-    property OnCloseUp;
+//    property OnCloseUp;
     property OnContextPopup;
     property OnDblClick;
     property OnDragDrop;
     property OnDragOver;
-    property OnDrawItem;
+//    property OnDrawItem;
     property OnDropDown;
     {$IFDEF FPC}property OnEditingDone;{$ENDIF}
     property OnEndDock;
     property OnEndDrag;
+    property OnEndEdit;
     property OnEnter;
     property OnExit;
     {$IFDEF DCC}property OnGesture;{$ENDIF}
@@ -207,7 +221,7 @@ type
     property OnKeyDown;
     property OnKeyPress;
     property OnKeyUp;
-    property OnMeasureItem;
+//    property OnMeasureItem;
     {$IFDEF DCC}property OnMouseActivate;{$ENDIF}
     property OnMouseDown;
     property OnMouseEnter;
@@ -236,15 +250,15 @@ type
 
     property AnchoredControls;
   end;
-  {$endregion TJppComboBox}
+  {$endregion TJppComboBoxEx}
 
 
 implementation
 
 
-{$region ' --------------------------------- TJppCustomComboBox ------------------------------- '}
+{$region ' --------------------------------- TJppCustomComboBoxEx ------------------------------- '}
 
-constructor TJppCustomComboBox.Create(AOwner: TComponent);
+constructor TJppCustomComboBoxEx.Create(AOwner: TComponent);
 begin
   inherited;
 
@@ -252,7 +266,7 @@ begin
   FBoundLabelSpacing := 4;
   SetupInternalLabel;
 
-  FFlash := TJppFlashJppComboBox.Create(Self);
+  FFlash := TJppFlashJppComboBoxEx.Create(Self);
 
   FTagExt := TJppTagExt.Create(Self);
   FShowLabel := True;
@@ -264,7 +278,7 @@ begin
   FAnchoredControls := TJppAnchoredControls.Create(Self);
 end;
 
-destructor TJppCustomComboBox.Destroy;
+destructor TJppCustomComboBoxEx.Destroy;
 begin
   FTagExt.Free;
   FFlash.Free;
@@ -272,17 +286,17 @@ begin
   inherited;
 end;
 
-procedure TJppCustomComboBox.Loaded;
+procedure TJppCustomComboBoxEx.Loaded;
 begin
   inherited;
 end;
 
-procedure TJppCustomComboBox.SetAnchoredControls(const Value: TJppAnchoredControls);
+procedure TJppCustomComboBoxEx.SetAnchoredControls(const Value: TJppAnchoredControls);
 begin
   FAnchoredControls := Value;
 end;
 
-procedure TJppCustomComboBox.Notification(AComponent: TComponent; Operation: TOperation);
+procedure TJppCustomComboBoxEx.Notification(AComponent: TComponent; Operation: TOperation);
 begin
   inherited;
   if Operation = opRemove then
@@ -297,33 +311,25 @@ begin
       end;
 end;
 
-procedure TJppCustomComboBox.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
-begin
-  inherited;
-  SetBoundLabelPosition(FBoundLabelPosition);
-  if not (csDestroying in ComponentState) then
-    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
-end;
-
-procedure TJppCustomComboBox.PropsChanged(Sender: TObject);
+procedure TJppCustomComboBoxEx.PropsChanged(Sender: TObject);
 begin
   if csLoading in ComponentState then Exit;
 end;
 
-procedure TJppCustomComboBox.CMBiDiModeChanged(var Message: TMessage);
+procedure TJppCustomComboBoxEx.CMBiDiModeChanged(var Message: TMessage);
 begin
   inherited;
   if FBoundLabel <> nil then FBoundLabel.BiDiMode := BiDiMode;
 end;
 
-procedure TJppCustomComboBox.CMEnabledChanged(var Message: TMessage);
+procedure TJppCustomComboBoxEx.CMEnabledChanged(var Message: TMessage);
 begin
   inherited;
   if FBoundLabel <> nil then FBoundLabel.Enabled := Enabled;
   //ApplyAppearance;
 end;
 
-procedure TJppCustomComboBox.CMMouseEnter(var Message: TMessage);
+procedure TJppCustomComboBoxEx.CMMouseEnter(var Message: TMessage);
 begin
   inherited;
   {$IFDEF MSWINDOWS}
@@ -335,42 +341,46 @@ begin
   end;
 end;
 
-procedure TJppCustomComboBox.CMMouseLeave(var Message: TMessage);
+procedure TJppCustomComboBoxEx.CMMouseLeave(var Message: TMessage);
 begin
   inherited;
   FMouseOverControl := False;
   //ApplyAppearance;
 end;
 
-procedure TJppCustomComboBox.CMVisibleChanged(var Message: TMessage);
+procedure TJppCustomComboBoxEx.CMVisibleChanged(var Message: TMessage);
 begin
   inherited;
   if FBoundLabel <> nil then FBoundLabel.Visible := Visible;
 end;
 
-
-procedure TJppCustomComboBox.DoEnter;
+procedure TJppCustomComboBoxEx.DoEnter;
 begin
   inherited;
 end;
 
-procedure TJppCustomComboBox.DoExit;
+procedure TJppCustomComboBoxEx.DoExit;
 begin
   inherited DoExit;
 end;
 
-procedure TJppCustomComboBox.FlashBackground;
+procedure TJppCustomComboBoxEx.FlashBackground;
 begin
   FFlash.OriginalColor := Color;
   FFlash.Flash;
 end;
 
-procedure TJppCustomComboBox.AdjustLabelBounds(Sender: TObject);
+function TJppCustomComboBoxEx.GetItemHt: Integer;
+begin
+  Result := Perform(CB_GETITEMHEIGHT, 0, 0); // returns 0 if Handle = 0
+end;
+
+procedure TJppCustomComboBoxEx.AdjustLabelBounds(Sender: TObject);
 begin
   SetBoundLabelPosition(FBoundLabelPosition);
 end;
 
-procedure TJppCustomComboBox.SetBoundLabelPosition(const Value: TLabelPosition);
+procedure TJppCustomComboBoxEx.SetBoundLabelPosition(const Value: TLabelPosition);
 var
   P: TPoint;
 begin
@@ -387,18 +397,26 @@ begin
   FBoundLabel.Visible := FShowLabel and Visible;
 end;
 
-procedure TJppCustomComboBox.SetBoundLabelSpacing(const Value: Integer);
+procedure TJppCustomComboBoxEx.SetBoundLabelSpacing(const Value: Integer);
 begin
   FBoundLabelSpacing := Value;
   SetBoundLabelPosition(FBoundLabelPosition);
 end;
 
-procedure TJppCustomComboBox.SetFlash(const Value: TJppFlashJppComboBox);
+procedure TJppCustomComboBoxEx.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  SetBoundLabelPosition(FBoundLabelPosition);
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppCustomComboBoxEx.SetFlash(const Value: TJppFlashJppComboBoxEx);
 begin
   FFlash := Value;
 end;
 
-procedure TJppCustomComboBox.SetParent(AParent: TWinControl);
+procedure TJppCustomComboBoxEx.SetParent(AParent: TWinControl);
 begin
   inherited;
   if FBoundLabel <> nil then
@@ -408,19 +426,19 @@ begin
   end;
 end;
 
-procedure TJppCustomComboBox.SetShowLabel(const Value: Boolean);
+procedure TJppCustomComboBoxEx.SetShowLabel(const Value: Boolean);
 begin
   if FBoundLabel.Visible = Value then Exit;
   FShowLabel := Value;
   FBoundLabel.Visible := FShowLabel;
 end;
 
-procedure TJppCustomComboBox.SetTagExt(const Value: TJppTagExt);
+procedure TJppCustomComboBoxEx.SetTagExt(const Value: TJppTagExt);
 begin
   FTagExt := Value;
 end;
 
-procedure TJppCustomComboBox.SetupInternalLabel;
+procedure TJppCustomComboBoxEx.SetupInternalLabel;
 begin
   if Assigned(FBoundLabel) then Exit;
   FBoundLabel := TJppControlBoundLabel.Create(Self);
@@ -430,7 +448,7 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
-procedure TJppCustomComboBox.KeyPress(var Key: Char);
+procedure TJppCustomComboBoxEx.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
 
@@ -445,13 +463,13 @@ end;
 {$ENDIF}
 
 
-{$endregion TJppCustomComboBox}
+{$endregion TJppCustomComboBoxEx}
 
 
 
-{$region ' -------------------- TJppFlashJppComboBox ---------------------- '}
+{$region ' -------------------- TJppFlashJppComboBoxEx ---------------------- '}
 
-constructor TJppFlashJppComboBox.Create(Edit: TJppCustomComboBox);
+constructor TJppFlashJppComboBoxEx.Create(Edit: TJppCustomComboBoxEx);
 begin
   inherited Create(Edit);
   FEdit := Edit;
@@ -463,23 +481,23 @@ begin
   OnFlashFinished := FlashFinished;
   FreeOnFlashFinished := False;
 
-  if FEdit is TJppCustomComboBox then
-    with (FEdit as TJppCustomComboBox) do
+  if FEdit is TJppCustomComboBoxEx then
+    with (FEdit as TJppCustomComboBoxEx) do
     begin
       OriginalColor := Color;
     end;
 end;
 
-procedure TJppFlashJppComboBox.FlashColorChanged(Sender: TObject; const AColor: TColor);
+procedure TJppFlashJppComboBoxEx.FlashColorChanged(Sender: TObject; const AColor: TColor);
 begin
-  if FEdit is TJppCustomComboBox then
-    (FEdit as TJppCustomComboBox).Color := AColor;
+  if FEdit is TJppCustomComboBoxEx then
+    (FEdit as TJppCustomComboBoxEx).Color := AColor;
 end;
 
-procedure TJppFlashJppComboBox.FlashFinished(Sender: TObject);
+procedure TJppFlashJppComboBoxEx.FlashFinished(Sender: TObject);
 begin
-  if FEdit is TJppCustomComboBox then
-    with (FEdit as TJppCustomComboBox) do
+  if FEdit is TJppCustomComboBoxEx then
+    with (FEdit as TJppCustomComboBoxEx) do
     begin
       Color := OriginalColor;
     end;
@@ -487,7 +505,7 @@ end;
 
 
 
-{$endregion TJppFlashJppComboBox}
+{$endregion TJppFlashJppComboBoxEx}
 
 end.
 

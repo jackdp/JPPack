@@ -6,6 +6,7 @@ unit JPP.BasicPanel;
   https://github.com/jackdp
   Last mods:
     2020.01.16 - FPC 3.0.2 compatibility
+    2020.04.09 - Anchored controls
 }
 
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
@@ -22,7 +23,7 @@ uses
   SysUtils, Messages, LMessages, LCLType, LCLIntf, Classes, Graphics, Controls, StdCtrls, ExtCtrls,
   {$ENDIF}
   JPL.Colors,
-  JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs;
+  JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls;
 
 
 type
@@ -178,9 +179,11 @@ type
     FOnGradientChange: TNotifyEvent;
     FAppearance: TJppBasicPanelAppearance;
     FTagExt: TJppTagExt;
+    FAnchoredControls: TJppAnchoredControls;
     procedure SetOnGradientChange(const Value: TNotifyEvent);
     procedure SetAppearance(const Value: TJppBasicPanelAppearance);
     procedure SetTagExt(const Value: TJppTagExt);
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure DrawBackground(ARect: TRect); override;
     procedure DrawBorders(ARect: TRect);
@@ -193,12 +196,16 @@ type
     procedure GetHDeltas(var dxLeft, dxRight: integer);
     procedure GetVDeltas(var dxTop, dxBottom: integer);
     procedure GetDeltas(var dxLeft, dxRight, dxTop, dxBottom: integer);
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
+
     property Canvas;
     property DockManager;
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   published
   end;
   {$endregion}
@@ -297,6 +304,7 @@ type
     property ChildSizing;
     property OnGetDockCaption;
     {$ENDIF}
+    property AnchoredControls;
   end;
   {$endregion}
 
@@ -473,12 +481,14 @@ begin
   FAppearance.UpperGradient.OnChange := {$IFDEF FPC} @ {$ENDIF}GradientChanged;
   FAppearance.BottomGradient.OnChange := {$IFDEF FPC} @ {$ENDIF}GradientChanged;
 
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
 end;
 
 destructor TJppCustomBasicPanel.Destroy;
 begin
   FTagExt.Free;
   FAppearance.Free;
+  FAnchoredControls.Free;
   inherited Destroy;
 end;
 
@@ -513,6 +523,32 @@ begin
   if (csDesigning in ComponentState) and (not (csLoading in ComponentState)) and ParentBackground then ParentBackground := False;
   {$ENDIF}{$ENDIF}
   Invalidate;
+end;
+
+procedure TJppCustomBasicPanel.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppCustomBasicPanel.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited;
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
+
+procedure TJppCustomBasicPanel.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
 end;
 
 procedure TJppCustomBasicPanel.SetAppearance(const Value: TJppBasicPanelAppearance);

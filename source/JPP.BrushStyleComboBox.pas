@@ -4,8 +4,10 @@ unit JPP.BrushStyleComboBox;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
+
   Last mods:
     2020.01.16 - FPC 3.0.2 compatibility
+    2020.04.10 - Anchored controls
 }
 
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
@@ -24,7 +26,7 @@ uses
   {$ENDIF}
 
   JPL.Strings,
-  JPP.Common;
+  JPP.Common, JPP.AnchoredControls;
 
 
 type
@@ -92,12 +94,14 @@ type
     FAppearance: TJppBrushStyleComboAppearance;
     FSelected: TBrushStyle;
     FOnGetDisplayName: TJppBrushStyleComboBoxGetDisplayName;
+    FAnchoredControls: TJppAnchoredControls;
     procedure SetBoundLabelPosition(const Value: TLabelPosition);
     procedure SetBoundLabelSpacing(const Value: Integer);
     procedure AdjustLabelBounds(Sender: TObject);
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetAppearance(const Value: TJppBrushStyleComboAppearance);
     procedure SetOnGetDisplayName(const Value: TJppBrushStyleComboBoxGetDisplayName);
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure SetParent(AParent: TWinControl); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -149,6 +153,7 @@ type
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
 
     property OnGetDisplayName: TJppBrushStyleComboBoxGetDisplayName read FOnGetDisplayName write SetOnGetDisplayName;
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
 
   end;
   {$endregion TJppCustomBrushStyleComboBox}
@@ -238,6 +243,7 @@ type
 
     property Appearance;
     property TagExt;
+    property AnchoredControls;
 
     //property OnSelectChangeColorItem;
     //property OnColorChanged;
@@ -332,6 +338,7 @@ begin
   FOnGetDisplayName := nil;
 
   FTagExt := TJppTagExt.Create(Self);
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
 
   Style := csOwnerDrawVariable;
   DropDownCount := 16;
@@ -358,6 +365,7 @@ destructor TJppCustomBrushStyleComboBox.Destroy;
 begin
   FAppearance.Free;
   FTagExt.Free;
+  FAnchoredControls.Free;
   inherited;
 end;
 
@@ -370,6 +378,33 @@ begin
   inherited Loaded;
 end;
 
+procedure TJppCustomBrushStyleComboBox.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
+procedure TJppCustomBrushStyleComboBox.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  SetBoundLabelPosition(FBoundLabelPosition);
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppCustomBrushStyleComboBox.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FBoundLabel then FBoundLabel := nil
+        else if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
 
 procedure TJppCustomBrushStyleComboBox.SetParent(AParent: TWinControl);
 begin
@@ -382,7 +417,6 @@ begin
   end;
 
 end;
-
 
 procedure TJppCustomBrushStyleComboBox.BeginUpdate;
 begin
@@ -405,7 +439,6 @@ function TJppCustomBrushStyleComboBox.UpdatingControl: Boolean;
 begin
   Result := FUpdateCounter > 0;
 end;
-
 
 function TJppCustomBrushStyleComboBox.GetBrushStyleDisplayName(const bs: TBrushStyle): string;
 begin
@@ -509,7 +542,6 @@ begin
     Items.EndUpdate;
   end;
 end;
-
 
 procedure TJppCustomBrushStyleComboBox.SetAppearance(const Value: TJppBrushStyleComboAppearance);
 begin
@@ -629,13 +661,6 @@ end;
 
   {$region ' --------- internal controls ------------- '}
 
-
-procedure TJppCustomBrushStyleComboBox.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
-begin
-  inherited SetBounds(ALeft, ATop, AWidth, AHeight);
-  SetBoundLabelPosition(FBoundLabelPosition);
-end;
-
 procedure TJppCustomBrushStyleComboBox.SetupInternalLabel;
 begin
   if Assigned(FBoundLabel) then Exit;
@@ -705,15 +730,6 @@ begin
   end;
 end;
 {$ENDIF}
-
-procedure TJppCustomBrushStyleComboBox.Notification(AComponent: TComponent; Operation: TOperation);
-begin
-  inherited Notification(AComponent, Operation);
-  if Operation = opRemove then
-  begin
-    if AComponent = FBoundLabel then FBoundLabel := nil
-  end;
-end;
 
 
   {$endregion internal controls}
@@ -850,8 +866,11 @@ end;
 
 procedure TJppBrushStyleComboAppearance.SetStyleNameFont(const Value: TFont);
 begin
-  FStyleNameFont := Value;
-  PropsChanged(Self);
+  if Assigned(FStyleNameFont) and Assigned(Value) then
+  begin
+    FStyleNameFont.Assign(Value);
+    PropsChanged(Self);
+  end;
 end;
 
 procedure TJppBrushStyleComboAppearance.SetTextMargin(const Value: integer);

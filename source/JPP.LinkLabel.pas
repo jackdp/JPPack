@@ -4,7 +4,6 @@ unit JPP.LinkLabel;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mod: 2019.05.25
 }
 
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
@@ -23,7 +22,7 @@ uses
   SysUtils, Messages, Classes, Controls, StdCtrls, Graphics, ActnList, LCLIntf, LCLType,
   {$ENDIF}
   //JPP.Types, JPP.Graphics,
-  JPP.Common;
+  JPP.Common, JPP.AnchoredControls;
 
 type
 
@@ -49,6 +48,7 @@ type
     FFontVisitedNormal: TFont;
     FVisited: Boolean;
     FFontVisitedHot: TFont;
+    FAnchoredControls: TJppAnchoredControls;
 
     //class constructor Create;
     procedure SetTagExt(const Value: TJppTagExt);
@@ -63,10 +63,12 @@ type
     procedure SetFontVisitedNormal(const Value: TFont);
     procedure SetVisited(const Value: Boolean);
     procedure SetFontVisitedHot(const Value: TFont);
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
 
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
   protected
     procedure CmMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CmMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
@@ -75,6 +77,7 @@ type
     property Font;
     procedure FontNormalChange(Sender: TObject);
     procedure FontVisitedChange(Sender: TObject);
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   published
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
     property FontNormal: TFont read FFontNormal write SetFontNormal;
@@ -89,6 +92,7 @@ type
     property CursorHot: TCursor read FCursorHot write SetCursorHot default crHandPoint;
     property CursorDisabled: TCursor read FCursorDisabled write SetCursorDisabled default crDefault;
     property Visited: Boolean read FVisited write SetVisited default False;
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   end;
   {$endregion TJppCustomLinkLabel}
 
@@ -229,6 +233,8 @@ begin
   FVisited := False;
   FTagExt := TJppTagExt.Create(Self);
 
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
+
   FFontNormal := TFont.Create;
   FFontHot := TFont.Create;
   FFontDisabled := TFont.Create;
@@ -266,6 +272,7 @@ begin
   FFontDisabled.Free;
   FFontVisitedNormal.Free;
   FFontVisitedHot.Free;
+  FAnchoredControls.Free;
   inherited;
 end;
   {$endregion Create & Destroy}
@@ -337,6 +344,32 @@ end;
   {$endregion Click}
 
 
+procedure TJppCustomLinkLabel.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
+procedure TJppCustomLinkLabel.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppCustomLinkLabel.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited;
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
+
 procedure TJppCustomLinkLabel.SetEnabled(Value: Boolean);
 begin
   //inherited SetEnabled(Value);
@@ -376,7 +409,6 @@ procedure TJppCustomLinkLabel.SetClickActionType(const Value: TJppLinkLabelClick
 begin
   FClickActionType := Value;
 end;
-
 
 procedure TJppCustomLinkLabel.SetCursorDisabled(const Value: TCursor);
 begin
@@ -435,6 +467,7 @@ begin
     if FVisited then Font.Assign(FFontVisitedNormal)
     else Font.Assign(FFontNormal);
 end;
+
 
 {$endregion TJppCustomLinkLabel}
 

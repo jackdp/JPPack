@@ -1,4 +1,4 @@
-unit JPP.ComboBox;
+unit JPP.Memo;
 
 {
   Jacek Pazera
@@ -28,17 +28,53 @@ uses
 
 type
 
-  TJppCustomComboBox = class;
-
-  {$Region ' --- TJppFlashJppComboBox --- '}
-  TJppFlashJppComboBox = class(TJppFlashBase)
+  {$region ' --- TJppCustomMemoAppearance --- '}
+  TJppCustomMemoAppearance = class(TJppPersistent)
   private
-    FEdit: TJppCustomComboBox;
+    FOwner: TComponent;
+    FNormalBgColor: TColor;
+    FFocusedBgColor: TColor;
+    FNormalTextColor: TColor;
+    FFocusedTextColor: TColor;
+    FHotBgColor: TColor;
+    FHotTextColor: TColor;
+    FDisabledBgColor: TColor;
+    FDisabledTextColor: TColor;
+    procedure SetNormalBgColor(const Value: TColor);
+    procedure SetFocusedBgColor(const Value: TColor);
+    procedure SetNormalTextColor(const Value: TColor);
+    procedure SetFocusedTextColor(const Value: TColor);
+    procedure SetHotBgColor(const Value: TColor);
+    procedure SetHotTextColor(const Value: TColor);
+    procedure SetDisabledBgColor(const Value: TColor);
+    procedure SetDisabledTextColor(const Value: TColor);
+  public
+    constructor Create(AOwner: TComponent);
+    destructor Destroy; override;
+    procedure Assign(Source: TJppCustomMemoAppearance); reintroduce;
+  published
+    property NormalBgColor: TColor read FNormalBgColor write SetNormalBgColor default clWindow;
+    property NormalTextColor: TColor read FNormalTextColor write SetNormalTextColor default clWindowText;
+    property FocusedBgColor: TColor read FFocusedBgColor write SetFocusedBgColor default clWindow;
+    property FocusedTextColor: TColor read FFocusedTextColor write SetFocusedTextColor default clWindowText;
+    property HotBgColor: TColor read FHotBgColor write SetHotBgColor default clWindow;
+    property HotTextColor: TColor read FHotTextColor write SetHotTextColor default clWindowText;
+    property DisabledBgColor: TColor read FDisabledBgColor write SetDisabledBgColor default clWindow;
+    property DisabledTextColor: TColor read FDisabledTextColor write SetDisabledTextColor default clGrayText;
+  end;
+  {$endregion TJppCustomMemoAppearance}
+
+  TJppCustomMemo = class;
+
+  {$Region ' --- TJppFlashMemo --- '}
+  TJppFlashMemo = class(TJppFlashBase)
+  private
+    FEdit: TJppCustomMemo;
   protected
     procedure FlashColorChanged(Sender: TObject; const AColor: TColor);
     procedure FlashFinished(Sender: TObject);
   public
-    constructor Create(Edit: TJppCustomComboBox);
+    constructor Create(Edit: TJppCustomMemo);
   published
     property Enabled;
     property FlashColor;
@@ -46,29 +82,31 @@ type
     property FlashInterval;
     property OnFlashFinished;
   end;
-  {$endregion TJppFlashJppComboBox}
+  {$endregion TJppFlashMemo}
 
 
-  {$region ' --- TJppCustomComboBox --- '}
-  TJppCustomComboBox = class(TCustomComboBox)
+  {$region ' --- TJppCustomMemo --- '}
+  TJppCustomMemo = class(TCustomMemo)
   private
     FBoundLabel: TJppControlBoundLabel;
     FMouseOverControl: Boolean;
     {$IFDEF MSWINDOWS} FTabOnEnter: Boolean; {$ENDIF}
     FTagExt: TJppTagExt;
     FShowLabel: Boolean;
-    FFlash: TJppFlashJppComboBox;
+    FFlash: TJppFlashMemo;
     FBoundLabelSpacing: Integer;
     FBoundLabelPosition: TLabelPosition;
+    FAppearance: TJppCustomMemoAppearance;
     FAnchoredControls: TJppAnchoredControls;
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetShowLabel(const Value: Boolean);
     procedure CMMouseEnter (var Message: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave (var Message: TMessage); message CM_MOUSELEAVE;
-    procedure SetFlash(const Value: TJppFlashJppComboBox);
+    procedure SetFlash(const Value: TJppFlashMemo);
     procedure SetBoundLabelPosition(const Value: TLabelPosition);
     procedure SetBoundLabelSpacing(const Value: Integer);
     procedure AdjustLabelBounds(Sender: TObject);
+    procedure SetAppearance(const Value: TJppCustomMemoAppearance);
     procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure SetParent(AParent: TWinControl); override;
@@ -82,6 +120,7 @@ type
     procedure PropsChanged(Sender: TObject);
     procedure Loaded; override;
 
+    procedure ApplyAppearance;
     property MouseOverControl: Boolean read FMouseOverControl;
   public
     constructor Create(AOwner: TComponent); override;
@@ -94,32 +133,27 @@ type
     property BoundLabelPosition: TLabelPosition read FBoundLabelPosition write SetBoundLabelPosition default lpLeft;
     property BoundLabelSpacing: Integer read FBoundLabelSpacing write SetBoundLabelSpacing default 4;
 
+    property Appearance: TJppCustomMemoAppearance read FAppearance write SetAppearance;
     {$IFDEF MSWINDOWS}
     property TabOnEnter: Boolean read FTabOnEnter write FTabOnEnter default False; // if True, after pressing the Enter key, the focus is moved to the next control
     {$ENDIF}
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
     property ShowLabel: Boolean read FShowLabel write SetShowLabel default True;
-    property Flash: TJppFlashJppComboBox read FFlash write SetFlash;
+    property Flash: TJppFlashMemo read FFlash write SetFlash;
     property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   end;
-  {$endregion TJppCustomComboBox}
+  {$endregion TJppCustomMemo}
 
 
-  {$region ' --- TJppComboBox --- '}
-  TJppComboBox = class(TJppCustomComboBox)
+  {$region ' --- TJppMemo --- '}
+  TJppMemo = class(TJppCustomMemo)
   public
     property MouseOverControl;
   published
     property Align;
+    property Alignment;
     {$IFDEF DCC}property AlignWithMargins;{$ENDIF}
     property Anchors;
-    {$IFDEF FPC}property ArrowKeysTraverseList;{$ENDIF}
-    property AutoComplete;
-    {$IFDEF FPC}property AutoCompleteText;{$ENDIF}
-    {$IFDEF DCC}property AutoCloseUp;{$ENDIF}
-    {$IFDEF DCC}property AutoCompleteDelay;{$ENDIF}
-    property AutoDropDown;
-    property AutoSize;
     {$IFDEF DCC}
     property BevelEdges;
     property BevelInner;
@@ -128,9 +162,9 @@ type
     {$ENDIF}
     property BiDiMode;
     {$IFDEF FPC}property BorderSpacing;{$ENDIF}
-    {$IFDEF FPC}property BorderStyle;{$ENDIF}
+    property BorderStyle;
     property CharCase;
-    property Color;
+    //property Color;  Use Appearance.NormalBgColor instead
     property Constraints;
     {$IFDEF DCC} property Ctl3D; {$ENDIF}
     property Cursor;
@@ -139,25 +173,23 @@ type
     property DragCursor;
     property DragKind;
     property DragMode;
-    property DropDownCount default 16;
     property Enabled;
     property Font;
     property Height;
     property HelpContext;
     property HelpKeyword;
     property HelpType;
+    property HideSelection;
     property Hint;
     {$IFDEF DCC}
     property ImeMode;
     property ImeName;
     {$ENDIF}
-    property ItemHeight;
-    property ItemIndex;
-    property Items;
-    {$IFDEF FPC}property ItemWidth;{$ENDIF}
     property Left;
+    property Lines;
     {$IFDEF DCC}property Margins;{$ENDIF}
     property MaxLength;
+    {$IFDEF DCC}property OEMConvert;{$ENDIF}
     property ParentBiDiMode;
     property ParentColor;
     {$IFDEF DCC}
@@ -172,9 +204,8 @@ type
     property ParentShowHint;
     property PopupMenu;
     {$IFDEF FPC}property ReadOnly;{$ENDIF}
+    property ScrollBars;
     property ShowHint;
-    property Sorted;
-    property Style;
     {$IFDEF DCC}{$IF RTLVersion > 23}property StyleElements;{$IFEND}{$ENDIF}
     property TabOrder;
     property TabStop;
@@ -184,30 +215,28 @@ type
     property Top;
     {$IFDEF DCC} property Touch; {$ENDIF}
     property Visible;
+    property WantReturns;
+    property WantTabs;
     property Width;
+    property WordWrap;
 
     // -------- Events ----------
     property OnChange;
     {$IFDEF FPC}property OnChangeBounds;{$ENDIF}
     property OnClick;
-    property OnCloseUp;
     property OnContextPopup;
     property OnDblClick;
     property OnDragDrop;
     property OnDragOver;
-    property OnDrawItem;
-    property OnDropDown;
     {$IFDEF FPC}property OnEditingDone;{$ENDIF}
     property OnEndDock;
     property OnEndDrag;
     property OnEnter;
     property OnExit;
     {$IFDEF DCC}property OnGesture;{$ENDIF}
-    {$IFDEF FPC}property OnGetItems;{$ENDIF}
     property OnKeyDown;
     property OnKeyPress;
     property OnKeyUp;
-    property OnMeasureItem;
     {$IFDEF DCC}property OnMouseActivate;{$ENDIF}
     property OnMouseDown;
     property OnMouseEnter;
@@ -219,13 +248,13 @@ type
     property OnMouseWheelDown;
     property OnMouseWheelUp;
     {$ENDIF}
-    property OnSelect;
     property OnStartDock;
     property OnStartDrag;
     {$IFDEF FPC}property OnUTF8KeyPress;{$ENDIF}
     {$IFDEF MSWINDOWS} property TabOnEnter; {$ENDIF}
 
     // ------- Custom Properties ---------
+    property Appearance;
     property ShowLabel;
     property Flash;
     property TagExt;
@@ -236,15 +265,15 @@ type
 
     property AnchoredControls;
   end;
-  {$endregion TJppComboBox}
+  {$endregion TJppMemo}
 
 
 implementation
 
 
-{$region ' --------------------------------- TJppCustomComboBox ------------------------------- '}
+{$region ' --------------------------------- TJppCustomMemo ------------------------------- '}
 
-constructor TJppCustomComboBox.Create(AOwner: TComponent);
+constructor TJppCustomMemo.Create(AOwner: TComponent);
 begin
   inherited;
 
@@ -252,39 +281,44 @@ begin
   FBoundLabelSpacing := 4;
   SetupInternalLabel;
 
-  FFlash := TJppFlashJppComboBox.Create(Self);
+  FAppearance := TJppCustomMemoAppearance.Create(AOwner);
+  FAppearance.OnChange := PropsChanged;
+
+  FFlash := TJppFlashMemo.Create(Self);
 
   FTagExt := TJppTagExt.Create(Self);
   FShowLabel := True;
   FMouseOverControl := False;
 
   {$IFDEF MSWINDOWS}FTabOnEnter := False;{$ENDIF}
-  DropDownCount := 16;
 
   FAnchoredControls := TJppAnchoredControls.Create(Self);
 end;
 
-destructor TJppCustomComboBox.Destroy;
+destructor TJppCustomMemo.Destroy;
 begin
+  FAppearance.Free;
   FTagExt.Free;
   FFlash.Free;
   FAnchoredControls.Free;
   inherited;
 end;
 
-procedure TJppCustomComboBox.Loaded;
+procedure TJppCustomMemo.Loaded;
 begin
   inherited;
+  Color := FAppearance.NormalBgColor;
+  Font.Color := FAppearance.NormalTextColor;
 end;
 
-procedure TJppCustomComboBox.SetAnchoredControls(const Value: TJppAnchoredControls);
+procedure TJppCustomMemo.SetAnchoredControls(const Value: TJppAnchoredControls);
 begin
   FAnchoredControls := Value;
 end;
 
-procedure TJppCustomComboBox.Notification(AComponent: TComponent; Operation: TOperation);
+procedure TJppCustomMemo.Notification(AComponent: TComponent; Operation: TOperation);
 begin
-  inherited;
+  inherited Notification(AComponent, Operation);
   if Operation = opRemove then
     if not (csDestroying in ComponentState) then
       if Assigned(FAnchoredControls) then
@@ -297,7 +331,7 @@ begin
       end;
 end;
 
-procedure TJppCustomComboBox.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+procedure TJppCustomMemo.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
 begin
   inherited;
   SetBoundLabelPosition(FBoundLabelPosition);
@@ -305,25 +339,55 @@ begin
     if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
 end;
 
-procedure TJppCustomComboBox.PropsChanged(Sender: TObject);
+procedure TJppCustomMemo.PropsChanged(Sender: TObject);
 begin
   if csLoading in ComponentState then Exit;
+  ApplyAppearance;
 end;
 
-procedure TJppCustomComboBox.CMBiDiModeChanged(var Message: TMessage);
+procedure TJppCustomMemo.ApplyAppearance;
+var
+  BgColor, TextColor: TColor;
+begin
+  if not Enabled then
+  begin
+    BgColor := FAppearance.DisabledBgColor;
+    TextColor := FAppearance.DisabledTextColor;
+  end
+  else if Self.Focused then
+  begin
+    BgColor := FAppearance.FocusedBgColor;
+    TextColor := FAppearance.FocusedTextColor;
+  end
+  else if FMouseOverControl then
+  begin
+    BgColor := FAppearance.HotBgColor;
+    TextColor := FAppearance.HotTextColor;
+  end
+  else
+  begin
+    BgColor := FAppearance.NormalBgColor;
+    TextColor := FAppearance.NormalTextColor;
+  end;
+
+  if Color <> BgColor then Color := BgColor;
+  if Font.Color <> TextColor then Font.Color := TextColor;
+end;
+
+procedure TJppCustomMemo.CMBiDiModeChanged(var Message: TMessage);
 begin
   inherited;
   if FBoundLabel <> nil then FBoundLabel.BiDiMode := BiDiMode;
 end;
 
-procedure TJppCustomComboBox.CMEnabledChanged(var Message: TMessage);
+procedure TJppCustomMemo.CMEnabledChanged(var Message: TMessage);
 begin
   inherited;
   if FBoundLabel <> nil then FBoundLabel.Enabled := Enabled;
-  //ApplyAppearance;
+  ApplyAppearance;
 end;
 
-procedure TJppCustomComboBox.CMMouseEnter(var Message: TMessage);
+procedure TJppCustomMemo.CMMouseEnter(var Message: TMessage);
 begin
   inherited;
   {$IFDEF MSWINDOWS}
@@ -331,46 +395,55 @@ begin
   {$ENDIF}
   begin
     FMouseOverControl := True;
-    //ApplyAppearance;
+    ApplyAppearance;
   end;
 end;
 
-procedure TJppCustomComboBox.CMMouseLeave(var Message: TMessage);
+procedure TJppCustomMemo.CMMouseLeave(var Message: TMessage);
 begin
   inherited;
   FMouseOverControl := False;
-  //ApplyAppearance;
+  ApplyAppearance;
 end;
 
-procedure TJppCustomComboBox.CMVisibleChanged(var Message: TMessage);
+procedure TJppCustomMemo.CMVisibleChanged(var Message: TMessage);
 begin
   inherited;
   if FBoundLabel <> nil then FBoundLabel.Visible := Visible;
 end;
 
-
-procedure TJppCustomComboBox.DoEnter;
+procedure TJppCustomMemo.DoEnter;
 begin
+  Color := FAppearance.FocusedBgColor;
+  Font.Color := FAppearance.FocusedTextColor;
   inherited;
 end;
 
-procedure TJppCustomComboBox.DoExit;
+procedure TJppCustomMemo.DoExit;
 begin
+  Color := FAppearance.NormalBgColor;
+  Font.Color := FAppearance.NormalTextColor;
   inherited DoExit;
 end;
 
-procedure TJppCustomComboBox.FlashBackground;
+procedure TJppCustomMemo.FlashBackground;
 begin
   FFlash.OriginalColor := Color;
   FFlash.Flash;
 end;
 
-procedure TJppCustomComboBox.AdjustLabelBounds(Sender: TObject);
+procedure TJppCustomMemo.AdjustLabelBounds(Sender: TObject);
 begin
   SetBoundLabelPosition(FBoundLabelPosition);
 end;
 
-procedure TJppCustomComboBox.SetBoundLabelPosition(const Value: TLabelPosition);
+procedure TJppCustomMemo.SetAppearance(const Value: TJppCustomMemoAppearance);
+begin
+  FAppearance := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomMemo.SetBoundLabelPosition(const Value: TLabelPosition);
 var
   P: TPoint;
 begin
@@ -387,18 +460,18 @@ begin
   FBoundLabel.Visible := FShowLabel and Visible;
 end;
 
-procedure TJppCustomComboBox.SetBoundLabelSpacing(const Value: Integer);
+procedure TJppCustomMemo.SetBoundLabelSpacing(const Value: Integer);
 begin
   FBoundLabelSpacing := Value;
   SetBoundLabelPosition(FBoundLabelPosition);
 end;
 
-procedure TJppCustomComboBox.SetFlash(const Value: TJppFlashJppComboBox);
+procedure TJppCustomMemo.SetFlash(const Value: TJppFlashMemo);
 begin
   FFlash := Value;
 end;
 
-procedure TJppCustomComboBox.SetParent(AParent: TWinControl);
+procedure TJppCustomMemo.SetParent(AParent: TWinControl);
 begin
   inherited;
   if FBoundLabel <> nil then
@@ -408,19 +481,19 @@ begin
   end;
 end;
 
-procedure TJppCustomComboBox.SetShowLabel(const Value: Boolean);
+procedure TJppCustomMemo.SetShowLabel(const Value: Boolean);
 begin
   if FBoundLabel.Visible = Value then Exit;
   FShowLabel := Value;
   FBoundLabel.Visible := FShowLabel;
 end;
 
-procedure TJppCustomComboBox.SetTagExt(const Value: TJppTagExt);
+procedure TJppCustomMemo.SetTagExt(const Value: TJppTagExt);
 begin
   FTagExt := Value;
 end;
 
-procedure TJppCustomComboBox.SetupInternalLabel;
+procedure TJppCustomMemo.SetupInternalLabel;
 begin
   if Assigned(FBoundLabel) then Exit;
   FBoundLabel := TJppControlBoundLabel.Create(Self);
@@ -430,7 +503,7 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
-procedure TJppCustomComboBox.KeyPress(var Key: Char);
+procedure TJppCustomMemo.KeyPress(var Key: Char);
 begin
   inherited KeyPress(Key);
 
@@ -445,13 +518,105 @@ end;
 {$ENDIF}
 
 
-{$endregion TJppCustomComboBox}
+{$endregion TJppCustomMemo}
 
 
 
-{$region ' -------------------- TJppFlashJppComboBox ---------------------- '}
+{$region ' ---------------------- TJppCustomMemoAppearance ----------------------- '}
 
-constructor TJppFlashJppComboBox.Create(Edit: TJppCustomComboBox);
+constructor TJppCustomMemoAppearance.Create(AOwner: TComponent);
+begin
+  inherited Create;
+  FOwner := AOwner;
+  FNormalBgColor := clWindow;
+  FNormalTextColor := clWindowText;
+  FFocusedBgColor := clWindow;
+  FFocusedTextColor := clWindowText;
+  FHotBgColor := clWindow;
+  FHotTextColor := clWindowText;
+  FDisabledBgColor := clWindow;
+  FDisabledTextColor := clGrayText;
+end;
+
+destructor TJppCustomMemoAppearance.Destroy;
+begin
+  inherited;
+end;
+
+procedure TJppCustomMemoAppearance.Assign(Source: TJppCustomMemoAppearance);
+begin
+  FNormalBgColor := Source.NormalBgColor;
+  FNormalTextColor := Source.NormalTextColor;
+  FFocusedBgColor := Source.FocusedBgColor;
+  FFocusedTextColor := Source.FocusedTextColor;
+  FHotBgColor := Source.HotBgColor;
+  FHotTextColor := Source.HotTextColor;
+  FDisabledBgColor := Source.DisabledBgColor;
+  FDisabledTextColor := Source.DisabledTextColor;
+end;
+
+procedure TJppCustomMemoAppearance.SetNormalTextColor(const Value: TColor);
+begin
+  if FNormalTextColor = Value then Exit;
+  FNormalTextColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomMemoAppearance.SetDisabledBgColor(const Value: TColor);
+begin
+  if FDisabledBgColor = Value then Exit;
+  FDisabledBgColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomMemoAppearance.SetDisabledTextColor(const Value: TColor);
+begin
+  if FDisabledTextColor = Value then Exit;
+  FDisabledTextColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomMemoAppearance.SetFocusedBgColor(const Value: TColor);
+begin
+  if FFocusedBgColor = Value then Exit;
+  FFocusedBgColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomMemoAppearance.SetFocusedTextColor(const Value: TColor);
+begin
+  if FFocusedTextColor = Value then Exit;
+  FFocusedTextColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomMemoAppearance.SetHotBgColor(const Value: TColor);
+begin
+  if FHotBgColor = Value then Exit;
+  FHotBgColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomMemoAppearance.SetHotTextColor(const Value: TColor);
+begin
+  if FHotTextColor = Value then Exit;
+  FHotTextColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomMemoAppearance.SetNormalBgColor(const Value: TColor);
+begin
+  if FNormalBgColor = Value then Exit;
+  FNormalBgColor := Value;
+  PropsChanged(Self);
+end;
+
+{$endregion TJppCustomMemoAppearance}
+
+
+{$region ' -------------------- TJppFlashMemo ---------------------- '}
+
+constructor TJppFlashMemo.Create(Edit: TJppCustomMemo);
 begin
   inherited Create(Edit);
   FEdit := Edit;
@@ -463,23 +628,23 @@ begin
   OnFlashFinished := FlashFinished;
   FreeOnFlashFinished := False;
 
-  if FEdit is TJppCustomComboBox then
-    with (FEdit as TJppCustomComboBox) do
+  if FEdit is TJppCustomMemo then
+    with (FEdit as TJppCustomMemo) do
     begin
       OriginalColor := Color;
     end;
 end;
 
-procedure TJppFlashJppComboBox.FlashColorChanged(Sender: TObject; const AColor: TColor);
+procedure TJppFlashMemo.FlashColorChanged(Sender: TObject; const AColor: TColor);
 begin
-  if FEdit is TJppCustomComboBox then
-    (FEdit as TJppCustomComboBox).Color := AColor;
+  if FEdit is TJppCustomMemo then
+    (FEdit as TJppCustomMemo).Color := AColor;
 end;
 
-procedure TJppFlashJppComboBox.FlashFinished(Sender: TObject);
+procedure TJppFlashMemo.FlashFinished(Sender: TObject);
 begin
-  if FEdit is TJppCustomComboBox then
-    with (FEdit as TJppCustomComboBox) do
+  if FEdit is TJppCustomMemo then
+    with (FEdit as TJppCustomMemo) do
     begin
       Color := OriginalColor;
     end;
@@ -487,7 +652,7 @@ end;
 
 
 
-{$endregion TJppFlashJppComboBox}
+{$endregion TJppFlashMemo}
 
 end.
 

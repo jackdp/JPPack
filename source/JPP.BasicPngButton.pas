@@ -9,7 +9,7 @@ uses
 
   PngFunctions,
   JPL.Strings, JPL.Colors,
-  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.Gradient, JPP.Graphics
+  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Gradient, JPP.Graphics
   ;
 
 type
@@ -133,6 +133,7 @@ type
     FOnMouseLeave: TNotifyEvent;
     FTagExt: TJppTagExt;
     FAppearance: TJppBasicPngButtonAppearance;
+    FAnchoredControls: TJppAnchoredControls;
     function PngImageStored: Boolean;
     procedure SetPngImage(const Value: TPngImage);
     procedure SetPngOptions(const Value: TPngOptions);
@@ -143,13 +144,16 @@ type
     procedure SetOnMouseLeave(const Value: TNotifyEvent);
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetAppearance(const Value: TJppBasicPngButtonAppearance);
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean); override;
     procedure SetButtonStyle(ADefault: Boolean); override;
     procedure PropsChanged(Sender: TObject);
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
   published
     property PngImage: TPngImage read FPngImage write SetPngImage stored PngImageStored;
     property PngOptions: TPngOptions read FPngOptions write SetPngOptions default [pngBlendOnDisabled];
@@ -157,6 +161,7 @@ type
     property OnMouseLeave: TNotifyEvent read FOnMouseLeave write SetOnMouseLeave;
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
     property Appearance: TJppBasicPngButtonAppearance read FAppearance write SetAppearance;
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   end;
   {$endregion TJppBasicPngButton}
 
@@ -585,6 +590,7 @@ begin
   FAppearance := TJppBasicPngButtonAppearance.Create(Self);
   FAppearance.OnChange := PropsChanged;
   bOver := False;
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
 end;
 
 destructor TJppBasicPngButton.Destroy;
@@ -593,9 +599,40 @@ begin
   FCanvas.Free;
   FTagExt.Free;
   FAppearance.Free;
+  FAnchoredControls.Free;
   inherited Destroy;
 end;
-  {$endregion Create & Destroy}
+
+
+
+{$endregion Create & Destroy}
+
+
+procedure TJppBasicPngButton.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
+procedure TJppBasicPngButton.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppBasicPngButton.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited;
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
 
 
   {$region ' --------------------------------- misc ------------------------------------ '}
@@ -616,6 +653,7 @@ begin
     end;
   end;
 end;
+
 
 procedure TJppBasicPngButton.SetAppearance(const Value: TJppBasicPngButtonAppearance);
 begin
@@ -677,7 +715,9 @@ procedure TJppBasicPngButton.SetTagExt(const Value: TJppTagExt);
 begin
   FTagExt := Value;
 end;
-  {$endregion misc}
+
+
+{$endregion misc}
 
 
   {$region ' -------------------------------------------------------- CNDrawItem ------------------------------------------------------------ '}

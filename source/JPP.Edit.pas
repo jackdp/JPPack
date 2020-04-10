@@ -24,7 +24,7 @@ uses
   SysUtils, Classes, Types, Controls, Graphics, StdCtrls, ExtCtrls, LCLType, LCLIntf, Messages, LMessages,
   {$ENDIF}
 
-  JPP.Common, JPP.Common.Procs, JPP.Flash
+  JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Flash
   ;
 
 
@@ -109,8 +109,7 @@ type
     FFlash: TJppFlashJppEdit;
     FBoundLabelSpacing: Integer;
     FBoundLabelPosition: TLabelPosition;
-    FBoundControl2: TJppBoundControl;
-    FBoundControl1: TJppBoundControl;
+    FAnchoredControls: TJppAnchoredControls;
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetShowLabel(const Value: Boolean);
     procedure CMMouseEnter (var Message: TMessage); message CM_MOUSEENTER;
@@ -120,9 +119,7 @@ type
     procedure SetBoundLabelPosition(const Value: TLabelPosition);
     procedure SetBoundLabelSpacing(const Value: Integer);
     procedure AdjustLabelBounds(Sender: TObject);
-    procedure SetBoundControl1(const Value: TJppBoundControl);
-    procedure SetBoundControl2(const Value: TJppBoundControl);
-    procedure WMWindowPosChanged(var Message: TWMWindowPosChanged); message WM_WINDOWPOSCHANGED;
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure SetParent(AParent: TWinControl); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -137,23 +134,13 @@ type
 
     procedure ApplyAppearance;
     property MouseOverControl: Boolean read FMouseOverControl;
-
-    procedure SetBoundControlPosition(BoundCtrl: TJppBoundControl);
-    procedure SetupBoundControl1(Sender: TObject);
-    procedure SetupBoundControl2(Sender: TObject);
-    procedure BoundControl1Changed(Sender: TObject);
-    procedure BoundControl2Changed(Sender: TObject);
-
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+
     procedure FlashBackground;
     procedure SetupInternalLabel;
     procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
-
-    procedure UpdateBoundControl1Pos;
-    procedure UpdateBoundControl2Pos;
-    procedure UpdateBoundControlsPos;
   protected
     property BoundLabel: TJppControlBoundLabel read FBoundLabel;
     property BoundLabelPosition: TLabelPosition read FBoundLabelPosition write SetBoundLabelPosition default lpLeft;
@@ -167,8 +154,7 @@ type
     property ShowLabel: Boolean read FShowLabel write SetShowLabel default True;
     property Flash: TJppFlashJppEdit read FFlash write SetFlash;
 
-    property BoundControl1: TJppBoundControl read FBoundControl1 write SetBoundControl1;
-    property BoundControl2: TJppBoundControl read FBoundControl2 write SetBoundControl2;
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   end;
   {$endregion TJppCustomEdit}
 
@@ -288,8 +274,7 @@ type
     property BoundLabelPosition;
     property BoundLabelSpacing;
 
-    property BoundControl1;
-    property BoundControl2;
+    property AnchoredControls;
   end;
   {$endregion TJppEdit}
 
@@ -316,13 +301,7 @@ begin
   FShowLabel := True;
   FMouseOverControl := False;
 
-  FBoundControl1 := TJppBoundControl.Create(Self);
-  FBoundControl1.OnChange := SetupBoundControl1;
-  FBoundControl1.OnBoundControlChanged := BoundControl1Changed;
-
-  FBoundControl2 := TJppBoundControl.Create(Self);
-  FBoundControl2.OnChange := SetupBoundControl2;
-  FBoundControl2.OnBoundControlChanged := BoundControl2Changed;
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
 end;
 
 destructor TJppCustomEdit.Destroy;
@@ -330,8 +309,7 @@ begin
   FAppearance.Free;
   FTagExt.Free;
   FFlash.Free;
-  FBoundControl1.Free;
-  FBoundControl2.Free;
+  FAnchoredControls.Free;
   inherited;
 end;
 
@@ -343,15 +321,24 @@ begin
   //EditLabel.Visible := FShowLabel;
 end;
 
+procedure TJppCustomEdit.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
 procedure TJppCustomEdit.Notification(AComponent: TComponent; Operation: TOperation);
 begin
-  inherited Notification(AComponent, Operation);
+  inherited;
   if Operation = opRemove then
-  begin
-    if AComponent = FBoundLabel then FBoundLabel := nil
-    else if AComponent = FBoundControl1.BoundControl then FBoundControl1.BoundControl := nil
-    else if AComponent = FBoundControl2.BoundControl then FBoundControl2.BoundControl := nil;
-  end;
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FBoundLabel then FBoundLabel := nil
+        else if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
 end;
 
 procedure TJppCustomEdit.PropsChanged(Sender: TObject);
@@ -387,18 +374,6 @@ begin
 
   if Color <> BgColor then Color := BgColor;
   if Font.Color <> TextColor then Font.Color := TextColor;
-end;
-
-procedure TJppCustomEdit.BoundControl1Changed(Sender: TObject);
-begin
-  if not Assigned(FBoundControl1.BoundControl) then Exit;
-  FBoundControl1.BoundControl.FreeNotification(Self);
-end;
-
-procedure TJppCustomEdit.BoundControl2Changed(Sender: TObject);
-begin
-  if not Assigned(FBoundControl2.BoundControl) then Exit;
-  FBoundControl2.BoundControl.FreeNotification(Self);
 end;
 
 procedure TJppCustomEdit.CMBiDiModeChanged(var Message: TMessage);
@@ -473,21 +448,6 @@ begin
   SetBoundLabelPosition(FBoundLabelPosition);
 end;
 
-procedure TJppCustomEdit.SetBoundControl1(const Value: TJppBoundControl);
-begin
-  FBoundControl1 := Value;
-end;
-
-procedure TJppCustomEdit.SetBoundControl2(const Value: TJppBoundControl);
-begin
-  FBoundControl2 := Value;
-end;
-
-procedure TJppCustomEdit.SetBoundControlPosition(BoundCtrl: TJppBoundControl);
-begin
-  SetBoundedCtrlPos(Self, BoundCtrl, True);
-end;
-
 procedure TJppCustomEdit.SetBoundLabelPosition(const Value: TLabelPosition);
 var
   P: TPoint;
@@ -515,6 +475,8 @@ procedure TJppCustomEdit.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
 begin
   inherited;
   SetBoundLabelPosition(FBoundLabelPosition);
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
 end;
 
 procedure TJppCustomEdit.SetFlash(const Value: TJppFlashJppEdit);
@@ -544,16 +506,6 @@ begin
   FTagExt := Value;
 end;
 
-procedure TJppCustomEdit.SetupBoundControl1(Sender: TObject);
-begin
-  SetBoundControlPosition(FBoundControl1);
-end;
-
-procedure TJppCustomEdit.SetupBoundControl2(Sender: TObject);
-begin
-  SetBoundControlPosition(FBoundControl2);
-end;
-
 procedure TJppCustomEdit.SetupInternalLabel;
 begin
   if Assigned(FBoundLabel) then Exit;
@@ -563,27 +515,6 @@ begin
   FBoundLabel.FocusControl := Self;
 end;
 
-procedure TJppCustomEdit.UpdateBoundControl1Pos;
-begin
-  SetupBoundControl1(Self);
-end;
-
-procedure TJppCustomEdit.UpdateBoundControl2Pos;
-begin
-  SetupBoundControl2(Self);
-end;
-
-procedure TJppCustomEdit.UpdateBoundControlsPos;
-begin
-  UpdateBoundControl1Pos;
-  UpdateBoundControl2Pos;
-end;
-
-procedure TJppCustomEdit.WMWindowPosChanged(var Message: TWMWindowPosChanged);
-begin
-  inherited;
-  UpdateBoundControlsPos;
-end;
 
 {$IFDEF MSWINDOWS}
 procedure TJppCustomEdit.KeyPress(var Key: Char);

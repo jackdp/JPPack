@@ -3,6 +3,7 @@
 **A small collection of VCL/LCL components for Delphi XE2 - 10.3 Rio and Lazarus**
 
 - [Overview](#overview)
+- [AnchoredControls](#anchoredcontrols)
 - [Components](#components)
   1. [TJppPanel](#tjpppanel)
   1. [TJppBasicPanel](#tjppbasicpanel)
@@ -62,6 +63,17 @@ After *long and fierce battles* with various buttons from different packages of 
 The original author of the *PngComponents* package is Martijn Saly (`www.thany.org`). The project is currently maintained by [Uwe Raabe](http://www.uweraabe.de/Blog/). Sources are available at https://bitbucket.org/uweraabe/pngcomponents
 
 In the folder [3rd-party](3rd-party) you can find the ZIP file with the *PngComponents* ver. 1.4.1. This is the latest version of the *PngComponents* available when writing this document and it works fine with the *JPPack*.
+
+---
+
+## AnchoredControls
+
+Each visual component in the JPPack package supports anchoring of external components using the `AnchoringControls` property.  
+You can anchor external components to any edge. When you change the size or position of the main component, the position of the anchored components will be automatically updated.
+
+![AnchoredControls](./docs/img/AnchoredControls.gif)
+
+---
 
 ## Components
 

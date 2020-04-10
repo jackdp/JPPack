@@ -11,9 +11,8 @@ uses
     TypInfo, lresources,
     JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel, JPP.LinkLabel,
     JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.BasicPanel, JPP.Panel,
-    JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
-    JPP.Edit,
-    JPP.ComboBox,
+    JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ComboBox, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
+    JPP.Edit, JPP.Memo,
     JPP.BrushStyleComboBox, JPP.PenStyleComboBox,
     {$IFDEF USE_GDIPLUS_CONTROLS}
     JPP.GPHatchStyleComboBox,
@@ -47,7 +46,7 @@ begin
   RegisterComponents(JPPackPageName, [TJppColorComboBox]);
   RegisterComponents(JPPackPageName, [TJppSimplePanel]);
   RegisterComponents(JPPackPageName, [TJppColorSwatch, TJppColorSwatchEx]);
-  RegisterComponents(JPPackPageName, [TJppEdit]);
+  RegisterComponents(JPPackPageName, [TJppEdit, TJppMemo]);
   RegisterComponents(JPPackPageName, [TJppComboBox]);
   RegisterComponents(JPPackPageName, [TJppBrushStyleComboBox, TJppPenStyleComboBox]);
 
@@ -72,5 +71,11 @@ initialization
   {$I '../resources/TJppColorSwatch.lrs'}
   {$I '../resources/TJppColorSwatchEx.lrs'}
   {$I '../resources/TJppEdit.lrs'}
+  {$I '../resources/TJppMemo.lrs'}
+  {$I '../resources/TJppPngCollection.lrs'}
+  {$I '../resources/TJppComboBox.lrs'}
+  {$I '../resources/TJppComboBoxEx.lrs'}
+  {$I '../resources/TJppStdPanel.lrs'}
+  {$I '../resources/TJppDoubleLabellrs'}
 
 end.

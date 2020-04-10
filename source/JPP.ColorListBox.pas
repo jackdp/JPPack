@@ -25,7 +25,7 @@ uses
   {$ENDIF}
 
   JPL.Conversion, JPL.Strings, JPL.Colors, JPL.ColorArrays,
-  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.ColorControls.Common, JPP.Graphics, JPP.Gradient;
+  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.ColorControls.Common, JPP.Graphics, JPP.Gradient;
 
 type
 
@@ -104,6 +104,7 @@ type
     FOnGetItemTextColor: TJppColorListBoxGetItemTextColor;
     FOnGetNumericItemTextColor: TJppColorListBoxGetNumericItemTextColor;
     {$IFDEF MSWINDOWS}FOnScroll: TNotifyEvent;{$ENDIF}
+    FAnchoredControls: TJppAnchoredControls;
     //FOnMeasureItem: TMeasureItemEvent;
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetNoneColor(const Value: TColor);
@@ -123,6 +124,7 @@ type
     procedure SetOnGetItemGradientColors(const Value: TJppColorListBoxGetItemGradientColors);
     procedure SetOnGetItemTextColor(const Value: TJppColorListBoxGetItemTextColor);
     procedure SetOnGetNumericItemTextColor(const Value: TJppColorListBoxGetNumericItemTextColor);
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure PropsChanged(Sender: TObject);
     procedure CreateWnd; override;
@@ -133,12 +135,12 @@ type
     ///////////////////////////////////////////////////////////////////////////////////////////
     procedure GetColorFromStr(sVal: string; var ColorName: string; var AColor: TColor);
     procedure RecreateItems;
-
-
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     procedure Click; override;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
 
     procedure AssignParams(
       clb: TJppCustomColorListBox; bBevel: Boolean = True; bBorderStyle: Boolean = True;
@@ -221,6 +223,8 @@ type
     property OnGetNumericItemTextColor: TJppColorListBoxGetNumericItemTextColor read FOnGetNumericItemTextColor write SetOnGetNumericItemTextColor;
 
     {$IFDEF MSWINDOWS}property OnScroll: TNotifyEvent read FOnScroll write FOnScroll;{$ENDIF}
+
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   end;
   {$ENDREGION TJppCustomColorListBox}
 
@@ -235,6 +239,7 @@ type
     //property Style;
 
     property Anchors;
+    property AnchoredControls;
     {$IFDEF DCC}
     property BevelEdges;
     property BevelInner;
@@ -373,17 +378,14 @@ begin
   FAppearance := TJppColorListBoxAppearance.Create(Self);
   FAppearance.OnChange := (*{$IFDEF FPC} @ {$ENDIF}*)PropsChanged;
 
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
+
   FTagExt := TJppTagExt.Create(Self);
 
   FNoneColor := clNone;
   {$IFDEF DCC}FColorDialogOptions := [cdFullOpen, cdAnyColor];{$ENDIF}
 
   FColorListSet := [cltBasic];
-  {
-  [
-    cltStandard16, cltWebGrayBlack, cltWebWhite, cltWebPink, cltWebRed, cltWebOrange, cltWebYellow, cltWebBrown, cltWebGreen,
-    cltWebCyan, cltWebBlue, cltWebPurpleVioletMagenta];
-  }
 
   if csDesigning in ComponentState then RecreateItems;
 end;
@@ -392,6 +394,7 @@ destructor TJppCustomColorListBox.Destroy;
 begin
   FAppearance.Free;
   FTagExt.Free;
+  FAnchoredControls.Free;
   inherited;
 end;
 
@@ -468,6 +471,31 @@ begin
   Result := FUpdateCounter > 0;
 end;
 
+procedure TJppCustomColorListBox.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
+procedure TJppCustomColorListBox.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppCustomColorListBox.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited;
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
 
 function TJppCustomColorListBox.SetItemColor(const Index: integer; const cl: TColor): Boolean;
 var
@@ -776,7 +804,6 @@ begin
 end;
 
 
-
 function TJppCustomColorListBox.ColorExists(const AColor: TColor): Boolean;
 begin
   Result := GetColorIndex(AColor) >= 0;
@@ -845,8 +872,6 @@ begin
   end;
 end;
 
-
-
 function TJppCustomColorListBox.IsChangeColorItem(const Index: integer): Boolean;
 begin
   Result := GetItemType(Index) = clbitChangeColor;
@@ -888,8 +913,6 @@ begin
   TopIndex := Items.Count - 1;
 end;
 
-
-
 procedure TJppCustomColorListBox.SetAppearance(const Value: TJppColorListBoxAppearance);
 begin
   FAppearance := Value;
@@ -909,8 +932,6 @@ begin
   if not (csLoading in ComponentState) then RecreateItems;
   PropsChanged(Self);
 end;
-
-
 
 procedure TJppCustomColorListBox.SetNoneColor(const Value: TColor);
 begin

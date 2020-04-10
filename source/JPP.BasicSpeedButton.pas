@@ -4,9 +4,9 @@ unit JPP.BasicSpeedButton;
   ---------------------------------------------------------------------------------------
   Based on PngSpeedButton from PngComponents https://bitbucket.org/uweraabe/pngcomponents
   ---------------------------------------------------------------------------------------
-  JP
-  2019.05.21
-  [+] AutoWidth
+  Last mods:
+    2019.05.21 - AutoWidth
+    2020.04.09 - Anchored controls
 }
 
 interface
@@ -23,8 +23,7 @@ uses
   {$ENDIF}
 
   JPL.Colors,
-  JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs
-  ,LDPngFunctions
+  JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, LDPngFunctions
   ;
 
 type
@@ -136,6 +135,7 @@ type
     FAutoWidth: Boolean;
     FAutoWidthMargin: ShortInt;
     FAutoWidthRightJustify: Boolean;
+    FAnchoredControls: TJppAnchoredControls;
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetOnMouseEnter(const Value: TNotifyEvent);
     procedure SetOnMouseLeave(const Value: TNotifyEvent);
@@ -150,6 +150,7 @@ type
     procedure SetAutoWidth(const Value: Boolean);
     procedure SetAutoWidthMargin(const Value: ShortInt);
     procedure SetAutoWidthRightJustify(const Value: Boolean);
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure Paint; override;
     property ButtonState: TJppBasicSpeedButtonState read FButtonState;
@@ -162,11 +163,13 @@ type
     procedure CMEnabledChanged(var Message: TMessage); message CM_ENABLEDCHANGED;
     procedure PropsChanged(Sender: TObject);
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Click; override;
     function CaptionWidth: integer;
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
   published
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
     property OnMouseEnter: TNotifyEvent read FOnMouseEnter write SetOnMouseEnter;
@@ -181,6 +184,7 @@ type
     property AutoWidth: Boolean read FAutoWidth write SetAutoWidth default True;
     property AutoWidthMargin: ShortInt read FAutoWidthMargin write SetAutoWidthMargin default 6;
     property AutoWidthRightJustify: Boolean read FAutoWidthRightJustify write SetAutoWidthRightJustify default False;
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
 
     property Action;
     property Align;
@@ -234,6 +238,8 @@ begin
   FAppearance := TJppBasicSpeedButtonAppearance.Create(Self);
   FAppearance.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
+
   FButtonState := bssNormal;
   FPngImage := TPngImage.Create;
   FPngOptions := [pngBlendOnDisabled, pngGrayscaleOnDisabled];
@@ -251,12 +257,12 @@ begin
   //Repaint;
 end;
 
-
 destructor TJppBasicSpeedButton.Destroy;
 begin
   FTagExt.Free;
   FAppearance.Free;
   FPngImage.Free;
+  FAnchoredControls.Free;
   inherited;
 end;
 
@@ -265,7 +271,6 @@ begin
   inherited Loaded;
   if Enabled then FButtonState := bssNormal else FButtonState := bssDisabled;
 end;
-
 
 procedure TJppBasicSpeedButton.CMMouseEnter(var Message: TMessage);
 begin
@@ -366,8 +371,7 @@ begin
   Repaint;
 end;
 
-
-
+{$region '                            Paint                             '}
 procedure TJppBasicSpeedButton.Paint;
 
 type
@@ -566,6 +570,7 @@ begin
 
   end; // with Canvas
 end;
+{$endregion Paint}
 
 function TJppBasicSpeedButton.PngImageStored: Boolean;
 begin
@@ -609,7 +614,6 @@ begin
   FCaption := Value;
   PropsChanged(Self);
 end;
-
 
 procedure TJppBasicSpeedButton.SetLayout(const Value: TButtonLayout);
 begin
@@ -675,6 +679,33 @@ procedure TJppBasicSpeedButton.SetTagExt(const Value: TJppTagExt);
 begin
   FTagExt := Value;
 end;
+
+procedure TJppBasicSpeedButton.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppBasicSpeedButton.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited;
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
+
+procedure TJppBasicSpeedButton.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
 
 {$endregion}
 

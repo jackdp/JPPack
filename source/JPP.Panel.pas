@@ -6,6 +6,7 @@ unit JPP.Panel;
   https://github.com/jackdp
   Last mods:
     2020.01.16 - FPC 3.0.2 compatibility
+    2020.04.09 - Anchored controls
 }
 
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
@@ -23,7 +24,7 @@ uses
   SysUtils, Messages, LMessages, LCLType, LCLIntf, Classes, Graphics, Controls, StdCtrls, ExtCtrls, Forms,
   {$ENDIF}
   JPL.Colors, JPL.Math,
-  JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs;
+  JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls;
 
 
 type
@@ -440,6 +441,7 @@ type
     FHorizontalLines: TJppPanelHorizontalLines;
     FCaptions: TJppPanelCaptions;
     FHorizontalBars: TJppPanelHorizontalBars;
+    FAnchoredControls: TJppAnchoredControls;
     procedure SetOnGradientChange(const Value: TNotifyEvent);
     procedure SetAppearance(const Value: TJppPanelAppearance);
     procedure SetTagExt(const Value: TJppTagExt);
@@ -447,6 +449,7 @@ type
     procedure SetHorizontalLines(const Value: TJppPanelHorizontalLines);
     procedure SetCaptions(const Value: TJppPanelCaptions);
     procedure SetHorizontalBars(const Value: TJppPanelHorizontalBars);
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
     {$IFDEF DCC}procedure WMMouseWheel(var Message: TWMMouseWheel); message WM_MOUSEWHEEL;{$ENDIF}
   protected
     procedure DrawBackground(ARect: TRect); override;
@@ -464,13 +467,16 @@ type
     procedure GetHDeltas(var dxLeft, dxRight: integer);
     procedure GetVDeltas(var dxTop, dxBottom: integer);
     procedure GetDeltas(var dxLeft, dxRight, dxTop, dxBottom: integer);
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
+
     property Canvas;
     property DockManager;
     property TagExt: TJppTagExt read FTagExt write SetTagExt;
-
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   published
     property VerticalLines: TJppPanelVerticalLines read FVerticalLines write SetVerticalLines;
     property HorizontalLines: TJppPanelHorizontalLines read FHorizontalLines write SetHorizontalLines;
@@ -575,6 +581,7 @@ type
     property ChildSizing;
     property OnGetDockCaption;
     {$ENDIF}
+    property AnchoredControls;
   end;
   {$endregion}
 
@@ -764,6 +771,8 @@ begin
 
   FHorizontalBars := TJppPanelHorizontalBars.Create(Self);
   FHorizontalBars.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
+
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
 end;
 
 destructor TJppCustomPanel.Destroy;
@@ -774,6 +783,7 @@ begin
   FHorizontalLines.Free;
   FCaptions.Free;
   FHorizontalBars.Free;
+  FAnchoredControls.Free;
   inherited Destroy;
 end;
 
@@ -808,6 +818,32 @@ begin
   if (csDesigning in ComponentState) and (not (csLoading in ComponentState)) and ParentBackground then ParentBackground := False;
   {$ENDIF}{$ENDIF}
   Invalidate;
+end;
+
+procedure TJppCustomPanel.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppCustomPanel.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited;
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
+
+procedure TJppCustomPanel.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
 end;
 
 procedure TJppCustomPanel.SetAppearance(const Value: TJppPanelAppearance);

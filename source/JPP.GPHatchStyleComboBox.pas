@@ -10,6 +10,7 @@ unit JPP.GPHatchStyleComboBox;
 
   Last mods:
     2020.01.22
+    2020.04.10 - Anchored controls
 }
 
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
@@ -30,7 +31,7 @@ uses
   {$ENDIF}
 
   IGDIPlus, IGDIPlusHelpers,
-  JPP.Common;
+  JPP.Common, JPP.AnchoredControls;
 
 
 type
@@ -154,6 +155,7 @@ type
     FAppearance: TJppGPHatchStyleComboAppearance;
     FOnGetDisplayName: TJppGPHatchStyleComboBoxGetDisplayName;
     FSelectedHatch: TIGPHatchStyle;
+    FAnchoredControls: TJppAnchoredControls;
     procedure SetBoundLabelPosition(const Value: TLabelPosition);
     procedure SetBoundLabelSpacing(const Value: Integer);
     procedure AdjustLabelBounds(Sender: TObject);
@@ -162,6 +164,7 @@ type
     procedure SetOnGetDisplayName(const Value: TJppGPHatchStyleComboBoxGetDisplayName);
     procedure SetSelectedHatchStyle(const Value: TIGPHatchStyle);
     function GetSelectedHatchStyle: TIGPHatchStyle;
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure SetParent(AParent: TWinControl); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -211,6 +214,8 @@ type
 
     property OnGetDisplayName: TJppGPHatchStyleComboBoxGetDisplayName read FOnGetDisplayName write SetOnGetDisplayName;
     property SelectedHatchStyle: TIGPHatchStyle read GetSelectedHatchStyle write SetSelectedHatchStyle;
+
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
 
   end;
   {$endregion TJppCustomGPHatchStyleComboBox}
@@ -300,6 +305,7 @@ type
 
     property Appearance;
     property TagExt;
+    property AnchoredControls;
 
     property OnGetDisplayName;
     {$IFDEF FPC}
@@ -337,6 +343,7 @@ begin
   FOnGetDisplayName := nil;
 
   FTagExt := TJppTagExt.Create(Self);
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
 
   Style := csOwnerDrawVariable;
   DropDownCount := 16;
@@ -366,9 +373,9 @@ destructor TJppCustomGPHatchStyleComboBox.Destroy;
 begin
   FAppearance.Free;
   FTagExt.Free;
+  FAnchoredControls.Free;
   inherited;
 end;
-
 
   {$endregion Create / Destroy}
 
@@ -378,6 +385,33 @@ begin
   inherited Loaded;
 end;
 
+procedure TJppCustomGPHatchStyleComboBox.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
+procedure TJppCustomGPHatchStyleComboBox.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited SetBounds(ALeft, ATop, AWidth, AHeight);
+  SetBoundLabelPosition(FBoundLabelPosition);
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppCustomGPHatchStyleComboBox.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited Notification(AComponent, Operation);
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FBoundLabel then FBoundLabel := nil
+        else if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
 
 procedure TJppCustomGPHatchStyleComboBox.SetParent(AParent: TWinControl);
 begin
@@ -388,9 +422,7 @@ begin
     FBoundLabel.Parent := AParent;
     FBoundLabel.Visible := True;
   end;
-
 end;
-
 
 procedure TJppCustomGPHatchStyleComboBox.BeginUpdate;
 begin
@@ -493,12 +525,10 @@ begin
   Invalidate;
 end;
 
-
 procedure TJppCustomGPHatchStyleComboBox.RecreateItems;
 begin
   AddHatchStyles(GPGetAllHatchStylesArray);
 end;
-
 
 procedure TJppCustomGPHatchStyleComboBox.SetAppearance(const Value: TJppGPHatchStyleComboAppearance);
 begin
@@ -696,13 +726,6 @@ end;
 
   {$region ' --------- internal controls ------------- '}
 
-
-procedure TJppCustomGPHatchStyleComboBox.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
-begin
-  inherited SetBounds(ALeft, ATop, AWidth, AHeight);
-  SetBoundLabelPosition(FBoundLabelPosition);
-end;
-
 procedure TJppCustomGPHatchStyleComboBox.SetupInternalLabel;
 begin
   if Assigned(FBoundLabel) then Exit;
@@ -774,15 +797,6 @@ begin
   end;
 end;
 {$ENDIF}
-
-procedure TJppCustomGPHatchStyleComboBox.Notification(AComponent: TComponent; Operation: TOperation);
-begin
-  inherited Notification(AComponent, Operation);
-  if Operation = opRemove then
-  begin
-    if AComponent = FBoundLabel then FBoundLabel := nil
-  end;
-end;
 
 
   {$endregion internal controls}

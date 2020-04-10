@@ -23,7 +23,7 @@ uses
   SysUtils, Classes, Types, Controls, StdCtrls, Graphics, Dialogs, Buttons, Clipbrd, ExtCtrls, LCLType, LCLIntf, Messages, LMessages,
   {$ENDIF}
   JPL.Strings, JPL.Conversion, JPL.Colors,
-  JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs, JPP.ColorControls.Common, JPP.BasicSpeedButton;
+  JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.ColorControls.Common, JPP.BasicSpeedButton;
 
 
 type
@@ -192,6 +192,7 @@ type
     FOnGetBottomColorStrValue: TOnGetColorStrValue;
     FOnSelectedColorChange: TOnSelectedColorChange;
     FOnSelectedColorChanged: TNotifyEvent;
+    FAnchoredControls: TJppAnchoredControls;
     procedure SetAppearance(const Value: TJppColorSwatchAppearance);
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetSelectedColor(const Value: TColor);
@@ -199,6 +200,7 @@ type
     procedure SetOnGetBottomColorStrValue(const Value: TOnGetColorStrValue);
     procedure SetOnSelectedColorChange(const Value: TOnSelectedColorChange);
     procedure SetOnSelectedColorChanged(const Value: TNotifyEvent);
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure DrawBackground(ARect: TRect); override;
     procedure DrawColorValue(ColorValue: TJppColorSwatchColorValue; ARect: TRect);
@@ -212,9 +214,12 @@ type
 
     function TopColorStr: string;
     function BottomColorStr: string;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
+
     property Canvas;
     property DockManager;
 
@@ -223,6 +228,8 @@ type
     property OnGetBottomColorStrValue: TOnGetColorStrValue read FOnGetBottomColorStrValue write SetOnGetBottomColorStrValue;
     property OnSelectedColorChange: TOnSelectedColorChange read FOnSelectedColorChange write SetOnSelectedColorChange;
     property OnSelectedColorChanged: TNotifyEvent read FOnSelectedColorChanged write SetOnSelectedColorChanged;
+
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   published
   end;
   {$endregion}
@@ -304,6 +311,8 @@ type
     property OnGetBottomColorStrValue;
     property OnSelectedColorChange;
     property OnSelectedColorChanged;
+
+    property AnchoredControls;
   end;
   {$endregion}
 
@@ -478,6 +487,7 @@ type
     property ButtonPasteColor;
     property ButtonsAlignment;
     {$IFDEF DCC}property ColorDialogOptions;{$ENDIF}
+    property AnchoredControls;
 
   end;
   {$endregion}
@@ -610,12 +620,15 @@ begin
 
   FOnSelectedColorChange := nil;
   FOnSelectedColorChanged := nil;
+
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
 end;
 
 destructor TJppCustomColorSwatch.Destroy;
 begin
   FTagExt.Free;
   FAppearance.Free;
+  FAnchoredControls.Free;
   inherited Destroy;
 end;
 
@@ -623,6 +636,32 @@ procedure TJppCustomColorSwatch.PropsChanged(Sender: TObject);
 begin
   if csLoading in ComponentState then Exit;
   Invalidate;
+end;
+
+procedure TJppCustomColorSwatch.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
+procedure TJppCustomColorSwatch.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppCustomColorSwatch.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited;
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
 end;
 
 procedure TJppCustomColorSwatch.SetAppearance(const Value: TJppColorSwatchAppearance);
@@ -806,7 +845,10 @@ begin
   end;
 
 end;
-  {$endregion TJppCustomColorSwatch.DrawColorValue}
+
+
+
+{$endregion TJppCustomColorSwatch.DrawColorValue}
 
 
 

@@ -6,6 +6,7 @@ unit JPP.ColorComboBox;
   https://github.com/jackdp
   Last mods:
     2020.01.16 - FPC 3.0.2 compatibility
+    2020.04.09 - Anchored controls
 }
 
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
@@ -24,7 +25,7 @@ uses
   {$ENDIF}
 
   JPL.Strings, JPL.Conversion, JPL.Colors, JPL.ColorArrays,
-  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.ColorControls.Common, JPP.BasicSpeedButton, JPP.Graphics, JPP.Gradient
+  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.ColorControls.Common, JPP.BasicSpeedButton, JPP.Graphics, JPP.Gradient
   ;
 
 
@@ -127,6 +128,7 @@ type
     FOnGetItemTextColor: TJppColorComboBoxGetItemTextColor;
     FOnGetNumericItemTextColor: TJppColorComboBoxGetNumericItemTextColor;
     FButtonsAlignment: TVerticalAlignment;
+    FAnchoredControls: TJppAnchoredControls;
     procedure ButtonCopyColorClick(Sender: TObject);
     procedure ButtonPasteColorClick(Sender: TObject);
     procedure ButtonChangeColorClick(Sender: TObject);
@@ -156,6 +158,7 @@ type
     procedure SetOnGetNumericItemTextColor(const Value: TJppColorComboBoxGetNumericItemTextColor);
     procedure SetButtonsAlignment(const Value: TVerticalAlignment);
     function GetButtonTopPosition(Button: TJppComboButton): integer;
+    procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure SetParent(AParent: TWinControl); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -165,7 +168,6 @@ type
     procedure PropsChanged(Sender: TObject);
     procedure RecreateItems;
     procedure Loaded; override;
-
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -260,6 +262,8 @@ type
     property OnGetItemGradientColors: TJppColorComboBoxGetItemGradientColors read FOnGetItemGradientColors write SetOnGetItemGradientColors;
     property OnGetItemTextColor: TJppColorComboBoxGetItemTextColor read FOnGetItemTextColor write SetOnGetItemTextColor;
     property OnGetNumericItemTextColor: TJppColorComboBoxGetNumericItemTextColor read FOnGetNumericItemTextColor write SetOnGetNumericItemTextColor;
+
+    property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
 
   end;
   {$endregion TJppCustomColorComboBox}
@@ -373,6 +377,7 @@ type
     {$IFDEF FPC}
     property BorderSpacing;
     {$ENDIF}
+    property AnchoredControls;
   end;
   {$endregion TJppColorComboBox}
 
@@ -421,6 +426,8 @@ begin
 
   FAppearance := TJppColorComboBoxAppearance.Create(Self);
   FAppearance.OnChange := PropsChanged;
+
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
 
   FOnSelectSeparatorItem := nil;
   FOnColorChanged := nil;
@@ -475,6 +482,7 @@ destructor TJppCustomColorComboBox.Destroy;
 begin
   FAppearance.Free;
   FTagExt.Free;
+  FAnchoredControls.Free;
   inherited;
 end;
 
@@ -560,6 +568,11 @@ end;
   {$endregion Create / Destroy / AssignParams}
 
 
+procedure TJppCustomColorComboBox.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
 procedure TJppCustomColorComboBox.Loaded;
 begin
   inherited Loaded;
@@ -621,7 +634,7 @@ end;
 
 
 
-  {$Region ' --------------------- Add & Insert ---------------------- '}
+{$Region ' --------------------- Add & Insert ---------------------- '}
 function TJppCustomColorComboBox.AddColor(const Color: TColor; const ColorName: string): integer;
 var
   x: integer;
@@ -1685,7 +1698,7 @@ begin
   FButtonChangeColor.OnClick := ButtonChangeColorClick;
   FButtonChangeColor.Height := Height;
   //FButtonChangeColor.AutoWidth := False;
-  FButtonChangeColor.Width := FButtonChangeColor.Height;
+  //FButtonChangeColor.Width := FButtonChangeColor.Height;
   FButtonChangeColor.Caption := '...';
   FButtonChangeColor.Appearance.Normal.BorderColor := GetSimilarColor(clBtnFace, 15, False);
   FButtonChangeColor.Hint := 'Change color...';
@@ -1701,7 +1714,7 @@ begin
   FButtonCopyColor.OnClick := ButtonCopyColorClick;
   //FButtonCopyColor.AutoWidth := False;
   FButtonCopyColor.Height := Height;
-  FButtonCopyColor.Width := FButtonCopyColor.Height;
+  //FButtonCopyColor.Width := FButtonCopyColor.Height;
   FButtonCopyColor.Caption := 'C';
   FButtonCopyColor.Appearance.Normal.BorderColor := GetSimilarColor(clBtnFace, 15, False);
   FButtonCopyColor.Hint := 'Copy color';
@@ -1717,7 +1730,7 @@ begin
   FButtonPasteColor.OnClick := ButtonPasteColorClick;
   //FButtonPasteColor.AutoWidth := False;
   FButtonPasteColor.Height := Height;
-  FButtonPasteColor.Width := FButtonPasteColor.Height;
+  //FButtonPasteColor.Width := FButtonPasteColor.Height;
   FButtonPasteColor.Caption := 'P';
   FButtonPasteColor.Appearance.Normal.BorderColor := GetSimilarColor(clBtnFace, 15, False);
   FButtonPasteColor.Hint := 'Paste color';
@@ -1827,6 +1840,8 @@ begin
   inherited SetBounds(ALeft, ATop, AWidth, AHeight);
   SetBoundLabelPosition(FBoundLabelPosition);
   SetButtonsPosition;
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
 end;
 
 
@@ -1861,6 +1876,7 @@ begin
   end;
 
   FBoundLabel.SetBounds({%H-}P.x, {%H-}P.y, FBoundLabel.Width, FBoundLabel.Height);
+  FBoundLabel.Visible := Visible;
 end;
 
 procedure TJppCustomColorComboBox.SetBoundLabelSpacing(const Value: Integer);
@@ -1906,6 +1922,15 @@ begin
     else if AComponent = FButtonChangeColor then FButtonChangeColor := nil
     else if AComponent = FButtonCopyColor then FButtonCopyColor := nil
     else if AComponent = FButtonPasteColor then FButtonPasteColor := nil;
+
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
   end;
 end;
 
@@ -1926,6 +1951,7 @@ constructor TJppComboButton.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   Name := 'ComboButton' + IntToStr(Random(10000)) + IntToStr(Random(10000));
+  //AutoWidth := False;
   SetSubComponent(True);
 end;
 

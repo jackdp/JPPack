@@ -8,14 +8,15 @@ uses
   System.Classes,
 
   JPP.Types,
-  JPP.BasicPanel, JPP.Panel, JPP.SimplePanel,
+  JPP.BasicPanel, JPP.Panel, JPP.SimplePanel, JPP.StdPanel,
   JPP.BasicPngButton, JPP.PngButton, JPP.BasicSpeedButton,
   JPP.ColorComboBox, JPP.ColorListBox, JPP.ColorSwatch,
   JPP.LinkLabel, JPP.Timer, JPP.StorageCtrl, JPP.StringStorageCtrl,
   JPP.FormIniStorage, JPP.PngCollection,
   JPP.DoubleLineLabel, JPP.DoubleLabel,
   JPP.Edit, JPP.EditEx,
-  JPP.ComboBox,
+  JPP.ComboBox, JPP.ComboBoxEx,
+  JPP.Memo, JPP.MemoEx,
   JPP.BrushStyleComboBox, JPP.PenStyleComboBox
   {$IFDEF USE_GDIPLUS_CONTROLS}
   , JPP.GPHatchStyleComboBox
@@ -35,7 +36,7 @@ begin
   RegisterComponents(
     JPPackPageName,
     [
-      TJppBasicPanel, TJppPanel, TJppSimplePanel,
+      TJppStdPanel, TJppSimplePanel, TJppBasicPanel, TJppPanel,
       TJppBasicSpeedButton, TJppBasicPngButton, TJppPngButton,
       TJppColorComboBox, TJppColorListBox, TJppColorSwatch, TJppColorSwatchEx,
       TJppLinkLabel,
@@ -46,7 +47,8 @@ begin
       TJppPngCollection,
       TJppDoubleLineLabel, TJppDoubleLabel,
       TJppEdit, TJppEditEx,
-      TJppComboBox,
+      TJppComboBox, TJppComboBoxEx,
+      TJppMemo, TJppMemoEx,
       TJppBrushStyleComboBox, TJppPenStyleComboBox
       {$IFDEF USE_GDIPLUS_CONTROLS}
       , TJppGPHatchStyleComboBox
