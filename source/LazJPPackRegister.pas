@@ -76,6 +76,6 @@ initialization
   {$I '../resources/TJppComboBox.lrs'}
   {$I '../resources/TJppComboBoxEx.lrs'}
   {$I '../resources/TJppStdPanel.lrs'}
-  {$I '../resources/TJppDoubleLabellrs'}
+  {$I '../resources/TJppDoubleLabel.lrs'}
 
 end.
