@@ -2,34 +2,45 @@
 
 **A small collection of VCL/LCL components for Delphi XE2 - 10.3 Rio and Lazarus**
 
-- [Overview](#overview)
-- [AnchoredControls](#anchoredcontrols)
-- [Components](#components)
-  1. [TJppPanel](#tjpppanel)
-  1. [TJppBasicPanel](#tjppbasicpanel)
-  1. [TJppSimplePanel](#tjppsimplepanel)
-  1. [TJppPngButton (Delphi only)](#tjpppngbutton)
-  1. [TJppBasicPngButton (Delphi only)](#tjppbasicpngbutton)
-  1. [TJppBasicSpeedButton](#tjppbasicspeedbutton)
-  1. [TJppColorComboBox](#tjppcolorcombobox)
-  1. [TJppColorListBox](#tjppcolorlistbox)
-  1. [TJppColorSwatch, TJppColorSwatchEx](#tjppcolorswatch-tjppcolorswatchex)
-  1. [TJppLinkLabel](#tjpplinklabel)
-  1. [TJppDoubleLineLabel](#tjppdoublelinelabel)
-  1. [TJppDoubleLabel](#tjppdoublelabel)
-  1. [TJppEdit](#tjppedit)
-  1. [TJppEditEx](#tjppeditex)
-  1. [TJppComboBox](#tjppcombobox)
-  1. [TJppGPHatchStyleComboBox](#tjppgphatchstylecombobox)
-  1. [TJppTimer](#tjpptimer)
-  1. [TJppBrushStyleComboBox](#tjppbrushstylecombobox)
-  1. [TJppPenStyleComboBox](#tjpppenstylecombobox)
-  1. [TJppPngCollection](#tjpppngcollection)
-  1. [TJppStorageCtrl](#tjppstoragectrl)
-  1. [TJppStringStorageCtrl](#tjppstringstoragectrl)
-- [TagExt](#tagext)
-- [Installation](#installation)
-- [License](#license)
+- [JPPack](#jppack)
+  - [Overview](#overview)
+    - [Cindy Components](#cindy-components)
+    - [PngComponents](#pngcomponents)
+  - [AnchoredControls](#anchoredcontrols)
+  - [Components](#components)
+    - [TJppPanel](#tjpppanel)
+    - [TJppBasicPanel](#tjppbasicpanel)
+    - [TJppSimplePanel](#tjppsimplepanel)
+    - [TJppStdPanel](#tjppstdpanel)
+    - [TJppPngButton](#tjpppngbutton)
+    - [TJppBasicPngButton](#tjppbasicpngbutton)
+    - [TJppBasicSpeedButton](#tjppbasicspeedbutton)
+    - [TJppComboBox](#tjppcombobox)
+    - [TJppComboBoxEx](#tjppcomboboxex)
+    - [TJppColorComboBox](#tjppcolorcombobox)
+    - [TJppColorListBox](#tjppcolorlistbox)
+    - [TJppColorSwatch, TJppColorSwatchEx](#tjppcolorswatch-tjppcolorswatchex)
+    - [TJppLinkLabel](#tjpplinklabel)
+    - [TJppDoubleLineLabel](#tjppdoublelinelabel)
+    - [TJppDoubleLabel](#tjppdoublelabel)
+    - [TJppEdit](#tjppedit)
+    - [TJppEditEx](#tjppeditex)
+    - [TJppMemo](#tjppmemo)
+    - [TJppMemoEx](#tjppmemoex)
+    - [TJppComboBox](#tjppcombobox-1)
+    - [TJppGPHatchStyleComboBox](#tjppgphatchstylecombobox)
+    - [TJppBrushStyleComboBox](#tjppbrushstylecombobox)
+    - [TJppPenStyleComboBox](#tjpppenstylecombobox)
+    - [TJppTimer](#tjpptimer)
+    - [TJppPngCollection](#tjpppngcollection)
+    - [TJppStorageCtrl](#tjppstoragectrl)
+    - [TJppStringStorageCtrl](#tjppstringstoragectrl)
+  - [TagExt](#tagext)
+  - [Installation](#installation)
+    - [Delphi](#delphi)
+    - [Lazarus](#lazarus)
+    - [CodeTyphon](#codetyphon)
+  - [License](#license)
 
 ---
 
@@ -108,13 +119,21 @@ A truncated version of the `TJppPanel`. It does not have built-in collections of
 
 A truncated version of the `TJppBasicPanel`. It has only one gradient, all borders have the same color (`Appearance.BorderColor`), but each border can be hidden/shown (`Appearance`: `DrawTopBorder`, `DrawBottomBorder`, `DrawLeftBorder`, `DrawRightBorder`).
 
-This panel is great for creating a basic window layout.
+This panel is great for creating a basic UI layout.
+
+---
+
+### TJppStdPanel
+
+`TCustomPanel` descendant
+
+Standard panel with component anchoring support.
 
 ---
 
 ### TJppPngButton
 
-Currently **only for Delphi**.
+Currently **only for Delphi**.  
 `TJppPngButton` is an extended `TPngBitBtn` button from the **PngComponents** package.
 
 <p align="center">
@@ -137,7 +156,7 @@ Color schemes can be edited with the `TJppPngButton Color Maps Designer` program
 
 ### TJppBasicPngButton
 
-Currently **only for Delphi**.
+Currently **only for Delphi**.  
 This button is a slightly truncated version of the `TJppPngButton`. It has only one gradient for each button state and does not support color schemes.
 
 ---
@@ -145,6 +164,39 @@ This button is a slightly truncated version of the `TJppPngButton`. It has only 
 ### TJppBasicSpeedButton
 
 This button is very similar to `TJppBasicPngButton`, but it is based on `TGraphicControl`, so it does not take the focus (it has no *focused* state).
+
+---
+
+### TJppComboBox
+
+`TCustomComboBox` descendant.
+
+Additional properties:
+
+- `AnchoredControls`
+- `BoundLabel` - Internal label.
+- `Flash` - Flashing options. To turn on flashing, call the `FlashBackground` method in the code.
+- `ShowLabel` - Show / hide bound label.
+- `TagExt`
+
+---
+
+### TJppComboBoxEx
+
+`TCustomComboBoxEx` descendant.
+
+Fixed item height bug in older Delphi versions.
+
+![TJppComboBox Item Height fixed](./docs/img/JppComboBoxEx_ItemHeight.gif)
+
+Additional properties:
+
+- `AnchoredControls`
+- `BoundLabel` - Internal label.
+- `Flash` - Flashing options. To turn on flashing, call the `FlashBackground` method in the code.
+- `ShowLabel` - Show / hide bound label.
+- `TagExt`
+- published `ItemIndex`
 
 ---
 
@@ -200,18 +252,18 @@ It consists of three parts: a rectangle displaying the color (on the left) and t
 
 Available color formats:
 
-|         Format          |           Example            |
-| ------------------------- | ------------------------------ |
-| `ctBgr`                 | `128,064,032`          |
-| `ctCmyk`               | `075,050,000,050` |
-| `ctCppHex`          | `0x00804020`             |
-| `ctHslCss`          | `220,60%,31%`          |
-| `ctHslWin`          | `146,144,075`          |
-| `ctHtml`               | `#204080`                    |
-| `ctPascalHex`   | `$00804020`               |
-| `ctPascalInt`   | `8405024`                    |
-| `ctRgb`                 | `032,064,128`          |
-| `ctRgbPercent` | `13%,25%,50%`          |
+| Format         | Example           |
+|----------------|-------------------|
+| `ctBgr`        | `128,064,032`     |
+| `ctCmyk`       | `075,050,000,050` |
+| `ctCppHex`     | `0x00804020`      |
+| `ctHslCss`     | `220,60%,31%`     |
+| `ctHslWin`     | `146,144,075`     |
+| `ctHtml`       | `#204080`         |
+| `ctPascalHex`  | `$00804020`       |
+| `ctPascalInt`  | `8405024`         |
+| `ctRgb`        | `032,064,128`     |
+| `ctRgbPercent` | `13%,25%,50%`     |
 
 If you want to display the color code in some other format, you can do it in the `OnGetTopColorStrValue` event handler (for the upper color code) and `OnGetBottomColorStrValue` (for the bottom).
 
@@ -223,7 +275,9 @@ If you want to display the color code in some other format, you can do it in the
 
 ### TJppLinkLabel
 
-Label with additional fonts (`TFont`) for 5 states: *normal*, *visited-normal*, *hot*, *visited-hot* and *disabled*. It is inherited from `TCustomLabel`.
+`TCustomLabel` descendant.  
+Label with additional fonts (`TFont`) for 5 states: *normal*, *visited-normal*, *hot*, *visited-hot* and *disabled*.  
+After clicking, it can open the URL in the default browser, execute file with `ShellExecute` or perform an action from **TActionList**.
 
 [More info...](./docs/TJppLinkLabel.md)
 
@@ -251,6 +305,7 @@ My modifications:
 
 - **TPegtopLineLabel** renamed to **TJppDoubleLineLabel**
 - `Annex` renamed to `RightCaption`
+- AnchoredControls
 - AutoHeight
 - DisabledLineColor
 - LinePosDeltaY
@@ -291,32 +346,62 @@ Based on **TJppDoubleLineLabel**.
 
 An edit component derived from `TCustomEdit`.
 
+![TJppEdit](./docs/img/JppEdit.gif)
+
 Additional properties:
 
-- `Appearance`: Here you can set the background and font color for four states: Normal, Hot, Focused, Disabled.
-- `BoundLabel`: Internal label
-- `BoundControl1`, `BoundControl2`: You can bound 2 external components (eg. CheckBox on the left and Buttton on the right).
-- `Flash`: `FlashColor`, `FlashCount`, `FlashInterval`. To turn on flashing, call the `FlashBackground` method. This function can be used to indicate the user of an incorrect value.
-- `ShowLabel`: `Boolean`
-- `TagExt`: `TJppTagExt`
+- `AnchoredControls`
+- `Appearance` - Here you can set the background and font color for four states: Normal, Hot, Focused, Disabled.
+- `BoundLabel` - Internal label
+- `Flash` - `FlashColor`, `FlashCount`, `FlashInterval`. To turn on flashing, call the `FlashBackground` method. This function can be used to indicate the user of an incorrect value.
+- `ShowLabel` - Show / hide bound label.
+- `TagExt` - Extended tag.
 
 ---
 
 ### TJppEditEx
 
 Currently **only for Delphi**.  
-Similar to `TJppEdit`, but also has the ability to define border colors.
+Similar to `TJppEdit`, but also has the ability to define border colors.  
+Border drawing methods based on `TFlatEdit` from the **FlatStyle** package https://sourceforge.net/projects/flatstyle/
+
+![TJppEditEx](./docs/img/JppEditEx.gif)
+
+---
+
+### TJppMemo
+
+`TCustomMemo` descendant.
+
+Additional properties:
+
+- `AnchoredControls`
+- `Appearance` - Here you can set the background and font color for four states: Normal, Hot, Focused, Disabled.
+- `BoundLabel` - Internal label
+- `Flash` - `FlashColor`, `FlashCount`, `FlashInterval`. To turn on flashing, call the `FlashBackground` method. This function can be used to indicate the user of an incorrect value.
+- `ShowLabel` - Show / hide bound label.
+- `Text` - Easy access to `Lines.Text`
+- `TagExt` - Extended tag.
+
+---
+
+### TJppMemoEx
+
+Similar to `TJppMemo`, but also has the ability to define border colors.  
+Border drawing methods based on `TFlatMemo` from the **FlatStyle** package https://sourceforge.net/projects/flatstyle/
+
+![TJppMemoEx](./docs/img/JppMemoEx.gif)
 
 ---
 
 ### TJppComboBox
 
-An edit component derived from `TCustomComboBox`.
+A combo box component derived from `TCustomComboBox`.
 
 Additional properties:
 
+- `AnchoredControls`
 - `BoundLabel`: Internal label
-- `BoundControl1`, `BoundControl2`: You can bound 2 external components (eg. CheckBox on the left and Buttton on the right).
 - `Flash`: `FlashColor`, `FlashCount`, `FlashInterval`. To turn on flashing, call the `FlashBackground` method. This function can be used to indicate the user of an incorrect value.
 - `ShowLabel`: `Boolean`
 - `TagExt`: `TJppTagExt`
@@ -326,7 +411,9 @@ Additional properties:
 ### TJppGPHatchStyleComboBox
 
 **Windows only**  
-GDI+ hatch style selector.
+Highly customizable GDI+ hatch style selector.
+
+![TJppGPHatchStyleComboBox](./docs/img/JppGPHatchStyleComboBox.gif)
 
 ---
 
@@ -334,9 +421,7 @@ GDI+ hatch style selector.
 
 A highly customizable combo box with a list of brush styles.
 
-<p align="center">
-<img src="./docs/img/TJppBrushStyleComboBox.png">
-</p>
+![TJppBrushStyleComboBox](./docs/img/TJppBrushStyleComboBox.png)
 
 Current style can be read/set using the `Selected` property.
 
@@ -350,9 +435,7 @@ The *TJppBrushStyleComboBox* has a built-in label (`BoundLabel`).
 
 A highly customizable combo box with a list of pen styles.
 
-<p align="center">
-<img src="./docs/img/TJppPenStyleComboBox.png">
-</p>
+![TJppPenStyleComboBox](./docs/img/TJppPenStyleComboBox.png)
 
 Current style can be read/set using the `Selected` property.
 
@@ -512,13 +595,15 @@ Each component in the **JPPack** package has the `TagExt` property. Here you can
 
 Default values:
 
-Property | Default value
--------- |------
-`TagExt.IntValue` | `0`
-`TagExt.StrValue` | `''`
-`TagExt.RealValue` | `0`
+Property              | Default value
+----------------------|--------------
+`TagExt.IntValue`     | `0`
+`TagExt.StrValue`     | `''`
+`TagExt.RealValue`    | `0`
 `TagExt.PointerValue` | **`nil`**
-`TagExt.DateValue` | `Now`
+`TagExt.DateValue`    | `Now`
+
+---
 
 ## Installation
 
@@ -561,6 +646,8 @@ On Windows, also install the **IGDIPlusMod** from https://github.com/jackdp/IGDI
 
 Open package file (`packages\CodeTyphon\jppacklcl.ctpkg`) in the Typhon IDE. Click button `Compile package` (2-nd button on the toolbar) then click the 3-rd button, select `Install` and rebuild IDE.
 All components you can find ont the **JPPackLCL** page in the *Component Palette*.
+
+---
 
 ## License
 
