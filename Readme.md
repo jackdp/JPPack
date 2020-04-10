@@ -27,7 +27,6 @@
     - [TJppEditEx](#tjppeditex)
     - [TJppMemo](#tjppmemo)
     - [TJppMemoEx](#tjppmemoex)
-    - [TJppComboBox](#tjppcombobox-1)
     - [TJppGPHatchStyleComboBox](#tjppgphatchstylecombobox)
     - [TJppBrushStyleComboBox](#tjppbrushstylecombobox)
     - [TJppPenStyleComboBox](#tjpppenstylecombobox)
@@ -391,20 +390,6 @@ Similar to `TJppMemo`, but also has the ability to define border colors.
 Border drawing methods based on `TFlatMemo` from the **FlatStyle** package https://sourceforge.net/projects/flatstyle/
 
 ![TJppMemoEx](./docs/img/JppMemoEx.gif)
-
----
-
-### TJppComboBox
-
-A combo box component derived from `TCustomComboBox`.
-
-Additional properties:
-
-- `AnchoredControls`
-- `BoundLabel`: Internal label
-- `Flash`: `FlashColor`, `FlashCount`, `FlashInterval`. To turn on flashing, call the `FlashBackground` method. This function can be used to indicate the user of an incorrect value.
-- `ShowLabel`: `Boolean`
-- `TagExt`: `TJppTagExt`
 
 ---
 
