@@ -14,6 +14,13 @@ package JPPack;
 {$R '..\DCR\JppSimplePanel.dcr'}
 {$R '..\DCR\JppEdit.dcr'}
 {$R '..\DCR\JppEditEx.dcr'}
+{$R '..\DCR\JppMemo.dcr'}
+{$R '..\DCR\JppMemoEx.dcr'}
+{$R '..\DCR\JppPngCollection.dcr'}
+{$R '..\DCR\JppComboBox.dcr'}
+{$R '..\DCR\JppComboBoxEx.dcr'}
+{$R '..\DCR\JppStdPanel.dcr'}
+{$R '..\DCR\JppDoubleLabel.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -81,9 +88,14 @@ contains
   JPP.Edit in '..\..\source\JPP.Edit.pas',
   JPP.EditEx in '..\..\source\JPP.EditEx.pas',
   JPP.ComboBox in '..\..\source\JPP.ComboBox.pas',
+  JPP.ComboBoxEx in '..\..\source\JPP.ComboBoxEx.pas',
+  JPP.Memo in '..\..\source\JPP.Memo.pas',
+  JPP.MemoEx in '..\..\source\JPP.MemoEx.pas',
   JPP.Flash in '..\..\source\JPP.Flash.pas',
   JPP.BrushStyleComboBox in '..\..\source\JPP.BrushStyleComboBox.pas',
   JPP.PenStyleComboBox in '..\..\source\JPP.PenStyleComboBox.pas',
+  JPP.StdPanel in '..\..\source\JPP.StdPanel.pas',
+  JPP.AnchoredControls in '..\..\source\JPP.AnchoredControls.pas',
   {$IFDEF USE_GDIPLUS_CONTROLS}
   JPP.GPHatchStyleComboBox in '..\..\source\JPP.GPHatchStyleComboBox.pas',
   {$ENDIF}

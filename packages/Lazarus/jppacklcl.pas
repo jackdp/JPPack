@@ -14,7 +14,7 @@ uses
   JPP.ColorControls.Common, JPP.ColorListBox, JPP.ColorComboBox, 
   JPP.ColorSwatch, JPP.Edit, JPP.SimplePanel, JPP.Flash, 
   JPP.BrushStyleComboBox, JPP.PenStyleComboBox, JPP.GPHatchStyleComboBox, 
-  JPP.ComboBox, LazarusPackageIntf;
+  JPP.ComboBox, JPP.AnchoredControls, JPP.Memo, LazarusPackageIntf;
 
 implementation
 
