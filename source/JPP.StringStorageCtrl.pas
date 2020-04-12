@@ -4,24 +4,19 @@ unit JPP.StringStorageCtrl;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mods:
-    2020.01.16 - FPC 3.0.2 compatibility
 }
 
+
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
-{$I JPPack.inc}
+
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Messages, Winapi.Windows,
-  System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Graphics,
-  {$ELSE}
-  SysUtils, Classes, Types, LCLType, Graphics,
-  {$ENDIF}
-
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  SysUtils, Classes, Graphics, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  {$IFDEF FPC}LCLType,{$ENDIF}
   JPP.Types, JPP.Common;
 
 
@@ -253,7 +248,7 @@ begin
     end;
 
     {$IFDEF DCC}
-    sl.WriteBOM := True;
+    {$IFDEF HAS_TSTRINGS_WRITEBOM}sl.WriteBOM := True;{$ENDIF}
     sl.SaveToFile(FileName, Encoding);
     {$ENDIF}
 

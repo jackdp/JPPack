@@ -4,21 +4,20 @@ unit JPP.PngCollection;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mod: 2019.05.25
 }
 
+
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Messages, Winapi.Windows,
-  System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Graphics, Vcl.Imaging.PngImage, Vcl.ExtCtrls,
-  {$ELSE}
-  SysUtils, Classes, Graphics, ExtCtrls,
-  {$ENDIF}
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  Messages,
+  SysUtils, Classes, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Graphics, {$IFDEF DCC}{$IFDEF HAS_UNIT_SCOPE}Vcl.Imaging.PngImage,{$ELSE}pngimage,{$ENDIF}{$ENDIF} ExtCtrls,
   JPP.Common, JPL.Strings, JPL.Conversion, JPL.Colors;
 
 

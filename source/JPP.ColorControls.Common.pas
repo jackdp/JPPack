@@ -1,23 +1,16 @@
 unit JPP.ColorControls.Common;
 
-
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows, Messages,
-  {$ENDIF}
-  {$IFDEF DCC}
-  System.SysUtils, System.Classes, System.Types,
-  Vcl.Controls, Vcl.StdCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Buttons, Vcl.Clipbrd, Vcl.ExtCtrls,
-  {$ELSE}
-  SysUtils, Classes, Types, Controls, StdCtrls, Graphics, Buttons, Clipbrd, ExtCtrls, LCLType, LCLIntf,
-  {$ENDIF}
-
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  Messages, SysUtils, Classes, Types,
+  Controls, StdCtrls, Graphics, Dialogs, Buttons, Clipbrd, ExtCtrls,
+  {$IFDEF FPC}LCLType, LCLIntf,{$ENDIF}
   JPL.Strings, JPL.Conversion, JPL.Colors, JPL.ColorArrays,
-
   JPP.Common, JPP.BasicSpeedButton, JPP.Graphics, JPP.Gradient, JPP.Types;
 
 
@@ -40,18 +33,14 @@ type
   TJppColorControlGradientItem = class(TJppPersistent)
   private
     FOwner: TComponent;
-    //FOnChange: TNotifyEvent;
     FBackground: TJppGradientBackground;
-    //procedure SetOnChange(const Value: TNotifyEvent);
     procedure SetBackground(const Value: TJppGradientBackground);
   protected
-    //procedure PropsChanged(Sender: TObject);
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
     procedure Assign(ccgi: TJppColorControlGradientItem); reintroduce;
   published
-    //property OnChange: TNotifyEvent read FOnChange write SetOnChange;
     property Background: TJppGradientBackground read FBackground write SetBackground;
   end;
   {$endregion TJppColorControlGradientItem}
@@ -134,22 +123,18 @@ type
   TJppColorControlRgbHexParams = class(TJppPersistent)
   private
     FOwner: TComponent;
-    //FOnChange: TNotifyEvent;
     FRgbSeparator: string;
     FPrefix: string;
     FSuffix: string;
-    //procedure SetOnChange(const Value: TNotifyEvent);
     procedure SetRgbSeparator(const Value: string);
     procedure SetPrefix(const Value: string);
     procedure SetSuffix(const Value: string);
   protected
-    //procedure PropsChanged(Sender: TObject);
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
     procedure Assign(ccrhp: TJppColorControlRgbHexParams); reintroduce;
   published
-    //property OnChange: TNotifyEvent read FOnChange write SetOnChange;
     property RgbSeparator: string read FRgbSeparator write SetRgbSeparator;
     property Prefix: string read FPrefix write SetPrefix;
     property Suffix: string read FSuffix write SetSuffix;
@@ -161,22 +146,18 @@ type
   TJppColorControlBgrHexParams = class(TJppPersistent)
   private
     FOwner: TComponent;
-    //FOnChange: TNotifyEvent;
     FBgrSeparator: string;
     FPrefix: string;
     FSuffix: string;
-    //procedure SetOnChange(const Value: TNotifyEvent);
     procedure SetBgrSeparator(const Value: string);
     procedure SetPrefix(const Value: string);
     procedure SetSuffix(const Value: string);
   protected
-    //procedure PropsChanged(Sender: TObject);
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
     procedure Assign(ccbhp: TJppColorControlBgrHexParams); reintroduce;
   published
-    //property OnChange: TNotifyEvent read FOnChange write SetOnChange;
     property BgrSeparator: string read FBgrSeparator write SetBgrSeparator;
     property Prefix: string read FPrefix write SetPrefix;
     property Suffix: string read FSuffix write SetSuffix;
@@ -188,26 +169,22 @@ type
   TJppColorControlRgbIntParams = class(TJppPersistent)
   private
     FOwner: TComponent;
-    //FOnChange: TNotifyEvent;
     FRgbSeparator: string;
     FPaddingChar: Char;
     FPaddingLen: integer;
     FPrefix: string;
     FSuffix: string;
-    //procedure SetOnChange(const Value: TNotifyEvent);
     procedure SetRgbSeparator(const Value: string);
     procedure SetPaddingChar(const Value: Char);
     procedure SetPaddingLen(const Value: integer);
     procedure SetPrefix(const Value: string);
     procedure SetSuffix(const Value: string);
   protected
-    //procedure PropsChanged(Sender: TObject);
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
     procedure Assign(ccrip: TJppColorControlRgbIntParams); reintroduce;
   published
-    //property OnChange: TNotifyEvent read FOnChange write SetOnChange;
     property RgbSeparator: string read FRgbSeparator write SetRgbSeparator;
     property PaddingChar: Char read FPaddingChar write SetPaddingChar default '0';
     property PaddingLen: integer read FPaddingLen write SetPaddingLen default 3;
@@ -262,7 +239,6 @@ type
   TJppColorControlAppearance = class(TJppPersistent)
   private
     FOwner: TComponent;
-    //FOnChange: TNotifyEvent;
     FShowRgbInt: Boolean;
     FShowRgbHex: Boolean;
     FShowColorName: Boolean;
@@ -283,7 +259,6 @@ type
     FShowBgrHex: Boolean;
     FBgrHexParams: TJppColorControlBgrHexParams;
     FLeftMargin: integer;
-    //procedure SetOnChange(const Value: TNotifyEvent);
     procedure SetShowRgbInt(const Value: Boolean);
     procedure SetShowRgbHex(const Value: Boolean);
     procedure SetShowColorName(const Value: Boolean);
@@ -305,13 +280,11 @@ type
     procedure SetBgrHexParams(const Value: TJppColorControlBgrHexParams);
     procedure SetLeftMargin(const Value: integer);
   protected
-    //procedure PropsChanged(Sender: TObject);
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
     procedure Assign(cca: TJppColorControlAppearance); reintroduce;
   published
-    //property OnChange: TNotifyEvent read FOnChange write SetOnChange;
     property ColorRectangle: TJppColorControlRectangle read FColorRectangle write SetColorRectangle;
     property ShowColorName: Boolean read FShowColorName write SetShowColorName default True;
 
@@ -369,21 +342,12 @@ begin
   end;
 end;
 
-//procedure TJppColorControlGradientItem.PropsChanged(Sender: TObject);
-//begin
-//  if Assigned(FOnChange) then FOnChange(Self);
-//end;
-
 procedure TJppColorControlGradientItem.SetBackground(const Value: TJppGradientBackground);
 begin
   FBackground := Value;
   PropsChanged(Self);
 end;
-//
-//procedure TJppColorControlGradientItem.SetOnChange(const Value: TNotifyEvent);
-//begin
-//  FOnChange := Value;
-//end;
+
 
 {$endregion TJppColorControlGradientItem}
 
@@ -434,7 +398,6 @@ constructor TJppColorControlCustomGradientCaptionItem.Create(AOwner: TComponent)
 begin
   inherited Create(AOwner);
   FOwner := AOwner;
-  //Background.OnChange := PropsChanged;
   FFont := TFont.Create;
   FFont.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FAlignment := taCenter;
@@ -540,16 +503,6 @@ begin
   end;
 end;
 
-//procedure TJppColorControlRgbHexParams.PropsChanged(Sender: TObject);
-//begin
-//  if Assigned(FOnChange) then FOnChange(Self);
-//end;
-
-//procedure TJppColorControlRgbHexParams.SetOnChange(const Value: TNotifyEvent);
-//begin
-//  FOnChange := Value;
-//end;
-
 procedure TJppColorControlRgbHexParams.SetPrefix(const Value: string);
 begin
   FPrefix := Value;
@@ -598,16 +551,6 @@ begin
     EndUpdate;
   end;
 end;
-
-//procedure TJppColorControlBgrHexParams.PropsChanged(Sender: TObject);
-//begin
-//  if Assigned(FOnChange) then FOnChange(Self);
-//end;
-
-//procedure TJppColorControlBgrHexParams.SetOnChange(const Value: TNotifyEvent);
-//begin
-//  FOnChange := Value;
-//end;
 
 procedure TJppColorControlBgrHexParams.SetPrefix(const Value: string);
 begin
@@ -662,16 +605,6 @@ begin
     EndUpdate;
   end;
 end;
-
-//procedure TJppColorControlRgbIntParams.PropsChanged(Sender: TObject);
-//begin
-//  if Assigned(FOnChange) then FOnChange(Self);
-//end;
-
-//procedure TJppColorControlRgbIntParams.SetOnChange(const Value: TNotifyEvent);
-//begin
-//  FOnChange := Value;
-//end;
 
 procedure TJppColorControlRgbIntParams.SetPaddingChar(const Value: Char);
 begin
@@ -922,11 +855,6 @@ begin
   end;
 end;
 
-//procedure TJppColorControlAppearance.PropsChanged(Sender: TObject);
-//begin
-//  if Assigned(FOnChange) then FOnChange(Self);
-//end;
-
 procedure TJppColorControlAppearance.SetColorRectangle(const Value: TJppColorControlRectangle);
 begin
   FColorRectangle := Value;
@@ -980,11 +908,6 @@ begin
   FNumericTextPosDeltaY := Value;
   PropsChanged(Self);
 end;
-
-//procedure TJppColorControlAppearance.SetOnChange(const Value: TNotifyEvent);
-//begin
-//  FOnChange := Value;
-//end;
 
 procedure TJppColorControlAppearance.SetBgrHexParams(const Value: TJppColorControlBgrHexParams);
 begin

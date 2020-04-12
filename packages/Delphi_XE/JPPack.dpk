@@ -46,7 +46,7 @@ package JPPack;
 {$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'JPPack VCL Components'}
-{$LIBSUFFIX 'Tokyo'}
+{$LIBSUFFIX 'XE'}
 {$IMPLICITBUILD ON}
 
 //{$I ..\..\source\jpp.inc}

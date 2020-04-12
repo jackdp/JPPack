@@ -4,26 +4,21 @@ unit JPP.BasicSpeedButton;
   ---------------------------------------------------------------------------------------
   Based on PngSpeedButton from PngComponents https://bitbucket.org/uweraabe/pngcomponents
   ---------------------------------------------------------------------------------------
-  Last mods:
-    2019.05.21 - AutoWidth
-    2020.04.09 - Anchored controls
 }
+
+{$I jpp.inc}
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Classes,
-  Vcl.Controls, Vcl.Graphics,  Vcl.StdCtrls, Vcl.Buttons, Vcl.GraphUtil, Vcl.ActnList, Vcl.Imaging.pngimage,
-  PngFunctions, PngButtonFunctions, PngImageList,
-  {$ELSE}
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  SysUtils, Classes, Controls, Graphics, StdCtrls, ActnList, Buttons, LCLType, LCLIntf, LMessages, Messages,
-  {$ENDIF}
-
+  Messages, SysUtils, Classes,
+  Controls, Graphics, StdCtrls, Buttons, ActnList,
+  {$IFDEF DCC}{$IFDEF HAS_UNIT_SCOPE}Vcl.Imaging.pngimage,{$ELSE}pngimage,{$ENDIF}{$ENDIF}
+  {$IFDEF DCC}PngFunctions, PngButtonFunctions, PngImageList,{$ENDIF}
+  {$IFDEF FPC}LCLType, LCLIntf, LMessages,{$ENDIF}
   JPL.Colors,
-  JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, LDPngFunctions
+  JPP.Graphics, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, LDPngFunctions
   ;
 
 type

@@ -4,24 +4,18 @@ unit JPP.BasicPanel;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mods:
-    2020.01.16 - FPC 3.0.2 compatibility
-    2020.04.09 - Anchored controls
 }
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
-{$I JPPack.inc}
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Messages, Winapi.Windows,
-  System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Graphics, Vcl.StdCtrls, Vcl.GraphUtil, Vcl.Themes, Vcl.ExtCtrls, Vcl.Dialogs,
-  {$ELSE}
-  SysUtils, Messages, LMessages, LCLType, LCLIntf, Classes, Graphics, Controls, StdCtrls, ExtCtrls,
-  {$ENDIF}
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  Messages, SysUtils, Classes, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Controls, Forms, Menus, Graphics, StdCtrls, GraphUtil, Themes, ExtCtrls, Dialogs,
+  {$IFDEF FPC}LMessages, LCLType, LCLIntf,{$ENDIF}
   JPL.Colors,
   JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls;
 
@@ -293,8 +287,8 @@ type
     {$IFDEF MSWINDOWS}property OnDragDropFiles;{$ENDIF}
     property Appearance;
     property TagExt;
-    {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
-    {$IFDEF DCC} property Touch; {$ENDIF}
+    {$IFDEF HAS_STYLE_ELEMENTS} property StyleElements; {$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE} property Touch; {$ENDIF}
     property DoubleBuffered;
     {$IFDEF DCC}property ParentDoubleBuffered;{$ENDIF}
     {$IFDEF FPC}
@@ -381,7 +375,7 @@ end;
 
 procedure TJppCustomBasePanel.DrawBackground(ARect: TRect);
 begin
-  {$IFDEF DCC}
+  {$IFDEF HAS_VCL_STYLES}
   if (not StyleServices.Enabled) or not ParentBackground
   then
   begin
@@ -585,11 +579,11 @@ procedure TJppCustomBasicPanel.DrawBackground(ARect: TRect);
 var
   R: TRect;
   xBottomGradientTop: integer;
-  {$IFDEF DCC} bVclStyle: Boolean; {$ENDIF}
+  {$IFDEF HAS_VCL_STYLES} bVclStyle: Boolean; {$ENDIF}
   Border: TJppBasicPanelBorder;
   xBottom: integer;
 
-  {$IFDEF DCC}
+  {$IFDEF HAS_VCL_STYLES}
   Rect: TRect;
   LColor: TColor;
   LStyle: TCustomStyleServices;
@@ -624,12 +618,12 @@ begin
   end;
   {$ENDIF}{$ENDIF}
 
-  {$IFDEF DCC}
+  {$IFDEF HAS_VCL_STYLES}
   bVclStyle := Assigned(TStyleManager.ActiveStyle) and (TStyleManager.ActiveStyle.Name <> 'Windows');
   {$ENDIF}
 
   //if (not bVclStyle) or (bVclStyle and (not (seClient in StyleElements))) then
-  {$IFDEF DCC}if (not bVclStyle) {$IF RTLVersion > 23} or (bVclStyle and (not (seClient in StyleElements))) {$IFEND} then{$ENDIF}
+  {$IFDEF HAS_VCL_STYLES}if (not bVclStyle) {$IFDEF HAS_STYLE_ELEMENTS} or (bVclStyle and (not (seClient in StyleElements))) {$ENDIF} then{$ENDIF}
   begin
 
     Canvas.Brush.Style := bsClear;
@@ -660,7 +654,7 @@ begin
       end;
 
       xBottom := R.Bottom;
-      R.Bottom := R.Top + Round((Appearance.UpperGradientPercent * R.Height) / 100);
+      R.Bottom := R.Top + Round((Appearance.UpperGradientPercent * RectHeight(R)) / 100);
       xBottomGradientTop := R.Bottom;
       Appearance.UpperGradient.Draw(Canvas, R);
 
@@ -670,10 +664,10 @@ begin
 
     end;
 
-  end{$IFDEF FPC};{$ENDIF}
+  end
+  {$IFNDEF HAS_VCL_STYLES};{$ENDIF}
 
-
-  {$IFDEF DCC}
+  {$IFDEF HAS_VCL_STYLES}
   else
 
   // VCL Style
@@ -687,7 +681,7 @@ begin
     BaseTopColor := clBtnHighlight;
     BaseBottomColor := clBtnShadow;
 
-    if LStyle.Enabled {$IF RTLVersion > 23} and (seClient in StyleElements) {$IFEND} then
+    if LStyle.Enabled {$IFDEF HAS_STYLE_ELEMENTS} and (seClient in StyleElements) {$ENDIF} then
     begin
 
       LDetails := LStyle.GetElementDetails(tpPanelBackground);

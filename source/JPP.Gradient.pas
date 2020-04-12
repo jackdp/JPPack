@@ -7,18 +7,17 @@ unit JPP.Gradient;
   VCL.cyTypes
 }
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  {$IFDEF DCC}
-  System.SysUtils, System.Classes, System.UITypes,
-  Vcl.Graphics;
-  {$ELSE}
-  SysUtils, Classes, Graphics, LCLType, LCLIntf;
-  {$ENDIF}
+  SysUtils, Classes, Graphics
+  {$IFDEF HAS_SYSTEM_UITYPES}, System.UITypes{$ENDIF}
+  {$IFDEF FPC}, LCLType, LCLIntf{$ENDIF}
+  ;
 
 const
   GRADIENT_BALANCE = 50;

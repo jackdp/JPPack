@@ -1,11 +1,13 @@
 unit JPP.BasicPngButton;
 
+{$I jpp.inc}
+
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages,
-  System.Classes, System.SysUtils, System.UITypes, System.StrUtils,
-  Vcl.Graphics, Vcl.Controls, Vcl.Buttons, Vcl.GraphUtil, Vcl.Dialogs, Vcl.Imaging.pngimage,
+  {$IFDEF MSWINDOWS}Windows, Messages,{$ENDIF}
+  Classes, SysUtils, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF} StrUtils,
+  Graphics, Controls, Buttons, GraphUtil, Dialogs, {$IFDEF HAS_UNIT_SCOPE}Vcl.Imaging.pngimage,{$ELSE}pngimage,{$ENDIF}
 
   PngFunctions,
   JPL.Strings, JPL.Colors,
@@ -183,7 +185,7 @@ implementation
 
 
 uses
-  Vcl.ActnList, Vcl.Themes, PngButtonFunctions, PngImageList;
+  ActnList, Themes, PngButtonFunctions, PngImageList;
 
 
 
@@ -238,8 +240,7 @@ end;
 
 
 
-{$IF RTLVersion >= 24.0 }
-
+{$IFDEF DELPHIXE3_OR_ABOVE}
 class constructor TJppBasicPngButton.Create;
 begin
   TCustomStyleEngine.RegisterStyleHook(TJppBasicPngButton, TJppBasicPngButtonStyleHook);
@@ -249,7 +250,7 @@ class destructor TJppBasicPngButton.Destroy;
 begin
   TCustomStyleEngine.UnRegisterStyleHook(TJppBasicPngButton, TJppBasicPngButtonStyleHook);
 end;
-{$IFEND}
+{$ENDIF}
 {$endregion Themes}
 
 

@@ -46,7 +46,7 @@ package JPPack;
 {$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'JPPack VCL Components'}
-{$LIBSUFFIX 'Tokyo'}
+{$LIBSUFFIX '2009'}
 {$IMPLICITBUILD ON}
 
 //{$I ..\..\source\jpp.inc}
@@ -83,7 +83,7 @@ contains
   JPP.LinkLabel in '..\..\source\JPP.LinkLabel.pas',
   JPP.Timer in '..\..\source\JPP.Timer.pas',
   JPP.StorageCtrl in '..\..\source\JPP.StorageCtrl.pas',
-  JPP.FormIniStorage in '..\..\source\JPP.FormIniStorage.pas',
+  //JPP.FormIniStorage in '..\..\source\JPP.FormIniStorage.pas',
   JPP.StringStorageCtrl in '..\..\source\JPP.StringStorageCtrl.pas',
   JPP.PngCollection in '..\..\source\JPP.PngCollection.pas',
   JPP.DoubleLabel in '..\..\source\JPP.DoubleLabel.pas',

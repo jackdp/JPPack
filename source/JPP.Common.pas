@@ -1,19 +1,16 @@
 unit JPP.Common;
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows,
-  {$ENDIF}
-  {$IFDEF DCC}
-  System.SysUtils, System.Classes, System.UITypes,
-  Vcl.Controls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs,
-  {$ELSE}
-  SysUtils, Classes, Controls, StdCtrls, Graphics, LCLType, LCLIntf,
-  {$ENDIF}
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  SysUtils, Classes,
+  Controls, StdCtrls, Buttons, Graphics, Dialogs, Types,
+  {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  {$IFDEF FPC}LCLType, LCLIntf,{$ENDIF}
   JPL.Colors,
   JPP.Types, JPP.Gradient, JPP.Graphics;
 
@@ -26,6 +23,19 @@ type
   {$ENDIF}
 
   TJppFocusRectType = (frtSystem, frtCustom, frtNone);
+
+  {$IFDEF DELPHIXE_OR_BELOW}
+  TRectHelper = record helper for TRect
+  private
+    function GetWidth: Integer;
+    procedure SetWidth(const Value: Integer);
+    function GetHeight: Integer;
+    procedure SetHeight(const Value: Integer);
+  public
+    property Width: Integer read GetWidth write SetWidth;
+    property Height: Integer read GetHeight write SetHeight;
+  end;
+  {$ENDIF}
 
 
   {$region ' ------------ TJppPersistent ------------- '}
@@ -133,7 +143,7 @@ type
     property ShowAccelChar;
     property ShowHint;
     property Top: Integer read GetTop;
-    {$IFDEF DCC}property Touch;{$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE}property Touch;{$ENDIF}
     property Transparent;
     property Layout;
     property WordWrap;
@@ -145,7 +155,7 @@ type
     property OnDragOver;
     property OnEndDock;
     property OnEndDrag;
-    {$IFDEF DCC}property OnGesture;{$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE}property OnGesture;{$ENDIF}
     {$IFDEF DCC}property OnMouseActivate;{$ENDIF}
     property OnMouseDown;
     property OnMouseMove;
@@ -155,45 +165,6 @@ type
     property FocusControl;
   end;
   {$endregion TJppControlBoundLabel}
-
-
-  //TJppBoundControlPos = (
-  //  bcpLeftTop, bcpLeftBottom, bcpLeftCenter,
-  //  bcpAboveLeft, bcpAboveCenter, bcpAboveRight,
-  //  bcpRightTop, bcpRightBottom, bcpRightCenter,
-  //  bcpBelowLeft, bcpBelowCenter, bcpBelowRight
-  //);
-
-  //{$Region ' --- TJppBoundControl --- '}
-  //TJppBoundControl = class(TJppPersistent)
-  //private
-  //  FOwner: TComponent;
-  //  FBoundControl: TControl;
-  //  FSpacing: integer;
-  //  FControlPos: TJppBoundControlPos;
-  //  FDeltaPosX: integer;
-  //  FDeltaPosY: integer;
-  //  FOnBoundControlChanged: TNotifyEvent;
-  //  procedure SetBoundControl(const Value: TControl);
-  //  procedure SetSpacing(const Value: integer);
-  //  procedure SetControlPos(const Value: TJppBoundControlPos);
-  //  procedure SetDeltaPosX(const Value: integer);
-  //  procedure SetDeltaPosY(const Value: integer);
-  //  procedure SetOnBoundControlChanged(const Value: TNotifyEvent);
-  //protected
-  //  procedure Notification(AComponent: TComponent; Operation: TOperation);
-  //public
-  //  constructor Create(AOwner: TComponent);
-  //  destructor Destroy; override;
-  //published
-  //  property BoundControl: TControl read FBoundControl write SetBoundControl;
-  //  property Spacing: integer read FSpacing write SetSpacing default 3;
-  //  property ControlPos: TJppBoundControlPos read FControlPos write SetControlPos default bcpRightTop;
-  //  property DeltaPosX: integer read FDeltaPosX write SetDeltaPosX default 0;
-  //  property DeltaPosY: integer read FDeltaPosY write SetDeltaPosY default 0;
-  //  property OnBoundControlChanged: TNotifyEvent read FOnBoundControlChanged write SetOnBoundControlChanged;
-  //end;
-  //{$endregion TJppBoundControl}
 
 
   {$region ' ---------- TJppGradient -------------- '}
@@ -539,75 +510,6 @@ begin
 end;
 {$endregion TJppControlBoundLabel}
 
-
-{$Region ' ----------------------------- TJppBoundControl ---------------------------- '}
-
-//constructor TJppBoundControl.Create(AOwner: TComponent);
-//begin
-//  inherited Create;
-//  FOwner := AOwner;
-//  FBoundControl := nil;
-//  FSpacing := 3;
-//  FControlPos := bcpRightTop;
-//  FDeltaPosX := 0;
-//  FDeltaPosY := 0;
-//  FOnBoundControlChanged := nil;
-//end;
-//
-//destructor TJppBoundControl.Destroy;
-//begin
-//  inherited;
-//end;
-//
-//
-//procedure TJppBoundControl.Notification(AComponent: TComponent; Operation: TOperation);
-//begin
-//  //inherited;
-//  if Operation = opRemove then
-//    if AComponent = FBoundControl then FBoundControl := nil;
-//end;
-//
-//procedure TJppBoundControl.SetBoundControl(const Value: TControl);
-//begin
-//  FBoundControl := Value;
-//  if Assigned(FOnBoundControlChanged) then FOnBoundControlChanged(Self);
-//  if Assigned(FBoundControl) then PropsChanged(Self);
-//end;
-//
-//
-//procedure TJppBoundControl.SetControlPos(const Value: TJppBoundControlPos);
-//begin
-//  //if FControlPos = Value then Exit;
-//  FControlPos := Value;
-//  PropsChanged(Self);
-//end;
-//
-//procedure TJppBoundControl.SetDeltaPosX(const Value: integer);
-//begin
-//  //if FDeltaPosX = Value then Exit;
-//  FDeltaPosX := Value;
-//  PropsChanged(Self);
-//end;
-//
-//procedure TJppBoundControl.SetDeltaPosY(const Value: integer);
-//begin
-//  //if FDeltaPosY = Value then Exit;
-//  FDeltaPosY := Value;
-//  PropsChanged(Self);
-//end;
-//
-//procedure TJppBoundControl.SetOnBoundControlChanged(const Value: TNotifyEvent);
-//begin
-//  FOnBoundControlChanged := Value;
-//end;
-//
-//procedure TJppBoundControl.SetSpacing(const Value: integer);
-//begin
-//  //if FSpacing = Value then Exit;
-//  FSpacing := Value;
-//  PropsChanged(Self);
-//end;
-{$endregion TJppBoundControl}
 
 {$region ' ---------------------- TJppGradient --------------------------- '}
 
@@ -1183,6 +1085,30 @@ begin
 end;
 
 {$endregion TJppMargins}
+
+
+
+{$IFDEF DELPHIXE_OR_BELOW}
+function TRectHelper.GetHeight: Integer;
+begin
+  Result := Self.Bottom - Self.Top;
+end;
+
+procedure TRectHelper.SetHeight(const Value: Integer);
+begin
+  Self.Bottom := Self.Top + Value;
+end;
+
+function TRectHelper.GetWidth: Integer;
+begin
+  Result := Self.Right - Self.Left;
+end;
+
+procedure TRectHelper.SetWidth(const Value: Integer);
+begin
+  Self.Right := Self.Left + Value;
+end;
+{$ENDIF}
 
 end.
 

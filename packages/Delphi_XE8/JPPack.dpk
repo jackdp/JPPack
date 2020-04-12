@@ -49,15 +49,20 @@ package JPPack;
 {$LIBSUFFIX 'XE8'}
 {$IMPLICITBUILD ON}
 
-{$I ..\..\source\JPPack.inc}
+//{$I ..\..\source\jpp.inc}
+{$DEFINE USE_GDIPLUS_CONTROLS}
+{$IFDEF VER220}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
+{$IFDEF VER210}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
+{$IFDEF VER200}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
 
 requires
   vcl,
   rtl,
   vclimg,
   JPLib,
-  PngComponents,
-  IGDIPlusMod;
+  PngComponents
+  {$IFDEF USE_GDIPLUS_CONTROLS}, IGDIPlusMod {$ENDIF}
+  ;
 
 contains
   JPP.Types in '..\..\source\JPP.Types.pas',

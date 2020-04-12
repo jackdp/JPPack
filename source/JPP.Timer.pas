@@ -4,26 +4,21 @@ unit JPP.Timer;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mod: 2019.05.25
 }
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Classes,
-  Vcl.Forms, Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Consts,
-  {$ELSE}
-  SysUtils, Classes, Controls, StdCtrls, ExtCtrls,
-  {$ENDIF}
-
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  SysUtils, Classes,
+  Forms, Controls, Graphics, StdCtrls, ExtCtrls, //Consts,
   JPP.Types, JPP.Common;
 
-type
 
+type
 
   TJppCustomTimer = class(TTimer)
   private
@@ -37,7 +32,7 @@ type
     procedure SetOnRepeatCountLimitReached(const Value: TNotifyEvent);
     procedure SetClearCounterOnStart(const Value: Boolean);
   protected
-    {$IFDEF DCC}procedure Timer; override; {$ENDIF} //dynamic;
+    {$IFDEF DCC}procedure Timer; override; {$ENDIF}
     {$IFDEF FPC}procedure DoOnTimer; override;{$ENDIF}
   public
     constructor Create(AOwner: TComponent); override;
@@ -65,7 +60,6 @@ type
     property OnTimer;
     property OnRepeatCountLimitReached;
   end;
-
 
 
 

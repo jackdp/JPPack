@@ -8,28 +8,22 @@ unit JPP.EditEx;
   Border drawing from TFlatEditUnit.pas: https://sourceforge.net/projects/flatstyle/
 }
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
-{$I JPPack.inc}
 
 interface
 
 
 uses
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  {$IFDEF DCC}
-  Winapi.Messages,
-  System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Forms,
-  {$ELSE}
-  SysUtils, Classes, Types, Controls, Graphics, StdCtrls, ExtCtrls, Forms, LCLType, LCLIntf, Messages, LMessages,
-  {$ENDIF}
-
-  JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Flash
-  ;
+  Messages,
+  SysUtils, Classes, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Controls, Graphics, StdCtrls, ExtCtrls, Forms,
+  {$IFDEF FPC}LCLType, LCLIntf, LMessages,{$ENDIF}
+  JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Flash;
 
 
 type
-
 
   {$region ' --- TJppCustomEditExAppearance --- '}
   TJppCustomEditExAppearance = class(TJppPersistent)
@@ -244,7 +238,7 @@ type
     property Text;
     property TextHint;
     property Top;
-    {$IFDEF DCC} property Touch; {$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE} property Touch; {$ENDIF}
     property Visible;
     property Width;
 
@@ -261,7 +255,7 @@ type
     property OnEndDrag;
     property OnEnter;
     property OnExit;
-    {$IFDEF DCC}property OnGesture;{$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE}property OnGesture;{$ENDIF}
     property OnKeyDown;
     property OnKeyPress;
     property OnKeyUp;

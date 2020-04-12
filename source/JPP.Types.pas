@@ -1,17 +1,12 @@
 unit JPP.Types;
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Windows, System.SysUtils;
-  {$ELSE}
   SysUtils;
-  {$ENDIF}
-
-
 
 const
 

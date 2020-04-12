@@ -1,4 +1,4 @@
-{ $ID: LazPngFunctions $ }
+{ $ID: LDPngFunctions $ }
 {
   Routines related to PNG processing.
 
@@ -6,6 +6,8 @@
 
 }
 unit LDPngFunctions;
+
+{$I jpp.inc}
 
 interface
 
@@ -19,7 +21,7 @@ uses
 
 
 {$IFDEF DCC}
-{$IF RTLVersion < 20.0 }
+{$IF RTLVersion < 20.0 } // Delphi 2007 or below
   {$IF RTLVersion < 15.0 }
     PngComponents are only compatible with Delphi 7 and higher!
   {$IFEND}

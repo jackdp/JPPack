@@ -1,18 +1,16 @@
 unit JPP.Common.Procs;
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Windows,
-  System.SysUtils, System.Classes, System.UITypes,
-  Vcl.Forms, Vcl.Controls, Vcl.Buttons, Vcl.Graphics, Vcl.Dialogs //, JPL.Math;
-  {$ELSE}
-  Forms, SysUtils, Classes, Controls, Graphics, LCLType, LCLIntf //, JPL.Math;
-  {$ENDIF}
-  , JPP.Common;
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  SysUtils, Classes, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Forms, Controls, Buttons, Graphics, Dialogs,
+  {$IFDEF FPC}LCLType, LCLIntf,{$ENDIF}
+  JPP.Common;
 
 
 function FontStylesToStr(FontStyles: TFontStyles): string;
@@ -47,7 +45,9 @@ procedure InflateRectEx(var ARect: TRect; const Margins: TJppMargins); overload;
 
 function GetFontName(const FontNameArray: array of string): string;
 
-//procedure SetBoundedCtrlPos(MainControl: TControl; BoundCtrl: TJppBoundControl; UpdateParent: Boolean = True);
+function PointInRect(Point: TPoint; Rect: TRect): Boolean;
+function RectHeight(R: TRect): integer;
+function RectWidth(R: TRect): integer;
 
 
 implementation
@@ -56,96 +56,22 @@ uses
   JPL.Strings;
 
 
-//procedure SetBoundedCtrlPos(MainControl: TControl; BoundCtrl: TJppBoundControl; UpdateParent: Boolean = True);
-//var
-//  Ctrl: TControl;
-//begin
-//  if not Assigned(BoundCtrl.BoundControl) then Exit;
-//  Ctrl := BoundCtrl.BoundControl;
-//  if UpdateParent then
-//     if Ctrl.Parent <> MainControl.Parent then Ctrl.Parent := MainControl.Parent;
-//
-//  case BoundCtrl.ControlPos of
-//
-//    // ------------------- RIGHT ---------------------
-//    bcpRightTop:
-//      begin
-//        Ctrl.Left := MainControl.Left + MainControl.Width + BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top + BoundCtrl.DeltaPosY;
-//      end;
-//
-//    bcpRightBottom:
-//      begin
-//        Ctrl.Left := MainControl.Left + MainControl.Width + BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top - (Ctrl.Height - MainControl.Height) + BoundCtrl.DeltaPosY;
-//      end;
-//
-//    bcpRightCenter:
-//      begin
-//        Ctrl.Left := MainControl.Left + MainControl.Width + BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top + (MainControl.Height div 2) - (Ctrl.Height div 2) + BoundCtrl.DeltaPosY;
-//      end;
-//
-//    // --------------------- LEFT --------------------
-//    bcpLeftTop:
-//      begin
-//        Ctrl.Left := MainControl.Left - Ctrl.Width - BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top + BoundCtrl.DeltaPosY;
-//      end;
-//
-//    bcpLeftBottom:
-//      begin
-//        Ctrl.Left := MainControl.Left - Ctrl.Width - BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top - (Ctrl.Height - MainControl.Height) + BoundCtrl.DeltaPosY;
-//      end;
-//
-//    bcpLeftCenter:
-//      begin
-//        Ctrl.Left := MainControl.Left - Ctrl.Width - BoundCtrl.Spacing + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top + (MainControl.Height div 2) - (Ctrl.Height div 2) + BoundCtrl.DeltaPosY;
-//      end;
-//
-//    // ------------------- ABOVE ---------------------
-//    bcpAboveLeft:
-//      begin
-//        Ctrl.Left := MainControl.Left + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top - Ctrl.Height - BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
-//      end;
-//
-//    bcpAboveCenter:
-//      begin
-//        Ctrl.Left := MainControl.Left + (MainControl.Width div 2) - (Ctrl.Width div 2) + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top - Ctrl.Height - BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
-//      end;
-//
-//    bcpAboveRight:
-//      begin
-//        Ctrl.Left := MainControl.Left + MainControl.Width - Ctrl.Width + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top - Ctrl.Height - BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
-//      end;
-//
-//    // -------------------- BELOW ----------------------
-//    bcpBelowLeft:
-//      begin
-//        Ctrl.Left := MainControl.Left + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top + MainControl.Height + BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
-//      end;
-//
-//    bcpBelowCenter:
-//      begin
-//        Ctrl.Left := MainControl.Left + (MainControl.Width div 2) - (Ctrl.Width div 2) + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top + MainControl.Height + BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
-//      end;
-//
-//    bcpBelowRight:
-//      begin
-//        Ctrl.Left := MainControl.Left + MainControl.Width - Ctrl.Width + BoundCtrl.DeltaPosX;
-//        Ctrl.Top := MainControl.Top + MainControl.Height + BoundCtrl.Spacing + BoundCtrl.DeltaPosY;
-//      end;
-//
-//
-//  end; // case
-//end;
+
+function RectWidth(R: TRect): integer;
+begin
+  Result := R.Right - R.Left; // R.Left - R.Right;
+end;
+
+function RectHeight(R: TRect): integer;
+begin
+  Result := R.Bottom - R.Top;
+end;
+
+function PointInRect(Point: TPoint; Rect: TRect): Boolean;
+begin
+  Result := (Point.X >= Rect.Left) and (Point.X <= RectWidth(Rect)) and (Point.Y >= Rect.Top) and (Point.Y <= Rect.Bottom);
+end;
+
 
 function GetFontName(const FontNameArray: array of string): string;
 var
@@ -166,7 +92,11 @@ end;
 
 procedure InflateRectEx(var ARect: TRect; const DeltaLeft, DeltaRight, DeltaTop, DeltaBottom: integer);
 begin
-  ARect.Inflate(DeltaLeft, DeltaTop, DeltaRight, DeltaBottom);
+  //ARect.Inflate(DeltaLeft, DeltaTop, DeltaRight, DeltaBottom);
+  ARect.Left := ARect.Left + DeltaLeft;
+  ARect.Right := ARect.Right + DeltaRight;
+  ARect.Top := ARect.Top + DeltaTop;
+  ARect.Bottom := ARect.Bottom + DeltaBottom;
 end;
 
 procedure InflateRectEx(var ARect: TRect; const Margins: TJppMargins); overload;
@@ -177,7 +107,7 @@ end;
 
 function GetMiddlePosY(const R: TRect; const TextHeight: integer): integer;
 begin
-  Result := R.Top + (R.Height div 2) - (TextHeight div 2);
+  Result := R.Top + (RectHeight(R) div 2) - (TextHeight div 2);
 end;
 
 
@@ -189,8 +119,8 @@ var
 begin
   with Canvas do
   begin
-    x := Rect.Left + (Rect.Width div 2) - (TextWidth(Text) div 2) + DeltaX;
-    y := Rect.Top + (Rect.Height div 2) - (TextHeight(Text) div 2) + DeltaY;
+    x := Rect.Left + (RectWidth(Rect) div 2) - (TextWidth(Text) div 2) + DeltaX;
+    y := Rect.Top + (RectHeight(Rect) div 2) - (TextHeight(Text) div 2) + DeltaY;
     TextOut(x, y, Text);
   end;
 end;

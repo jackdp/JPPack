@@ -1,23 +1,23 @@
 unit JPP.PngButton;
 
+
+{$I jpp.inc}
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
+
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Windows, Winapi.Messages,
-  System.SysUtils, System.Classes, System.UITypes, System.StrUtils,
-  Vcl.Controls, Vcl.Graphics,  Vcl.StdCtrls, Vcl.Buttons, Vcl.GraphUtil, Vcl.ActnList, Vcl.Imaging.pngimage,
-  PngFunctions,
-  {$ELSE}
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  SysUtils, Classes, Controls, Graphics, StdCtrls, ActnList, StrUtils, LazPngFunctions, Buttons, LCLType, LCLIntf, LMessages, Messages,
-  {$ENDIF}
-
+  Messages,
+  SysUtils, Classes, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF} StrUtils,
+  Controls, Graphics, StdCtrls, Buttons, GraphUtil, ActnList,
+  {$IFDEF HAS_UNIT_SCOPE}Vcl.Imaging.pngimage,{$ELSE}pngimage,{$ENDIF}
+  {$IFDEF DCC}PngFunctions,{$ENDIF}
+  {$IFDEF FPC}LazPngFunctions, LCLType, LCLIntf, LMessages,{$ENDIF}
   JPL.Colors, JPL.Strings,
-  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Graphics, JPP.Gradient, JPP.PngButton.ColorMaps
-  ;
+  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Graphics, JPP.Gradient,
+  JPP.PngButton.ColorMaps;
 
 
 type
@@ -131,12 +131,10 @@ type
 
   {$region ' ----------------- TJppPngButton ------------------- '}
   TJppPngButton = class(TBitBtn)
-  {$IFDEF DCC}
-    {$IF RTLVersion >= 24.0 }
-    strict private
-      class constructor Create;
-      class destructor Destroy;
-    {$IFEND}
+  {$IFDEF DELPHIXE3_OR_ABOVE}
+  strict private
+    class constructor Create;
+    class destructor Destroy;
   {$ENDIF}
   private
     bOver: Boolean;
@@ -193,13 +191,11 @@ type
   {$endregion TJppPngButton}
 
 
-  {$IFDEF DCC}
-    {$IF RTLVersion >= 24.0 }
-    TJppPngButtonStyleHook = class(TBitBtnStyleHook)
-    strict protected
-      procedure DrawButton(ACanvas: TCanvas; AMouseInControl: Boolean); override;
-    end;
-    {$IFEND}
+  {$IFDEF DELPHIXE3_OR_ABOVE}
+  TJppPngButtonStyleHook = class(TBitBtnStyleHook)
+  strict protected
+    procedure DrawButton(ACanvas: TCanvas; AMouseInControl: Boolean); override;
+  end;
   {$ENDIF}
 
 
@@ -214,7 +210,7 @@ implementation
 
 {$IFDEF DCC}
 uses
-  Vcl.Themes, PngButtonFunctions, PngImageList;
+  Themes, PngButtonFunctions, PngImageList;
 {$ENDIF}
 
 
@@ -227,14 +223,14 @@ begin
 
   if (StyleName = '') or (StyleName = 'WINDOWS') then
   begin
-    {$IFDEF DCC}{$IF RTLVersion > 23} Button.StyleElements := [seFont, seClient, seBorder]; {$IFEND}{$ENDIF}
+    {$IFDEF HAS_STYLE_ELEMENTS} Button.StyleElements := [seFont, seClient, seBorder]; {$ENDIF}
     Button.Appearance.DefaultDrawing := True;
   end
 
   else
 
   begin
-    {$IFDEF DCC}{$IF RTLVersion > 23} Button.StyleElements := []; {$IFEND}{$ENDIF}
+    {$IFDEF HAS_STYLE_ELEMENTS} Button.StyleElements := []; {$ENDIF}
     Button.Appearance.DefaultDrawing := False;
 
     if AnsiStartsText('AQUALIGHT', StyleName) then Button.ColorMapType := cmtVclAquaLightSlate
@@ -365,7 +361,7 @@ end;
 {$region ' ---------------- Themes ------------------------- '}
 {$IFDEF DCC}
 
-{$IF RTLVersion < 23.0 }
+{$IFDEF DELPHIXE_OR_BELOW}
 type
   TThemeServicesHelper = class helper for TThemeServices
   private
@@ -390,10 +386,9 @@ function StyleServices: TThemeServices;
 begin
   Result := ThemeServices;
 end;
-{$IFEND}
+{$ENDIF}
 
-{$IF RTLVersion >= 24.0 }
-
+{$IFDEF DELPHIXE3_OR_ABOVE}
 class constructor TJppPngButton.Create;
 begin
   TCustomStyleEngine.RegisterStyleHook(TJppPngButton, TJppPngButtonStyleHook);
@@ -403,7 +398,7 @@ class destructor TJppPngButton.Destroy;
 begin
   TCustomStyleEngine.UnRegisterStyleHook(TJppPngButton, TJppPngButtonStyleHook);
 end;
-{$IFEND}
+{$ENDIF}
 
 {$ENDIF}
 {$endregion Themes}
@@ -1362,7 +1357,7 @@ begin
     IsDefault := Message.DrawItemStruct^.itemState and ODS_FOCUS <> 0;
 
 
-    //Draw the border
+    //Draw border
     {$IFDEF DCC}
     if StyleServices.Enabled then
     begin
@@ -1546,7 +1541,7 @@ end;
 {$region ' ------------------------- StyleHook -------------------------- '}
 {$IFDEF DCC}
 
-{$IF RTLVersion >= 24.0 }
+{$IFDEF DELPHIXE3_OR_ABOVE}
 procedure TJppPngButtonStyleHook.DrawButton(ACanvas: TCanvas; AMouseInControl: Boolean);
 const
   WordBreakFlag: array [Boolean] of Integer = (0, DT_WORDBREAK);
@@ -1614,7 +1609,7 @@ begin
   StyleServices.DrawText(ACanvas.Handle, Details, btn.Caption, TextRect, LFormats, LColor);
 
 end;
-{$IFEND}
+{$ENDIF}
 
 {$ENDIF}
 {$endregion}

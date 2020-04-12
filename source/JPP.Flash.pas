@@ -1,18 +1,14 @@
 ﻿unit JPP.Flash;
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS} Windows, {$ENDIF}
-  {$IFDEF DCC}
-  System.SysUtils, System.Classes,
-  Vcl.Graphics, Vcl.Controls, Vcl.StdCtrls, Vcl.ExtCtrls,
-  {$ELSE}
-  SysUtils, Classes, Graphics, StdCtrls, ExtCtrls,
-  {$ENDIF}
-
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  SysUtils, Classes,
+  Graphics, Controls, StdCtrls, ExtCtrls,
   JPP.Common, JPP.Timer;
 
 

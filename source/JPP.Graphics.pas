@@ -1,31 +1,24 @@
 ﻿{ $ID: JPP.Graphics $ }
 {
   ------------------------------------------------------
-
   Routines related to Bitmap and PNG processing.
-
   ------------------------------------------------------
-
-  Initial release: June, 2006
-  Last mod: 26.05.2019
-
 }
 unit JPP.Graphics;
 
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
   {$IFDEF MSWINDOWS} Windows, ShellAPI, {$ENDIF}
+  SysUtils, Classes, Math, Graphics
   {$IFDEF DCC}
-  Winapi.Messages,
-  System.SysUtils, System.Classes, System.Math,
-  Vcl.Graphics, Vcl.Imaging.pngimage
-  {$ELSE}
-  SysUtils, Classes, Math, Graphics, GraphType, LCLType, LCLIntf
+    {$IFDEF HAS_UNIT_SCOPE}, Vcl.Imaging.pngimage{$ELSE}, pngimage{$ENDIF}
   {$ENDIF}
+  {$IFDEF FPC}, GraphType, LCLType, LCLIntf{$ENDIF}
   ;
 
 
@@ -132,22 +125,19 @@ function SetPngGamma(Value: Single; Png: TPngImage): Boolean; deprecated 'Use Pn
 {$endregion PNG procs}
 
 
-function PointInRect(Point: TPoint; Rect: TRect): Boolean;
-
 {$IFDEF MSWINDOWS}
 function GetIconCount(const FileName: string): Integer;
 {$ENDIF}
 
-function RectHeight(R: TRect): integer;
-function RectWidth(R: TRect): integer;
+
 
 function PixelFormatToStr(const pf: TPixelFormat): string;
 procedure GrayscaleRGB(var R, G, B: Byte; Amount: Byte = 255);
 
-
-
-
 implementation
+
+uses
+  JPP.Common.Procs;
 
 
 // from PngComponents - PngFunctions.pas
@@ -186,15 +176,7 @@ begin
 end;
 
 
-function RectWidth(R: TRect): integer;
-begin
-  Result := R.Right - R.Left; // R.Left - R.Right;
-end;
 
-function RectHeight(R: TRect): integer;
-begin
-  Result := R.Bottom - R.Top;
-end;
 
 {$IFDEF MSWINDOWS}
 function GetIconCount(const FileName: string): Integer;
@@ -202,11 +184,6 @@ begin
   Result := ExtractIcon(hInstance, PChar(FileName), DWORD(-1));
 end;
 {$ENDIF}
-
-function PointInRect(Point: TPoint; Rect: TRect): Boolean;
-begin
-  Result := (Point.X >= Rect.Left) and (Point.X <= Rect.Width) and (Point.Y >= Rect.Top) and (Point.Y <= Rect.Bottom);
-end;
 
 
 

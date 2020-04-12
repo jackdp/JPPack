@@ -108,6 +108,13 @@
         <DCCReference Include="..\DCR\JppSimplePanel.dcr"/>
         <DCCReference Include="..\DCR\JppEdit.dcr"/>
         <DCCReference Include="..\DCR\JppEditEx.dcr"/>
+        <DCCReference Include="..\DCR\JppMemo.dcr"/>
+        <DCCReference Include="..\DCR\JppMemoEx.dcr"/>
+        <DCCReference Include="..\DCR\JppPngCollection.dcr"/>
+        <DCCReference Include="..\DCR\JppComboBox.dcr"/>
+        <DCCReference Include="..\DCR\JppComboBoxEx.dcr"/>
+        <DCCReference Include="..\DCR\JppStdPanel.dcr"/>
+        <DCCReference Include="..\DCR\JppDoubleLabel.dcr"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vclimg.dcp"/>
@@ -150,6 +157,7 @@
         <DCCReference Include="..\..\source\JPP.PenStyleComboBox.pas"/>
         <DCCReference Include="..\..\source\JPP.StdPanel.pas"/>
         <DCCReference Include="..\..\source\JPP.AnchoredControls.pas"/>
+        <DCCReference Include="..\..\source\JPP.GPHatchStyleComboBox.pas"/>
         <DCCReference Include="..\..\source\LDPngFunctions.pas"/>
         <DCCReference Include="..\..\source\JPP.Register.pas"/>
         <BuildConfiguration Include="Base">

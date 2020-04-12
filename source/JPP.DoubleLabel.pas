@@ -11,6 +11,7 @@ unit JPP.DoubleLabel;
   More information in file JPP.DoubleLineLabel.pas
 }
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
@@ -94,7 +95,7 @@ type
     property ParentShowHint;
     property PopupMenu;
     property ShowHint;
-    {$IFDEF DCC}{$IF CompilerVersion > 23}property StyleElements;{$IFEND}{$ENDIF}
+    {$IFDEF DCC}{$IFDEF HAS_STYLE_ELEMENTS}property StyleElements;{$ENDIF}{$ENDIF}
     property Visible;
     property OnClick;
     property OnContextPopup;

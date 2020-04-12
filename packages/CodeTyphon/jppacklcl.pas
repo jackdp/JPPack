@@ -8,10 +8,11 @@ unit jppacklcl;
 interface
 
 uses
-  JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.Gradient, JPP.Graphics, JPP.Types, JPP.DoubleLineLabel, JPP.LinkLabel, 
-  JPP.MemIniFile, JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.BasicPanel, JPP.Panel, JPP.BasicSpeedButton, 
-  LDPngFunctions, JPP.ColorControls.Common, JPP.ColorListBox, JPP.ColorComboBox, JPP.ColorSwatch, JPP.Edit, JPP.SimplePanel, JPP.Flash, 
-  JPP.BrushStyleComboBox, JPP.PenStyleComboBox, CTJPPackRegister, TyphonPackageIntf;
+  JPP.AnchoredControls, JPP.BasicPanel, JPP.BasicSpeedButton, JPP.BrushStyleComboBox, JPP.ColorComboBox, JPP.ColorControls.Common, 
+  JPP.ColorListBox, JPP.ColorSwatch, JPP.ComboBox, JPP.ComboBoxEx, JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel, 
+  JPP.Edit, JPP.Flash, JPP.Gradient, JPP.Graphics, JPP.LinkLabel, JPP.MemIniFile, JPP.Memo, JPP.Panel, JPP.PenStyleComboBox, 
+  JPP.PngCollection, JPP.SimplePanel, JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.Timer, JPP.Types, LDPngFunctions, CTJPPackRegister, 
+  TyphonPackageIntf;
 
 implementation
 

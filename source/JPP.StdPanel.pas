@@ -6,6 +6,7 @@
   http://www.pazera-software.com
 }
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
 
 interface
@@ -79,7 +80,7 @@ type
     property ShowHint;
     property TabOrder;
     property TabStop;
-    property Touch;
+    {$IFDEF DELPHI2010_OR_ABOVE}property Touch;{$ENDIF}
     property VerticalAlignment;
     property Visible;
     {$IFDEF DCC}{$IF RTLVersion > 23}property StyleElements;{$IFEND}{$ENDIF}
@@ -98,7 +99,7 @@ type
     property OnEndDrag;
     property OnEnter;
     property OnExit;
-    property OnGesture;
+    {$IFDEF DELPHI2010_OR_ABOVE}property OnGesture;{$ENDIF}
     property OnGetSiteInfo;
     property OnMouseActivate;
     property OnMouseDown;

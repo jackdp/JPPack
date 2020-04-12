@@ -2,24 +2,24 @@ unit LazJPPackRegister;
 
 {$mode objfpc}{$H+}
 {$WARN 5023 off : Unit "$1" not used in $2}
-{$I JPPack.inc}
+{$I jpp.inc}
 
 interface
 
 uses
-    Forms, LCLIntf, LCLType, LMessages, Classes, Graphics, Controls, SysUtils, StdCtrls,
-    TypInfo, lresources,
-    JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel, JPP.LinkLabel,
-    JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.BasicPanel, JPP.Panel,
-    JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ComboBox, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
-    JPP.Edit, JPP.Memo,
-    JPP.BrushStyleComboBox, JPP.PenStyleComboBox,
-    {$IFDEF USE_GDIPLUS_CONTROLS}
-    JPP.GPHatchStyleComboBox,
-    {$ENDIF}
-    //JPP.PngButton, JPP.PngButton.ColorMaps,
-    JPP.Types
-    ;
+  Forms, LCLIntf, LCLType, LMessages, Classes, Graphics, Controls, SysUtils, StdCtrls,
+  TypInfo, lresources,
+  JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel, JPP.LinkLabel,
+  JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.BasicPanel, JPP.Panel,
+  JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ComboBox, JPP.ComboBoxEx, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
+  JPP.Edit, JPP.Memo,
+  JPP.BrushStyleComboBox, JPP.PenStyleComboBox,
+  {$IFDEF USE_GDIPLUS_CONTROLS}
+  JPP.GPHatchStyleComboBox,
+  {$ENDIF}
+  //JPP.PngButton, JPP.PngButton.ColorMaps,
+  JPP.Types
+  ;
 
 procedure Register;
 
@@ -47,7 +47,7 @@ begin
   RegisterComponents(JPPackPageName, [TJppSimplePanel]);
   RegisterComponents(JPPackPageName, [TJppColorSwatch, TJppColorSwatchEx]);
   RegisterComponents(JPPackPageName, [TJppEdit, TJppMemo]);
-  RegisterComponents(JPPackPageName, [TJppComboBox]);
+  RegisterComponents(JPPackPageName, [TJppComboBox, TJppComboBoxEx]);
   RegisterComponents(JPPackPageName, [TJppBrushStyleComboBox, TJppPenStyleComboBox]);
 
   {$IFDEF USE_GDIPLUS_CONTROLS}

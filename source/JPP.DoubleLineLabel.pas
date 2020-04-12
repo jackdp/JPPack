@@ -76,20 +76,23 @@ unit JPP.DoubleLineLabel;
 //   damages arising from the use of this software.
 
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS}Windows,{$ENDIF} Messages, Classes, Graphics, Controls, StdCtrls, {$IFDEF DCC}{$IF CompilerVersion >= 23}UItypes,{$IFEND}{$ENDIF}
-  JPP.Common, JPP.AnchoredControls {$IFDEF FPC}, LCLType, Types, LCLIntf{$ENDIF};
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  Messages, Classes, Graphics, Controls, StdCtrls, {$IFDEF HAS_SYSTEM_UITYPES}System.UItypes,{$ENDIF}
+  {$IFDEF FPC}LCLType, Types, LCLIntf, {$ENDIF}
+  JPP.Common, JPP.AnchoredControls
+  ;
 
 type
   TJppDoubleLabelLineStyle = (dllsNone, dllsSolid, dllsDash, dllsDot);
 
   TJppDoubleLabelLineEvent = procedure(Sender: TObject; Canvas: TCanvas; X1, X2, Y: Integer) of object;
 
-  { TJppDoubleLineLabel }
 
   TJppDoubleLineLabel = class(TGraphicControl)
   private
@@ -171,7 +174,7 @@ type
     property ParentShowHint;
     property PopupMenu;
     property ShowHint;
-    {$IFDEF DCC}{$IF CompilerVersion > 23}property StyleElements;{$IFEND}{$ENDIF}
+    {$IFDEF HAS_STYLE_ELEMENTS}property StyleElements;{$ENDIF}
     property Visible;
     property OnClick;
     property OnContextPopup;

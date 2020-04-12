@@ -1,16 +1,15 @@
 unit JPP.PngButton.ColorMaps;
 
+
+{$I jpp.inc}
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
+
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Windows, System.SysUtils, System.IniFiles, Vcl.Graphics,
-  {$ELSE}
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
   SysUtils, IniFiles, Graphics,
-  {$ENDIF}
   JPL.Colors;
 
 const

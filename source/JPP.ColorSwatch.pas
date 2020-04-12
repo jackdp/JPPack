@@ -4,24 +4,20 @@ unit JPP.ColorSwatch;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mods:
-    2020.01.16 - FPC 3.0.2 compatibility
 }
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
-{$I JPPack.inc}
+
 
 interface
 
 uses
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  {$IFDEF DCC}
-  Winapi.Messages,
-  System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Controls, Vcl.Forms, Vcl.Graphics, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Dialogs, Vcl.Clipbrd,
-  {$ELSE}
-  SysUtils, Classes, Types, Controls, StdCtrls, Graphics, Dialogs, Buttons, Clipbrd, ExtCtrls, LCLType, LCLIntf, Messages, LMessages,
-  {$ENDIF}
+  Messages,
+  SysUtils, Classes, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Controls, Forms, Graphics, StdCtrls, ExtCtrls, Dialogs, Clipbrd,
+  {$IFDEF FPC}LCLType, LCLIntf, LMessages,{$ENDIF}
   JPL.Strings, JPL.Conversion, JPL.Colors,
   JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.ColorControls.Common, JPP.BasicSpeedButton;
 
@@ -295,7 +291,7 @@ type
     property Appearance;
     property TagExt;
     {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
-    {$IFDEF DCC} property Touch; {$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE} property Touch; {$ENDIF}
     property DoubleBuffered;
     {$IFDEF DCC}property ParentDoubleBuffered;{$ENDIF}
     {$IFDEF FPC}{$IFDEF HAS_WINCONTROL_WITH_PARENTDOUBLEBUFFERED}
@@ -460,7 +456,7 @@ type
     property Appearance;
     property TagExt;
     {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
-    {$IFDEF DCC} property Touch; {$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE} property Touch; {$ENDIF}
     property DoubleBuffered;
     {$IFDEF DCC}property ParentDoubleBuffered;{$ENDIF}
     {$IFDEF FPC}{$IFDEF HAS_WINCONTROL_WITH_PARENTDOUBLEBUFFERED}

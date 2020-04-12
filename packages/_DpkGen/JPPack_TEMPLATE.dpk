@@ -49,53 +49,58 @@ package JPPack;
 {$LIBSUFFIX '<LibSuffix>'}
 {$IMPLICITBUILD ON}
 
-{$I ..\..\source\JPPack.inc}
+//{$I ..\..\source\jpp.inc}
+{$DEFINE USE_GDIPLUS_CONTROLS}
+{$IFDEF VER220}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
+{$IFDEF VER210}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
+{$IFDEF VER200}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
 
 requires
   vcl,
   rtl,
   vclimg,
   JPLib,
-  PngComponents,
-  IGDIPlusMod;
+  PngComponents
+  {$IFDEF USE_GDIPLUS_CONTROLS}, IGDIPlusMod {$ENDIF}
+  ;
 
 contains
-  JPP.Types in '..\..\source\JPP.Types.pas',
-  JPP.Common in '..\..\source\JPP.Common.pas',
-  JPP.Common.Procs in '..\..\source\JPP.Common.Procs.pas',
-  JPP.Graphics in '..\..\source\JPP.Graphics.pas',
-  JPP.Gradient in '..\..\source\JPP.Gradient.pas',
-  JPP.MemIniFile in '..\..\source\JPP.MemIniFile.pas',
-  JPP.ColorControls.Common in '..\..\source\JPP.ColorControls.Common.pas',
-  JPP.Panel in '..\..\source\JPP.Panel.pas',
+  JPP.AnchoredControls in '..\..\source\JPP.AnchoredControls.pas',
   JPP.BasicPanel in '..\..\source\JPP.BasicPanel.pas',
   JPP.BasicPngButton in '..\..\source\JPP.BasicPngButton.pas',
-  JPP.PngButton.ColorMaps in '..\..\source\JPP.PngButton.ColorMaps.pas',
-  JPP.PngButton in '..\..\source\JPP.PngButton.pas',
   JPP.BasicSpeedButton in '..\..\source\JPP.BasicSpeedButton.pas',
+  JPP.BrushStyleComboBox in '..\..\source\JPP.BrushStyleComboBox.pas',
   JPP.ColorComboBox in '..\..\source\JPP.ColorComboBox.pas',
+  JPP.ColorControls.Common in '..\..\source\JPP.ColorControls.Common.pas',
   JPP.ColorListBox in '..\..\source\JPP.ColorListBox.pas',
-  JPP.LinkLabel in '..\..\source\JPP.LinkLabel.pas',
-  JPP.Timer in '..\..\source\JPP.Timer.pas',
-  JPP.StorageCtrl in '..\..\source\JPP.StorageCtrl.pas',
-  JPP.FormIniStorage in '..\..\source\JPP.FormIniStorage.pas',
-  JPP.StringStorageCtrl in '..\..\source\JPP.StringStorageCtrl.pas',
-  JPP.PngCollection in '..\..\source\JPP.PngCollection.pas',
-  JPP.DoubleLabel in '..\..\source\JPP.DoubleLabel.pas',
-  JPP.DoubleLineLabel in '..\..\source\JPP.DoubleLineLabel.pas',
-  JPP.SimplePanel in '..\..\source\JPP.SimplePanel.pas',
   JPP.ColorSwatch in '..\..\source\JPP.ColorSwatch.pas',
-  JPP.Edit in '..\..\source\JPP.Edit.pas',
-  JPP.EditEx in '..\..\source\JPP.EditEx.pas',
   JPP.ComboBox in '..\..\source\JPP.ComboBox.pas',
   JPP.ComboBoxEx in '..\..\source\JPP.ComboBoxEx.pas',
+  JPP.Common in '..\..\source\JPP.Common.pas',
+  JPP.Common.Procs in '..\..\source\JPP.Common.Procs.pas',
+  JPP.DoubleLabel in '..\..\source\JPP.DoubleLabel.pas',
+  JPP.DoubleLineLabel in '..\..\source\JPP.DoubleLineLabel.pas',
+  JPP.Edit in '..\..\source\JPP.Edit.pas',
+  JPP.EditEx in '..\..\source\JPP.EditEx.pas',
+  JPP.Flash in '..\..\source\JPP.Flash.pas',
+  JPP.FormIniStorage in '..\..\source\JPP.FormIniStorage.pas',
+  JPP.Gradient in '..\..\source\JPP.Gradient.pas',
+  JPP.Graphics in '..\..\source\JPP.Graphics.pas',
+  JPP.LinkLabel in '..\..\source\JPP.LinkLabel.pas',
+  JPP.MemIniFile in '..\..\source\JPP.MemIniFile.pas',
   JPP.Memo in '..\..\source\JPP.Memo.pas',
   JPP.MemoEx in '..\..\source\JPP.MemoEx.pas',
-  JPP.Flash in '..\..\source\JPP.Flash.pas',
-  JPP.BrushStyleComboBox in '..\..\source\JPP.BrushStyleComboBox.pas',
+  JPP.Panel in '..\..\source\JPP.Panel.pas',
   JPP.PenStyleComboBox in '..\..\source\JPP.PenStyleComboBox.pas',
+  JPP.PngButton in '..\..\source\JPP.PngButton.pas',
+  JPP.PngButton.ColorMaps in '..\..\source\JPP.PngButton.ColorMaps.pas',
+  JPP.PngCollection in '..\..\source\JPP.PngCollection.pas',
+  JPP.SimplePanel in '..\..\source\JPP.SimplePanel.pas',
   JPP.StdPanel in '..\..\source\JPP.StdPanel.pas',
-  JPP.AnchoredControls in '..\..\source\JPP.AnchoredControls.pas',
+  JPP.StorageCtrl in '..\..\source\JPP.StorageCtrl.pas',
+  JPP.StringStorageCtrl in '..\..\source\JPP.StringStorageCtrl.pas',
+  JPP.Timer in '..\..\source\JPP.Timer.pas',
+  JPP.Types in '..\..\source\JPP.Types.pas',
   {$IFDEF USE_GDIPLUS_CONTROLS}
   JPP.GPHatchStyleComboBox in '..\..\source\JPP.GPHatchStyleComboBox.pas',
   {$ENDIF}

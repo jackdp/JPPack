@@ -4,24 +4,21 @@ unit JPP.SimplePanel;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mods:
-    2020.01.16 - FPC 3.0.2 compatibility
-    2020.04.09 - Anchored controls
 }
 
+
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
-{$I JPPack.inc}
+
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Messages, Winapi.Windows,
-  System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Graphics, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Dialogs,
-  {$ELSE}
-  SysUtils, Messages, LMessages, LCLType, LCLIntf, Classes, Graphics, Controls, StdCtrls, ExtCtrls,
-  {$ENDIF}
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  Messages,
+  SysUtils, Classes, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Controls, Forms, Menus, Graphics, StdCtrls, ExtCtrls, Dialogs,
+  {$IFDEF FPC}LMessages, LCLType, LCLIntf,{$ENDIF}
   JPL.Colors,
   JPP.Types, JPP.Graphics, JPP.Gradient, JPP.AnchoredControls, JPP.Common, JPP.Common.Procs;
 
@@ -159,7 +156,6 @@ type
     property Constraints;
     property Caption;
     property CaptionMargin;
-    {$IFDEF DCC}property ShowCaption;{$ENDIF}
     {$IFDEF DCC} property Ctl3D; {$ENDIF}
     property UseDockManager default True;
     property DockSite;
@@ -217,8 +213,8 @@ type
     {$IFDEF MSWINDOWS}property OnDragDropFiles;{$ENDIF}
     property Appearance;
     property TagExt;
-    {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
-    {$IFDEF DCC} property Touch; {$ENDIF}
+    {$IFDEF HAS_STYLE_ELEMENTS} property StyleElements; {$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE} property Touch; {$ENDIF}
     property DoubleBuffered;
     {$IFDEF DCC}property ParentDoubleBuffered;{$ENDIF}
     {$IFDEF FPC}{$IFDEF HAS_WINCONTROL_WITH_PARENTDOUBLEBUFFERED}

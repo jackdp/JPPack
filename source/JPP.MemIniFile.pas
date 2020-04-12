@@ -1,20 +1,15 @@
 unit JPP.MemIniFile deprecated 'Use JPL.MemIniFile instead';
 
 
-
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
-{$I JPPack.inc}
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Windows,
-  System.SysUtils, System.Classes, System.IniFiles, System.ZLib, Vcl.Graphics, Vcl.Dialogs,
-  {$ELSE}
-  SysUtils, Classes, IniFiles, Graphics,
-  {$ENDIF}
-  JPL.Strings, JPL.Colors, {JPL.Math,} JPL.Conversion,
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  SysUtils, Classes, IniFiles, Graphics, Dialogs, {$IFDEF DCC}ZLib,{$ENDIF}
+  JPL.Strings, JPL.Colors, JPL.Conversion,
   JPP.Common.Procs
   ;
 
@@ -199,7 +194,7 @@ var
   FloatStr: string;
 begin
   FloatStr := ReadString(Section, Ident, '');
-  FloatStr := StringReplace(FloatStr, '.', FormatSettings.DecimalSeparator, []);
+  FloatStr := StringReplace(FloatStr, '.', GetDecimalSeparator, []);
   Result := Default;
   if FloatStr <> '' then
     if not TryStrToFloat(FloatStr, Result) then Result := Default;
@@ -219,7 +214,7 @@ var
   s: string;
 begin
   s := FloatToStr(Value);
-  s := StringReplace(s, FormatSettings.DecimalSeparator, '.', []);
+  s := StringReplace(s, GetDecimalSeparator, '.', []);
   WriteString(Section, Ident, s);
 end;
 

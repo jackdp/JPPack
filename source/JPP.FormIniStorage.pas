@@ -5,14 +5,15 @@ unit JPP.FormIniStorage;
   DO NOT USE!
 }
 
+{$I jpp.inc}
+
 interface
 
 
 uses
-  Winapi.Windows,
-  System.SysUtils, System.Classes, System.IniFiles, System.AnsiStrings, System.UITypes, System.RTTI,
-  Vcl.Controls, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Forms, Vcl.Dialogs, Vcl.Graphics,
-
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  SysUtils, Classes, IniFiles, AnsiStrings, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF} RTTI,
+  Controls, StdCtrls, ExtCtrls, ComCtrls, Forms, Dialogs, Graphics,
   JPP.Types, JPP.MemIniFile, JPL.Strings;
 
 
@@ -998,7 +999,7 @@ begin
   FEncoding := Value;
   case Value of
     teASCII: IniEncoding := TEncoding.ASCII;
-    teANSI: IniEncoding := TEncoding.ANSI;
+    teANSI: IniEncoding := {$IFDEF HAS_ANSI_ENCODING}TEncoding.ANSI;{$ELSE}TEncoding.Default;{$ENDIF}
     teUnicode: IniEncoding := TEncoding.Unicode;
     teUTF8: IniEncoding := TEncoding.UTF8;
   else

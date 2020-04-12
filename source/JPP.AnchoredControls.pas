@@ -8,18 +8,15 @@ unit JPP.AnchoredControls;
   TODO: Block circular anchoring: A.B + B.C + C.A
 }
 
-{$IFDEF FPC} {$mode delphi}{$H+} {$ENDIF}
+{$I jpp.inc}
+{$IFDEF FPC} {$mode delphi} {$ENDIF}
 
 interface
 
 uses
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  {$IFDEF DCC}
-  System.SysUtils, System.Classes, Vcl.Controls, System.UITypes,
-
-  {$ELSE}
-  SysUtils, Classes, Controls, StdCtrls, LCLType, LCLIntf,
-  {$ENDIF}
+  SysUtils, Classes, Controls, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  {$IFDEF FPC}LCLType, LCLIntf,{$ENDIF}
   JPP.Common;
 
 type

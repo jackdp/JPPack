@@ -1,18 +1,19 @@
 unit JPP.Register;
 
-{$I JPPack.inc}
+{$I jpp.inc}
 
 interface
 
 uses
-  System.Classes,
+  Classes,
 
   JPP.Types,
   JPP.BasicPanel, JPP.Panel, JPP.SimplePanel, JPP.StdPanel,
   JPP.BasicPngButton, JPP.PngButton, JPP.BasicSpeedButton,
   JPP.ColorComboBox, JPP.ColorListBox, JPP.ColorSwatch,
   JPP.LinkLabel, JPP.Timer, JPP.StorageCtrl, JPP.StringStorageCtrl,
-  JPP.FormIniStorage, JPP.PngCollection,
+  {$IFDEF DELPHI2010_OR_ABOVE}JPP.FormIniStorage,{$ENDIF}
+  JPP.PngCollection,
   JPP.DoubleLineLabel, JPP.DoubleLabel,
   JPP.Edit, JPP.EditEx,
   JPP.ComboBox, JPP.ComboBoxEx,
@@ -43,7 +44,7 @@ begin
       TJppTimer,
       TJppStorageCtrl,
       TJppStringStorageCtrl,
-      TJppFormIniStorage,
+      {$IFDEF DELPHI2010_OR_ABOVE}TJppFormIniStorage,{$ENDIF}
       TJppPngCollection,
       TJppDoubleLineLabel, TJppDoubleLabel,
       TJppEdit, TJppEditEx,

@@ -6,22 +6,17 @@ unit JPP.LinkLabel;
   https://github.com/jackdp
 }
 
+
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS}
-  Windows,
-  ShellAPI,
-  {$ENDIF}
-  {$IFDEF DCC}
-  Winapi.Messages, System.SysUtils, System.Classes, System.UITypes,
-  Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.Buttons, Vcl.GraphUtil, Vcl.Dialogs, Vcl.ActnList, Vcl.Themes,
-  {$ELSE}
-  SysUtils, Messages, Classes, Controls, StdCtrls, Graphics, ActnList, LCLIntf, LCLType,
-  {$ENDIF}
-  //JPP.Types, JPP.Graphics,
+  {$IFDEF MSWINDOWS}Windows, ShellAPI,{$ENDIF}
+  Messages, SysUtils, Classes, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Controls, Graphics, StdCtrls, Buttons, GraphUtil, Dialogs, ActnList, Themes,
+  {$IFDEF FPC}LCLIntf, LCLType,{$ENDIF}
   JPP.Common, JPP.AnchoredControls;
 
 type
@@ -115,7 +110,7 @@ type
     property CursorDisabled;
     property Visited;
 
-    {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
+    {$IFDEF HAS_STYLE_ELEMENTS} property StyleElements; {$ENDIF}
     property Cursor default crHandPoint;
 
     property Align;
@@ -141,7 +136,7 @@ type
     property PopupMenu;
     property ShowAccelChar;
     property ShowHint;
-    {$IFDEF DCC} property Touch; {$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE} property Touch; {$ENDIF}
     property Transparent;
     property Layout;
     property Visible;
@@ -153,7 +148,7 @@ type
     property OnDragOver;
     property OnEndDock;
     property OnEndDrag;
-    {$IFDEF DCC} property OnGesture; {$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE} property OnGesture; {$ENDIF}
     {$IFDEF DCC} property OnMouseActivate; {$ENDIF}
     property OnMouseDown;
     property OnMouseMove;
@@ -328,8 +323,10 @@ begin
     {$IFDEF MSWINDOWS}
     ShellExecute(0, 'open', PChar(FURL), '', '', SW_SHOW);
     {$ELSE}
-    if (Copy(FURL, 1, 4) = 'http') or (Copy(FURL, 1, 4) = 'www.') then OpenURL(FURL)
-    else OpenDocument(FURL);
+      {$IFDEF FPC}
+      if (Copy(FURL, 1, 4) = 'http') or (Copy(FURL, 1, 4) = 'www.') then OpenURL(FURL)
+      else OpenDocument(FURL);
+      {$ENDIF}
     {$ENDIF}
   end
   else if FClickActionType = catExecuteAction then
@@ -422,31 +419,26 @@ end;
 
 procedure TJppCustomLinkLabel.SetFontVisitedHot(const Value: TFont);
 begin
-  //FFontVisitedHot := Value;
   if Assigned(FFontVisitedHot) and Assigned(Value) then FFontVisitedHot.Assign(Value);
 end;
 
 procedure TJppCustomLinkLabel.SetFontDisabled(const Value: TFont);
 begin
-  //FFontDisabled := Value;
   if Assigned(FFontDisabled) and Assigned(Value) then FFontDisabled.Assign(Value);
 end;
 
 procedure TJppCustomLinkLabel.SetFontHot(const Value: TFont);
 begin
-  //FFontHot := Value;
   if Assigned(FFontHot) and Assigned(Value) then FFontHot.Assign(Value);
 end;
 
 procedure TJppCustomLinkLabel.SetFontNormal(const Value: TFont);
 begin
-  //FFontNormal := Value;
   if Assigned(FFontNormal) and Assigned(Value) then FFontNormal.Assign(Value);
 end;
 
 procedure TJppCustomLinkLabel.SetFontVisitedNormal(const Value: TFont);
 begin
-  //FFontVisitedNormal := Value;
   if Assigned(FFontVisitedNormal) and Assigned(Value) then FFontVisitedNormal.Assign(Value);
 end;
 

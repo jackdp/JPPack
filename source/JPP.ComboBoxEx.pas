@@ -6,22 +6,18 @@ unit JPP.ComboBoxEx;
   https://github.com/jackdp
 }
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
-{$I JPPack.inc}
 
 interface
 
 
 uses
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  {$IFDEF DCC}
-  Winapi.Messages,
-  System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls,
-  {$ELSE}
-  SysUtils, Classes, Types, Controls, Graphics, StdCtrls, ExtCtrls, ComCtrls, LCLType, LCLIntf, Messages, LMessages,
-  {$ENDIF}
-
+  Messages,
+  SysUtils, Classes, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Controls, Graphics, StdCtrls, ExtCtrls, ComCtrls,
+  {$IFDEF FPC}ComboEx, LCLType, LCLIntf, LMessages,{$ENDIF}
   JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Flash
   ;
 
@@ -84,7 +80,7 @@ type
 
     property MouseOverControl: Boolean read FMouseOverControl;
 
-    function GetItemHt: Integer; override;
+    {$IFDEF DCC}function GetItemHt: Integer; override;{$ENDIF}
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -194,12 +190,12 @@ type
     property Text;
 //    {$IFDEF DCC}property TextHint;{$ENDIF}
     property Top;
-    {$IFDEF DCC} property Touch; {$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE} property Touch; {$ENDIF}
     property Visible;
     property Width;
 
     // -------- Events ----------
-    property OnBeginEdit;
+    {$IFDEF DCC}property OnBeginEdit;{$ENDIF}
     property OnChange;
     {$IFDEF FPC}property OnChangeBounds;{$ENDIF}
     property OnClick;
@@ -213,10 +209,10 @@ type
     {$IFDEF FPC}property OnEditingDone;{$ENDIF}
     property OnEndDock;
     property OnEndDrag;
-    property OnEndEdit;
+    {$IFDEF DCC}property OnEndEdit;{$ENDIF}
     property OnEnter;
     property OnExit;
-    {$IFDEF DCC}property OnGesture;{$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE}property OnGesture;{$ENDIF}
     {$IFDEF FPC}property OnGetItems;{$ENDIF}
     property OnKeyDown;
     property OnKeyPress;
@@ -370,10 +366,12 @@ begin
   FFlash.Flash;
 end;
 
+{$IFDEF DCC}
 function TJppCustomComboBoxEx.GetItemHt: Integer;
 begin
   Result := Perform(CB_GETITEMHEIGHT, 0, 0); // returns 0 if Handle = 0
 end;
+{$ENDIF}
 
 procedure TJppCustomComboBoxEx.AdjustLabelBounds(Sender: TObject);
 begin

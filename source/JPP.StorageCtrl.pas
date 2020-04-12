@@ -4,26 +4,22 @@ unit JPP.StorageCtrl;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mod: 2019.05.25
 }
 
+
+{$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
 
 interface
 
 uses
-  {$IFDEF DCC}
-  Winapi.Messages, Winapi.Windows,
-  System.SysUtils, System.Classes, System.Types, System.UITypes, Vcl.Graphics,
-  {$ELSE}
-  SysUtils, Classes, Graphics, LCLType, Types,
-  {$ENDIF}
-
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  SysUtils, Classes, Graphics, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  {$IFDEF FPC}LCLType,{$ENDIF}
   JPP.Types, JPP.Common;
 
 
 type
-
 
   {$region ' --------- TJppStorageCtrlItem - collection item ----------- '}
   TJppStorageCtrlItem = class(TCollectionItem)

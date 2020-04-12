@@ -13,8 +13,9 @@ unit JPP.GPHatchStyleComboBox;
     2020.04.10 - Anchored controls
 }
 
+
+{$I jpp.inc}
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
-{$I JPPack.inc}
 
 interface
 

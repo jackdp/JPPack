@@ -4,30 +4,23 @@ unit JPP.PenStyleComboBox;
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-
-  Last mods:
-    2020.01.16 - FPC 3.0.2 compatibility
-    2020.04.10 - Anchored controls
 }
 
+
+{$I jpp.inc}
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
-{$I JPPack.inc}
+
 
 interface
 
 uses
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  {$IFDEF DCC}
   Messages,
-  System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.Controls, Vcl.StdCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Buttons, Vcl.Clipbrd, Vcl.ExtCtrls,
-  {$ELSE}
-  SysUtils, Classes, Types, Controls, StdCtrls, Graphics, Dialogs, Buttons, Clipbrd, ExtCtrls, LCLType, LCLIntf, Messages, LMessages,
-  {$ENDIF}
-
+  SysUtils, Classes, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Controls, StdCtrls, Graphics, Dialogs, Buttons, Clipbrd, ExtCtrls,
+  {$IFDEF FPC}LCLType, LCLIntf, LMessages,{$ENDIF}
   JPL.Strings, JPL.Conversion,
-  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Graphics
-  ;
+  JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Graphics;
 
 
 type
@@ -209,9 +202,9 @@ type
     property TabOrder;
     property TabStop;
     {$IFDEF DCC}property TextHint;{$ENDIF}
-    {$IFDEF DCC}property Touch;{$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE}property Touch;{$ENDIF}
     property Visible;
-    {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
+    {$IFDEF HAS_STYLE_ELEMENTS} property StyleElements; {$ENDIF}
     property OnChange;
     property OnClick;
     property OnCloseUp;
@@ -225,7 +218,7 @@ type
     property OnEndDrag;
     property OnEnter;
     property OnExit;
-    {$IFDEF DCC}property OnGesture;{$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE}property OnGesture;{$ENDIF}
     property OnKeyDown;
     property OnKeyPress;
     property OnKeyUp;

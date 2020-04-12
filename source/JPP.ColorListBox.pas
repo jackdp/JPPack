@@ -4,28 +4,21 @@
   Jacek Pazera
   http://www.pazera-software.com
   https://github.com/jackdp
-  Last mods:
-    2019.07.12 - [+] SetItemColor, SetItemName
-    2020.01.16 - FPC 3.0.2 compatibility
 }
 
+{$I jpp.inc}
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
-{$I JPPack.inc}
 
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS}Windows, Messages,{$ENDIF}
-  {$IFDEF DCC}
-  System.SysUtils, System.Classes, System.Types, System.UITypes,
-  Vcl.GraphUtil, Vcl.Controls, Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.StdCtrls,
-  {$ELSE}
-  SysUtils, Classes, Types, Controls, ExtCtrls, Graphics, StdCtrls, Dialogs, LCLType, LCLIntf,
-  {$ENDIF}
-
-  JPL.Conversion, JPL.Strings, JPL.Colors, JPL.ColorArrays,
-  JPP.Types, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.ColorControls.Common, JPP.Graphics, JPP.Gradient;
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  Messages, SysUtils, Classes, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Controls, ExtCtrls, Graphics, Dialogs, StdCtrls,
+  {$IFDEF FPC}LCLType, LCLIntf,{$ENDIF}
+  JPL.Strings, JPL.Colors, JPL.ColorArrays,
+  JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.ColorControls.Common, JPP.Gradient;
 
 type
 
@@ -267,7 +260,7 @@ type
     property ShowHint;
     property TabOrder;
     property TabStop;
-    {$IFDEF DCC}property Touch;{$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE}property Touch;{$ENDIF}
     property Visible;
     {$IFDEF DCC}{$IF RTLVersion > 23} property StyleElements; {$IFEND}{$ENDIF}
     property OnClick;
@@ -279,7 +272,7 @@ type
     property OnEndDrag;
     property OnEnter;
     property OnExit;
-    {$IFDEF DCC}property OnGesture;{$ENDIF}
+    {$IFDEF DELPHI2010_OR_ABOVE}property OnGesture;{$ENDIF}
     property OnKeyDown;
     property OnKeyPress;
     property OnKeyUp;
@@ -1161,7 +1154,11 @@ end;
 
 procedure SplitStrToColors(s: string; out clFont, clBg, clBgTo: TColor);
 var
+  {$IFDEF DELPHI2009_OR_BELOW}
+  Arr: TStringDynArray;
+  {$ELSE}
   Arr: TArray<string>;
+  {$ENDIF}
   i, xp: integer;
   sInd, sValue: string;
   cl: TColor;
