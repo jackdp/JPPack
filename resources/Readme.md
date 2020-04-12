@@ -1,8 +1,8 @@
 # How to compile resources?
 
-## global.bat
+## globals.bat
 
-Set the correct file paths: `brcc32.exe` (Borland/Embarcadero resource compiler), `lazres.exe` (Lazarus resource compiler) and `ctres.exe` (CodeTyphon resource compiler).
+Set the correct file paths: `brcc32.exe` (Delphi resource compiler), `lazres.exe` (Lazarus resource compiler) and `ctres.exe` (CodeTyphon resource compiler).
 
 ---
 

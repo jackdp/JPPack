@@ -1,12 +1,13 @@
 # JPPack
 
-**A small collection of VCL/LCL components for Delphi XE2 - 10.3 Rio and Lazarus**
+**A small collection of VCL/LCL components for Delphi 2009 - 10.3 Rio and Lazarus**
 
 - [JPPack](#jppack)
   - [Overview](#overview)
     - [Cindy Components](#cindy-components)
     - [PngComponents](#pngcomponents)
   - [AnchoredControls](#anchoredcontrols)
+  - [TagExt](#tagext)
   - [Components](#components)
     - [TJppPanel](#tjpppanel)
     - [TJppBasicPanel](#tjppbasicpanel)
@@ -34,7 +35,6 @@
     - [TJppPngCollection](#tjpppngcollection)
     - [TJppStorageCtrl](#tjppstoragectrl)
     - [TJppStringStorageCtrl](#tjppstringstoragectrl)
-  - [TagExt](#tagext)
   - [Installation](#installation)
     - [Delphi](#delphi)
     - [Lazarus](#lazarus)
@@ -47,9 +47,9 @@
 
 **JPPack** is a small collection of VCL components for Delphi and LCL components for [Lazarus](https://www.lazarus-ide.org/) and [CodeTyphon](https://pilotlogic.com/).
 
-Supported Delphi versions: **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**.  
-**Lazarus**: Required FPC version 3.0.2 or newer.  
-**CodeTyphon**: Tested on CodeTyphon 7.00
+Supported Delphi versions: **2009**, **2010**, **XE**, **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**.  
+**Lazarus**: Required FPC version ~~3.0.2~~ **3.0.4** or newer.  
+**CodeTyphon**: Tested on CodeTyphon 7.00 with FPC 3.3.1
 
 
 ![JPPack demo app main window](./docs/img/JPPack.png)
@@ -78,10 +78,26 @@ In the folder [3rd-party](3rd-party) you can find the ZIP file with the *PngComp
 
 ## AnchoredControls
 
-Each visual component in the JPPack package supports anchoring of external components using the `AnchoringControls` property.  
+Each visual component in the JPPack package supports anchoring of external components using the `AnchoredControls` property.  
 You can anchor external components to any edge. When you change the size or position of the main component, the position of the anchored components will be automatically updated.
 
 ![AnchoredControls](./docs/img/AnchoredControls.gif)
+
+---
+
+## TagExt
+
+Most components in the **JPPack** package has the `TagExt` property. Here you can store one integer value (`IntValue`), string (`StrValue`), float number (`RealValue`), pointer (`PointerValue`) and date (`DateValue`). The first three values are available from the **Object Inspector** and in the code, the last two - only in the code.
+
+Default values:
+
+Property              | Default value
+----------------------|--------------
+`TagExt.IntValue`     | `0`
+`TagExt.StrValue`     | `''` (empty string)
+`TagExt.RealValue`    | `0`
+`TagExt.PointerValue` | **`nil`**
+`TagExt.DateValue`    | `Now`
 
 ---
 
@@ -396,7 +412,9 @@ Border drawing methods based on `TFlatMemo` from the **FlatStyle** package https
 ### TJppGPHatchStyleComboBox
 
 **Windows only**  
-Highly customizable GDI+ hatch style selector.
+Lazarus and Delphi X2 - Rio.
+
+Highly customizable GDI+ hatch style selector with `BoundLabel` and `AnchoredControls`.
 
 ![TJppGPHatchStyleComboBox](./docs/img/JppGPHatchStyleComboBox.gif)
 
@@ -574,32 +592,16 @@ A non-visual component that allows you to store collection of strings with addit
 
 ---
 
-## TagExt
-
-Each component in the **JPPack** package has the `TagExt` property. Here you can store one integer value (`IntValue`), string (`StrValue`), float number (`RealValue`), pointer (`PointerValue`) and date (`DateValue`). The first three values are available from the **Object Inspector** and in the code, the last two - only in the code.
-
-Default values:
-
-Property              | Default value
-----------------------|--------------
-`TagExt.IntValue`     | `0`
-`TagExt.StrValue`     | `''`
-`TagExt.RealValue`    | `0`
-`TagExt.PointerValue` | **`nil`**
-`TagExt.DateValue`    | `Now`
-
----
-
 ## Installation
 
 ### Delphi
 
-Before installing the **JPPack** package, you must first install 3 another packages:
+Before installing the **JPPack** package, you must first install the following packages:
 
 1. **JPLib** from https://github.com/jackdp/JPLib
 1. **PngComponents** from https://bitbucket.org/uweraabe/pngcomponents
 You can use *PngComponents* ver. 1.4.1 package from the [3rd-party](3rd-party) folder. I tested *JPPack* with this version and it looks like everything works OK.
-1. **IGDIPlusMod** from https://github.com/jackdp/IGDIPlusMod
+1. For Delphi XE2 - Rio: **IGDIPlusMod** from https://github.com/jackdp/IGDIPlusMod
 
 If you have installed the **PNG Components** using the **GetIt Package Manager**, you will probably have to change the name `PngComponents` to `PngComponentsD` in the **JPPack.dpk** file.
 
@@ -613,8 +615,6 @@ After installing the package, it is best to add the `source` folder to the **lib
 1. Select menu `Tools` --> `Options`.
 1. In the tree view on the left, go to `Environment Options` --> `Delphi Options` --> `Library`.
 1. In the **Library path** combo box (on the right), add `;` (semicolon) and the path to the `source` directory.
-
-If you want to install the **JPPack** in Delphi 2009/2010/XE, remove *unit scopes* (eg. `Winapi.Windows` -> `Windows`, `System.SysUtils` -> `SysUtils`) and try compiling. Perhaps it will be necessary to comment out some properties, but there should be no major problems.
 
 ### Lazarus
 
