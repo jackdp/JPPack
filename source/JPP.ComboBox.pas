@@ -57,6 +57,8 @@ type
     FBoundLabelSpacing: Integer;
     FBoundLabelPosition: TLabelPosition;
     FAnchoredControls: TJppAnchoredControls;
+    FColorEnabled: TColor;
+    FColorDisabled: TColor;
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetShowLabel(const Value: Boolean);
     procedure CMMouseEnter (var Message: TMessage); message CM_MOUSEENTER;
@@ -66,6 +68,8 @@ type
     procedure SetBoundLabelSpacing(const Value: Integer);
     procedure AdjustLabelBounds(Sender: TObject);
     procedure SetAnchoredControls(const Value: TJppAnchoredControls);
+    procedure SetColorEnabled(const Value: TColor);
+    procedure SetColorDisabled(const Value: TColor);
   protected
     procedure SetParent(AParent: TWinControl); override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
@@ -77,7 +81,6 @@ type
     {$IFDEF MSWINDOWS} procedure KeyPress(var Key: Char); override; {$ENDIF}
     procedure PropsChanged(Sender: TObject);
     procedure Loaded; override;
-
     property MouseOverControl: Boolean read FMouseOverControl;
   public
     constructor Create(AOwner: TComponent); override;
@@ -97,6 +100,8 @@ type
     property ShowLabel: Boolean read FShowLabel write SetShowLabel default True;
     property Flash: TJppFlashJppComboBox read FFlash write SetFlash;
     property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
+    property ColorEnabled: TColor read FColorEnabled write SetColorEnabled default clWindow;
+    property ColorDisabled: TColor read FColorDisabled write SetColorDisabled;
   end;
   {$endregion TJppCustomComboBox}
 
@@ -126,7 +131,9 @@ type
     {$IFDEF FPC}property BorderSpacing;{$ENDIF}
     {$IFDEF FPC}property BorderStyle;{$ENDIF}
     property CharCase;
-    property Color;
+    //property Color;
+    property ColorEnabled;
+    property ColorDisabled;
     property Constraints;
     {$IFDEF DCC} property Ctl3D; {$ENDIF}
     property Cursor;
@@ -258,6 +265,9 @@ begin
   DropDownCount := 16;
 
   FAnchoredControls := TJppAnchoredControls.Create(Self);
+
+  FColorEnabled := clWindow;
+  FColorDisabled := $00F0F0F0;
 end;
 
 destructor TJppCustomComboBox.Destroy;
@@ -301,6 +311,20 @@ begin
     if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
 end;
 
+procedure TJppCustomComboBox.SetColorDisabled(const Value: TColor);
+begin
+  if FColorDisabled = Value then Exit;
+  FColorDisabled := Value;
+  if not Enabled then Invalidate;
+end;
+
+procedure TJppCustomComboBox.SetColorEnabled(const Value: TColor);
+begin
+  if FColorEnabled = Value then Exit;
+  FColorEnabled := Value;
+  if Enabled then Invalidate;
+end;
+
 procedure TJppCustomComboBox.PropsChanged(Sender: TObject);
 begin
   if csLoading in ComponentState then Exit;
@@ -316,7 +340,7 @@ procedure TJppCustomComboBox.CMEnabledChanged(var Message: TMessage);
 begin
   inherited;
   if FBoundLabel <> nil then FBoundLabel.Enabled := Enabled;
-  //ApplyAppearance;
+  if Enabled then Color := FColorEnabled else Color := FColorDisabled;
 end;
 
 procedure TJppCustomComboBox.CMMouseEnter(var Message: TMessage);
