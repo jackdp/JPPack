@@ -159,6 +159,8 @@ type
     procedure FlashBackground;
     procedure CopyAppearance(Memo: TJppCustomMemoEx);
     procedure ApplyAppearance;
+    procedure AssignColors(const ColorBg, ColorText, ColorBorder: TColor);
+
   protected
     property Appearance: TJppCustomMemoExAppearance read FAppearance write SetAppearance;
 
@@ -546,6 +548,25 @@ begin
   Font.Color := TextColor;
 
   RedrawBorder;
+end;
+
+procedure TJppCustomMemoEx.AssignColors(const ColorBg, ColorText, ColorBorder: TColor);
+begin
+  FAppearance.NormalBgColor := ColorBg;
+  FAppearance.NormalBorderColor := ColorBorder;
+  FAppearance.NormalTextColor := ColorText;
+
+  FAppearance.HotBgColor := ColorBg;
+  FAppearance.HotBorderColor := ColorBorder;
+  FAppearance.HotTextColor := ColorText;
+
+  FAppearance.FocusedBgColor := ColorBg;
+  FAppearance.FocusedBorderColor := ColorBorder;
+  FAppearance.FocusedTextColor := ColorText;
+
+  FAppearance.DisabledBgColor := ColorBg;
+  FAppearance.DisabledBorderColor := ColorBorder;
+  FAppearance.DisabledTextColor := ColorText;
 end;
 
 procedure TJppCustomMemoEx.RedrawBorder (Clip: HRGN = 0);
