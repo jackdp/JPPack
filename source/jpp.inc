@@ -112,6 +112,10 @@
   {$IFEND}
 
 
+  {$IF CompilerVersion <= 23}
+    {$DEFINE DELPHIXE2_OR_BELOW}
+  {$IFEND}
+  
   {$IF CompilerVersion >= 23}
     {$DEFINE DELPHIXE2_OR_ABOVE}
     {$DEFINE HAS_SYSTEM_UITYPES}
