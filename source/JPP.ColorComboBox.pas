@@ -526,13 +526,15 @@ begin
 
     if bButtonsSize then
     begin
+      ButtonChangeColor.AutoWidth := ccb.ButtonChangeColor.AutoWidth;
       ButtonChangeColor.Width := ccb.ButtonChangeColor.Width;
       ButtonChangeColor.Height := ccb.ButtonChangeColor.Height;
+      ButtonCopyColor.AutoWidth := ccb.ButtonCopyColor.AutoWidth;
       ButtonCopyColor.Width := ccb.ButtonCopyColor.Width;
       ButtonCopyColor.Height := ccb.ButtonCopyColor.Height;
+      ButtonPasteColor.AutoWidth := ccb.ButtonPasteColor.AutoWidth;
       ButtonPasteColor.Width := ccb.ButtonPasteColor.Width;
       ButtonPasteColor.Height := ccb.ButtonPasteColor.Height;
-      SetButtonsPosition;
     end;
 
     if bButtonsSpacing then ButtonsSpacing := ccb.ButtonsSpacing;
@@ -551,6 +553,8 @@ begin
     if bDropDownCount then Self.DropDownCount := ccb.DropDownCount;
     if bItems then Self.Items.Assign(ccb.Items);
     if bSelectedColor then Self.SelectedColor := ccb.SelectedColor;
+
+    SetButtonsPosition;
 
   finally
     EndUpdate;
