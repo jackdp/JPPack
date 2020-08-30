@@ -24,6 +24,7 @@ type
   {$ENDIF}
 
   TJppFocusRectType = (frtSystem, frtCustom, frtNone);
+  TJppTextAlignment = (talTopLeft, talTopCenter, talTopRight, talLeft, talCenter, talRight, talBottomLeft, talBottomCenter, talBottomRight);
 
   {$IFDEF DELPHIXE_OR_BELOW}
   TPointHelper = record helper for TPoint
