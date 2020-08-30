@@ -12,7 +12,7 @@ uses
   JPP.Gradient, JPP.Graphics, JPP.Types, LazJPPackRegister, JPP.ColorComboBox, JPP.DoubleLineLabel, JPP.LinkLabel, JPP.MemIniFile, 
   JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.Panel, LDPngFunctions, JPP.ColorControls.Common, 
   JPP.ColorListBox, JPP.ColorSwatch, JPP.Edit, JPP.SimplePanel, JPP.Flash, JPP.PenStyleComboBox, JPP.GPHatchStyleComboBox, JPP.ComboBox, 
-  JPP.Memo, JPP.ComboBoxEx, LazarusPackageIntf;
+  JPP.Memo, JPP.ComboBoxEx, JPP.ProgressBar, LazarusPackageIntf;
 
 implementation
 

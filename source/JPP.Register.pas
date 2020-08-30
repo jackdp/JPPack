@@ -18,7 +18,8 @@ uses
   JPP.Edit, JPP.EditEx,
   JPP.ComboBox, JPP.ComboBoxEx,
   JPP.Memo, JPP.MemoEx,
-  JPP.BrushStyleComboBox, JPP.PenStyleComboBox
+  JPP.BrushStyleComboBox, JPP.PenStyleComboBox,
+  JPP.ProgressBar
   {$IFDEF USE_GDIPLUS_CONTROLS}
   , JPP.GPHatchStyleComboBox
   {$ENDIF}
@@ -50,7 +51,8 @@ begin
       TJppEdit, TJppEditEx,
       TJppComboBox, TJppComboBoxEx,
       TJppMemo, TJppMemoEx,
-      TJppBrushStyleComboBox, TJppPenStyleComboBox
+      TJppBrushStyleComboBox, TJppPenStyleComboBox,
+      TJppProgressBar
       {$IFDEF USE_GDIPLUS_CONTROLS}
       , TJppGPHatchStyleComboBox
       {$ENDIF}

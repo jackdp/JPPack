@@ -7,20 +7,13 @@ To execute the `generate_packages.bat` file, you need:
 ```pascal
 program StrRep;
 
-// Disable extended RTTI
-{$IF CompilerVersion >= 21.0} // >= Delphi 2010
-  {$WEAKLINKRTTI ON}
-  {$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
-{$IFEND}
+{$MODE Delphi}
 
-{$SetPEFlags 1}   // IMAGE_FILE_RELOCS_STRIPPED
 {$SetPEFlags $20} // IMAGE_FILE_LARGE_ADDRESS_AWARE
-
 {$APPTYPE CONSOLE}
-{$R *.res}
+
 
 uses
-  Windows,
   SysUtils, StrUtils, Classes,
   JPL.Console, JPL.FileSearch // <-- https://github.com/jackdp/JPLib/tree/master/Base
   ;
@@ -143,7 +136,7 @@ begin
     slFileNames.Sort;
 
     xModifiedFiles := 0;
-    xReplaceCount := 0;
+
 
     for x := 0 to slFileNames.Count - 1 do
     begin
@@ -152,6 +145,8 @@ begin
       TConsole.WriteTaggedText('Processing file: <color=LightBlue>' + fName + '</color>');
 
       slFileContent.LoadFromFile(fName);
+
+      xReplaceCount := 0;
 
       for i := 0 to slFileContent.Count - 1 do
       begin
@@ -178,7 +173,7 @@ begin
       begin
         Inc(xModifiedFiles);
         slFileContent.SaveToFile(fName);
-        TConsole.WriteTaggedTextLine(' - <color=LightMagenta>file modified!</color>');
+        TConsole.WriteTaggedTextLine(' - <color=red,LightGray>file modified!</color>');
       end
       else
         Writeln('');
@@ -195,9 +190,11 @@ begin
   end;
 
 
+  Writeln;
   Writeln('Modified files: ', xModifiedFiles);
   Writeln('Done');
 
 end.
+
 
 ```

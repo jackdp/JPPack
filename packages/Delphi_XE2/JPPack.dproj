@@ -51,14 +51,14 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_UsePackage>vcl;vclimg;PngComponents;JPLib;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>vcl;vclimg;PngComponents;JPLib;IGDIPlusMod;$(DCC_UsePackage)</DCC_UsePackage>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_UsePackage>vcl;vclimg;PngComponents;JPLib;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>vcl;vclimg;PngComponents;JPLib;IGDIPlusMod;$(DCC_UsePackage)</DCC_UsePackage>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
@@ -101,42 +101,43 @@
         <DCCReference Include="vclimg.dcp"/>
         <DCCReference Include="JPLib.dcp"/>
         <DCCReference Include="PngComponents.dcp"/>
-        <DCCReference Include="..\..\source\JPP.Types.pas"/>
-        <DCCReference Include="..\..\source\JPP.Common.pas"/>
-        <DCCReference Include="..\..\source\JPP.Common.Procs.pas"/>
-        <DCCReference Include="..\..\source\JPP.Graphics.pas"/>
-        <DCCReference Include="..\..\source\JPP.Gradient.pas"/>
-        <DCCReference Include="..\..\source\JPP.MemIniFile.pas"/>
-        <DCCReference Include="..\..\source\JPP.ColorControls.Common.pas"/>
-        <DCCReference Include="..\..\source\JPP.Panel.pas"/>
+        <DCCReference Include="..\..\source\JPP.AnchoredControls.pas"/>
         <DCCReference Include="..\..\source\JPP.BasicPanel.pas"/>
         <DCCReference Include="..\..\source\JPP.BasicPngButton.pas"/>
-        <DCCReference Include="..\..\source\JPP.PngButton.ColorMaps.pas"/>
-        <DCCReference Include="..\..\source\JPP.PngButton.pas"/>
         <DCCReference Include="..\..\source\JPP.BasicSpeedButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.BrushStyleComboBox.pas"/>
         <DCCReference Include="..\..\source\JPP.ColorComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.ColorControls.Common.pas"/>
         <DCCReference Include="..\..\source\JPP.ColorListBox.pas"/>
-        <DCCReference Include="..\..\source\JPP.LinkLabel.pas"/>
-        <DCCReference Include="..\..\source\JPP.Timer.pas"/>
-        <DCCReference Include="..\..\source\JPP.StorageCtrl.pas"/>
-        <DCCReference Include="..\..\source\JPP.FormIniStorage.pas"/>
-        <DCCReference Include="..\..\source\JPP.StringStorageCtrl.pas"/>
-        <DCCReference Include="..\..\source\JPP.PngCollection.pas"/>
-        <DCCReference Include="..\..\source\JPP.DoubleLabel.pas"/>
-        <DCCReference Include="..\..\source\JPP.DoubleLineLabel.pas"/>
-        <DCCReference Include="..\..\source\JPP.SimplePanel.pas"/>
         <DCCReference Include="..\..\source\JPP.ColorSwatch.pas"/>
-        <DCCReference Include="..\..\source\JPP.Edit.pas"/>
-        <DCCReference Include="..\..\source\JPP.EditEx.pas"/>
         <DCCReference Include="..\..\source\JPP.ComboBox.pas"/>
         <DCCReference Include="..\..\source\JPP.ComboBoxEx.pas"/>
+        <DCCReference Include="..\..\source\JPP.Common.pas"/>
+        <DCCReference Include="..\..\source\JPP.Common.Procs.pas"/>
+        <DCCReference Include="..\..\source\JPP.DoubleLabel.pas"/>
+        <DCCReference Include="..\..\source\JPP.DoubleLineLabel.pas"/>
+        <DCCReference Include="..\..\source\JPP.Edit.pas"/>
+        <DCCReference Include="..\..\source\JPP.EditEx.pas"/>
+        <DCCReference Include="..\..\source\JPP.Flash.pas"/>
+        <DCCReference Include="..\..\source\JPP.FormIniStorage.pas"/>
+        <DCCReference Include="..\..\source\JPP.Gradient.pas"/>
+        <DCCReference Include="..\..\source\JPP.Graphics.pas"/>
+        <DCCReference Include="..\..\source\JPP.LinkLabel.pas"/>
+        <DCCReference Include="..\..\source\JPP.MemIniFile.pas"/>
         <DCCReference Include="..\..\source\JPP.Memo.pas"/>
         <DCCReference Include="..\..\source\JPP.MemoEx.pas"/>
-        <DCCReference Include="..\..\source\JPP.Flash.pas"/>
-        <DCCReference Include="..\..\source\JPP.BrushStyleComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.Panel.pas"/>
         <DCCReference Include="..\..\source\JPP.PenStyleComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.PngButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.PngButton.ColorMaps.pas"/>
+        <DCCReference Include="..\..\source\JPP.PngCollection.pas"/>
+        <DCCReference Include="..\..\source\JPP.SimplePanel.pas"/>
         <DCCReference Include="..\..\source\JPP.StdPanel.pas"/>
-        <DCCReference Include="..\..\source\JPP.AnchoredControls.pas"/>
+        <DCCReference Include="..\..\source\JPP.StorageCtrl.pas"/>
+        <DCCReference Include="..\..\source\JPP.StringStorageCtrl.pas"/>
+        <DCCReference Include="..\..\source\JPP.Timer.pas"/>
+        <DCCReference Include="..\..\source\JPP.Types.pas"/>
+        <DCCReference Include="..\..\source\JPP.ProgressBar.pas"/>
         <DCCReference Include="..\..\source\LDPngFunctions.pas"/>
         <DCCReference Include="..\..\source\JPP.Register.pas"/>
         <BuildConfiguration Include="Base">

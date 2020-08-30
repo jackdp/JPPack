@@ -139,6 +139,14 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="CTJPPackRegister"/>
       </Item>
+      <Item>
+        <Filename Value="..\..\source\JPP.ProgressBar.pas"/>
+        <UnitName Value="JPP.ProgressBar"/>
+      </Item>
+      <Item>
+        <Filename Value="..\..\source\JPP.GPHatchStyleComboBox.pas"/>
+        <UnitName Value="JPP.GPHatchStyleComboBox"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

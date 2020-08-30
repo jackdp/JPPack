@@ -12,7 +12,7 @@ uses
   JPP.ColorListBox, JPP.ColorSwatch, JPP.ComboBox, JPP.ComboBoxEx, JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel, 
   JPP.Edit, JPP.Flash, JPP.Gradient, JPP.Graphics, JPP.LinkLabel, JPP.MemIniFile, JPP.Memo, JPP.Panel, JPP.PenStyleComboBox, 
   JPP.PngCollection, JPP.SimplePanel, JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.Timer, JPP.Types, LDPngFunctions, CTJPPackRegister, 
-  TyphonPackageIntf;
+  JPP.ProgressBar, JPP.GPHatchStyleComboBox, TyphonPackageIntf;
 
 implementation
 
