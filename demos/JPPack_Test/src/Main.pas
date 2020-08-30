@@ -17,7 +17,7 @@ uses
 
   // JPPack units
   JPP.BasicSpeedButton, JPP.ColorComboBox, JPP.Panel, JPP.LinkLabel, JPP.PngButton, JPP.PngButton.ColorMaps, JPP.ColorListBox, JPP.BasicPanel,
-  JPP.DoubleLineLabel, JPP.DoubleLabel, JPP.PngCollection, JPP.ColorSwatch, JPP.SimplePanel, JPP.Edit;
+  JPP.DoubleLineLabel, JPP.DoubleLabel, JPP.PngCollection, JPP.ColorSwatch, JPP.SimplePanel, JPP.Edit, JPP.Timer, JPP.ProgressBar;
 
 
 
@@ -96,6 +96,8 @@ type
     lbl5: TLabel;
     JppEdit1: TJppEdit;
     sbtnFlashEdit: TJppBasicSpeedButton;
+    pb: TJppProgressBar;
+    tmProgress: TJppTimer;
     procedure FormCreate(Sender: TObject);
     procedure ButtonClick(Sender: TObject);
     procedure actEscExecute(Sender: TObject);
@@ -108,6 +110,7 @@ type
     procedure JppColorSwatch1GetBottomColorStrValue(const AColor: TColor; var ColorStr, Prefix, Suffix: string);
     procedure sbtnFlashEditClick(Sender: TObject);
     procedure SetActiveColor(const cl: TColor);
+    procedure tmProgressTimer(Sender: TObject);
   end;
 
 
@@ -195,6 +198,12 @@ begin
       btn := Controls[i] as TJppPngButton;
       SetJppPngButtonFonts(btn, Self.Font.Name, btn.Appearance.Normal.Font.Size);
     end;
+end;
+
+procedure TFormMain.tmProgressTimer(Sender: TObject);
+begin
+  if pb.Position >= pb.Max then pb.Position := pb.Min;
+  pb.StepBy(1);
 end;
 
 procedure TFormMain.actEscExecute(Sender: TObject);

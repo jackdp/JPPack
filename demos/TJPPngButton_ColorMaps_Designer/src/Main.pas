@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics, System.IniFiles,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, System.Actions, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Clipbrd, Vcl.ComCtrls, Vcl.ImgList,
 
-  JPP.PngButton, JPP.Common, JPP.PngButton.ColorMaps, JPP.FormIniStorage, JPP.ColorComboBox
+  JPP.PngButton, JPP.Common, JPP.Common.Procs, JPP.PngButton.ColorMaps, JPP.FormIniStorage, JPP.ColorComboBox, JPP.SimplePanel
 
   ;
 
@@ -119,17 +119,17 @@ type
     JPPngButton9: TJppPngButton;
     Label12: TLabel;
     Label33: TLabel;
-    Panel1: TPanel;
-    pnBackgroundColor: TPanel;
+    pnBorderFocus: TPanel;
     pnColors_Disabled: TPanel;
     pnColors_Down: TPanel;
     pnColors_Focused: TPanel;
     pnColors_Hot: TPanel;
     pnColors_Normal: TPanel;
-    pnTestButtons: TPanel;
+    pnTestButtons: TJppSimplePanel;
     Splitter1: TSplitter;
     tmStart: TTimer;
     udBorderToGradientMargin: TUpDown;
+    pnBackgroundColor: TJppSimplePanel;
     procedure actEscExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure actSwitchEnabledExecute(Sender: TObject);
@@ -208,8 +208,10 @@ begin
 end;
 
 procedure TFormMain.PrepareControls;
+var
+  i: integer;
+  Button: TJppPngButton;
 begin
-  pnTestButtons.BevelOuter := bvNone;
   pnTestButtons.Align := alClient;
 
   cpg.ExpandAll;
@@ -220,7 +222,32 @@ begin
   SetCombosParams;
   EnableColorCombosHints;
 
-  Panel1.Align := alClient;
+  pnBorderFocus.Align := alClient;
+  pnColors_Normal.Align := alClient;
+  pnColors_Hot.Align := alClient;
+  pnColors_Focused.Align := alClient;
+  pnColors_Down.Align := alClient;
+  pnColors_Disabled.Align := alClient;
+
+  Self.Font.Name := GetFontName(['Segoe UI', 'Tahoma']);
+  Self.Font.Size := 9;
+
+  // Set fonts for all buttons
+  for i := 0 to ComponentCount - 1 do
+    if Components[i] is TJppPngButton then
+    begin
+      Button := Components[i] as TJppPngButton;
+      Button.Appearance.Normal.Font.Name := Font.Name;
+      Button.Appearance.Normal.Font.Size := Font.Size;
+      Button.Appearance.Hot.Font.Name := Font.Name;
+      Button.Appearance.Hot.Font.Size := Font.Size;
+      Button.Appearance.Focused.Font.Name := Font.Name;
+      Button.Appearance.Focused.Font.Size := Font.Size;
+      Button.Appearance.Down.Font.Name := Font.Name;
+      Button.Appearance.Down.Font.Size := Font.Size;
+      Button.Appearance.Disabled.Font.Name := Font.Name;
+      Button.Appearance.Disabled.Font.Size := Font.Size;
+    end;
 end;
 
 procedure TFormMain.SetCombosParams;
@@ -236,6 +263,7 @@ begin
       ccb := Components[i] as TJppColorComboBox;
       if ccb = ccbT then Continue;
       ccb.AssignParams(ccbT);
+      ccb.Width := ccbT.Width;
     end;
 end;
 
@@ -419,7 +447,7 @@ begin
   Ini := TIniFile.Create(FileName);
   try
     Ini.WriteString('MAIN', 'AppName', AppName);
-    Ini.WriteInteger('MAIN', 'BackgroundColor', ColorToRGB(pnTestButtons.Color));
+    Ini.WriteInteger('MAIN', 'BackgroundColor', ColorToRGB(pnTestButtons.Appearance.BackgroundColor));
   finally
     Ini.Free;
   end;
@@ -432,8 +460,8 @@ var
 begin
   Ini := TIniFile.Create(FileName);
   try
-    pnTestButtons.Color := Ini.ReadInteger('MAIN', 'BackgroundColor', pnTestButtons.Color);
-    ccbBackground.SelectedColor := pnTestButtons.Color;
+    pnTestButtons.Appearance.BackgroundColor := Ini.ReadInteger('MAIN', 'BackgroundColor', pnTestButtons.Appearance.BackgroundColor);
+    ccbBackground.SelectedColor := pnTestButtons.Appearance.BackgroundColor;
   finally
     Ini.Free;
   end;
@@ -489,7 +517,7 @@ end;
 
 procedure TFormMain.ccbBackgroundChange(Sender: TObject);
 begin
-  pnTestButtons.Color := ccbBackground.SelectedColor;
+  pnTestButtons.Appearance.BackgroundColor := ccbBackground.SelectedColor;
 end;
 
 procedure TFormMain.chShowFocusRectClick(Sender: TObject);
@@ -669,6 +697,8 @@ begin
   ccbNormal_UpperGradientColorTo.SelectedColor := brec.UpperGradientColorTo;
   actApplyColors.Execute;
 end;
+
+
 
 {$endregion}
 

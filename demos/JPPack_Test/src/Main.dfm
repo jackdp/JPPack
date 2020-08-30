@@ -86,7 +86,7 @@ object FormMain: TFormMain
   end
   object JppDoubleLabel1: TJppDoubleLabel
     Left = 28
-    Top = 666
+    Top = 661
     Width = 196
     Height = 19
     RightCaption = ' RightCaption '
@@ -130,6 +130,61 @@ object FormMain: TFormMain
     LinePosDeltaY = -4
     LineSizeDeltaX1 = 10
     LineSizeDeltaX2 = -10
+  end
+  object pb: TJppProgressBar
+    Left = 6
+    Top = 698
+    Width = 433
+    Height = 19
+    Hint = 'Progress'
+    Caption = 'pb'
+    ShowHint = True
+    Max = 200
+    Position = 50
+    AnchoredControls.Bottom.Spacing = 5
+    AnchoredControls.Left.Spacing = 10
+    AnchoredControls.Left.Position = lcpLeftCenter
+    AnchoredControls.Right.Spacing = 10
+    AnchoredControls.Right.Position = rcpRightCenter
+    Appearance.BackgroundColor = 9276813
+    Appearance.BackgroundColorTo = 6250335
+    Appearance.ProgressColor = 16490317
+    Appearance.ProgressColorTo = 12015876
+    Appearance.BorderColor = 1710618
+    Appearance.DisabledBackGroundColor = clSilver
+    Appearance.DisabledBackgroundColorTo = clSilver
+    Appearance.DisabledProgressColor = clMedGray
+    Appearance.DisabledProgressColorTo = clMedGray
+    Appearance.Font.Charset = EASTEUROPE_CHARSET
+    Appearance.Font.Color = 7527422
+    Appearance.Font.Height = -12
+    Appearance.Font.Name = 'Consolas'
+    Appearance.Font.Style = [fsBold]
+    Appearance.DisabledFont.Charset = EASTEUROPE_CHARSET
+    Appearance.DisabledFont.Color = 3552822
+    Appearance.DisabledFont.Height = -12
+    Appearance.DisabledFont.Name = 'Consolas'
+    Appearance.DisabledFont.Style = [fsBold]
+    Appearance.TextPrefix = 'TJppProgressBar: '
+    Appearance.TextPostfix = '%'
+    Appearance.TextShadowSize = 1
+    Appearance.TextShadowColor = clBlack
+    Appearance.DisabledTextShadowColor = clGray
+    Appearance.EndMarkerColor = 106710
+    Appearance.DisabledEndMarkerColor = clGray
+    Appearance.EndMarkerWidth = 2
+    Appearance.MidStage.Paleness = -20
+    Appearance.FinalStage.PercentThreshold = 80
+    Appearance.FinalStage.Paleness = -40
+    BoundLabel.Width = 3
+    BoundLabel.Height = 15
+    BoundLabel.Font.Charset = DEFAULT_CHARSET
+    BoundLabel.Font.Color = clWindowText
+    BoundLabel.Font.Height = -12
+    BoundLabel.Font.Name = 'Segoe UI'
+    BoundLabel.Font.Style = []
+    BoundLabel.ParentFont = False
+    BoundLabelSpacing = 5
   end
   object JppPanel1: TJppPanel
     Left = 28
@@ -4704,7 +4759,6 @@ object FormMain: TFormMain
       Options = [clboAddOnSelectIfNotExists, clboAddAtTop]
       SelectedColor = clNone
       OnColorChanged = clbColorChanged
-      ExplicitTop = 197
     end
     object spnColorSwatch: TJppSimplePanel
       Left = 0
@@ -5032,15 +5086,11 @@ object FormMain: TFormMain
         Top = 39
         Width = 104
         Height = 21
-        EditLabel.Width = 46
-        EditLabel.Height = 13
-        EditLabel.Caption = 'TJppEdit:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = 143934
         Font.Height = -11
         Font.Name = 'Segoe UI'
         Font.Style = []
-        LabelSpacing = 2
         ParentFont = False
         TabOrder = 0
         Text = 'JppEdit1'
@@ -5051,6 +5101,9 @@ object FormMain: TFormMain
         Appearance.HotBgColor = 16640981
         Appearance.HotTextColor = 5845764
         TabOnEnter = False
+        BoundLabel.Width = 3
+        BoundLabel.Height = 13
+        BoundLabel.FocusControl = JppEdit1
       end
     end
   end
@@ -5105,5 +5158,13 @@ object FormMain: TFormMain
       end>
     Left = 371
     Top = 619
+  end
+  object tmProgress: TJppTimer
+    Interval = 100
+    OnTimer = tmProgressTimer
+    Counter = 0
+    RepeatCountLimit = 2048
+    Left = 280
+    Top = 520
   end
 end
