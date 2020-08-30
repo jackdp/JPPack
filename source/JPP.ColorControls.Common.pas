@@ -460,7 +460,8 @@ end;
 
 procedure TJppColorControlCustomGradientCaptionItem.SetFont(const Value: TFont);
 begin
-  FFont := Value;
+  //FFont := Value;
+  FFont.Assign(Value);
   PropsChanged(Self);
 end;
 
@@ -891,7 +892,8 @@ end;
 
 procedure TJppColorControlAppearance.SetNumericFont(const Value: TFont);
 begin
-  FNumericFont := Value;
+  //FNumericFont := Value;
+  FNumericFont.Assign(Value);
   PropsChanged(Self);
 end;
 
