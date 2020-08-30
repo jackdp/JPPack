@@ -1,0 +1,154 @@
+﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+		<PropertyGroup>
+			<Base>True</Base>
+			<AppType>Application</AppType>
+			<Config Condition="'$(Config)'==''">Release</Config>
+			<FrameworkType>VCL</FrameworkType>
+			<MainSource>JppProgressBarDemo.dpr</MainSource>
+			<Platform Condition="'$(Platform)'==''">Win32</Platform>
+			<ProjectGuid>{7B2C2404-F84D-4EF8-91A2-6AC224BE3798}</ProjectGuid>
+			<ProjectVersion>15.3</ProjectVersion>
+			<TargetedPlatforms>3</TargetedPlatforms>
+			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_1)'!=''">
+			<Cfg_1>true</Cfg_1>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_2)'!=''">
+			<Cfg_2>true</Cfg_2>
+			<CfgParent>Base</CfgParent>
+			<Base>true</Base>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_DependencyCheckOutputName>%Platform%\%Config%\JppProgressBarDemo.exe</DCC_DependencyCheckOutputName>
+			<DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
+			<DCC_E>false</DCC_E>
+			<DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
+			<DCC_F>false</DCC_F>
+			<DCC_K>false</DCC_K>
+			<DCC_N>false</DCC_N>
+			<DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
+			<DCC_S>false</DCC_S>
+			<Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_1)'!=''">
+			<DCC_DebugDCUs>true</DCC_DebugDCUs>
+			<DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
+			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+			<DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+			<DCC_Optimize>false</DCC_Optimize>
+			<DCC_RemoteDebug>true</DCC_RemoteDebug>
+		</PropertyGroup>
+		<PropertyGroup Condition="'$(Cfg_2)'!=''">
+			<DCC_DependencyCheckOutputName>..\JppProgressBarDemo.exe</DCC_DependencyCheckOutputName>
+			<DCC_DcuOutput>..\dcu32</DCC_DcuOutput>
+			<DCC_ExeOutput>..\</DCC_ExeOutput>
+			<DCC_DebugInformation>false</DCC_DebugInformation>
+			<DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+			<DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+		</PropertyGroup>
+		<ItemGroup>
+			<DelphiCompile Include="JppProgressBarDemo.dpr">
+				<MainSource>MainSource</MainSource>
+			</DelphiCompile>
+			<DCCReference Include="Main.pas">
+				<FormType>dfm</FormType>
+				<Form>Form1</Form>
+			</DCCReference>
+			<BuildConfiguration Include="Base">
+				<Key>Base</Key>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Debug">
+				<Key>Cfg_1</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+		</ItemGroup>
+		<Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+		<ProjectExtensions>
+			<Borland.Personality>Delphi.Personality.12</Borland.Personality>
+			<Borland.ProjectType/>
+			<BorlandProject>
+				<Delphi.Personality>
+					<VersionInfo>
+						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
+						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
+						<VersionInfo Name="MajorVer">1</VersionInfo>
+						<VersionInfo Name="MinorVer">0</VersionInfo>
+						<VersionInfo Name="Release">0</VersionInfo>
+						<VersionInfo Name="Build">0</VersionInfo>
+						<VersionInfo Name="Debug">False</VersionInfo>
+						<VersionInfo Name="PreRelease">False</VersionInfo>
+						<VersionInfo Name="Special">False</VersionInfo>
+						<VersionInfo Name="Private">False</VersionInfo>
+						<VersionInfo Name="DLL">False</VersionInfo>
+						<VersionInfo Name="Locale">1033</VersionInfo>
+						<VersionInfo Name="CodePage">1252</VersionInfo>
+					</VersionInfo>
+					<VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName"/>
+						<VersionInfoKeys Name="FileDescription"/>
+						<VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="InternalName"/>
+						<VersionInfoKeys Name="LegalCopyright"/>
+						<VersionInfoKeys Name="LegalTrademarks"/>
+						<VersionInfoKeys Name="OriginalFilename"/>
+						<VersionInfoKeys Name="ProductName"/>
+						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="Comments"/>
+						<VersionInfoKeys Name="CFBundleName"/>
+						<VersionInfoKeys Name="CFBundleDisplayName"/>
+						<VersionInfoKeys Name="UIDeviceFamily"/>
+						<VersionInfoKeys Name="CFBundleIdentifier"/>
+						<VersionInfoKeys Name="CFBundleVersion"/>
+						<VersionInfoKeys Name="CFBundlePackageType"/>
+						<VersionInfoKeys Name="CFBundleSignature"/>
+						<VersionInfoKeys Name="CFBundleAllowMixedLocalizations"/>
+						<VersionInfoKeys Name="UISupportedInterfaceOrientations"/>
+						<VersionInfoKeys Name="CFBundleExecutable"/>
+						<VersionInfoKeys Name="CFBundleResourceSpecification"/>
+						<VersionInfoKeys Name="LSRequiresIPhoneOS"/>
+						<VersionInfoKeys Name="CFBundleInfoDictionaryVersion"/>
+						<VersionInfoKeys Name="CFBundleDevelopmentRegion"/>
+						<VersionInfoKeys Name="package"/>
+						<VersionInfoKeys Name="label"/>
+						<VersionInfoKeys Name="versionCode"/>
+						<VersionInfoKeys Name="versionName"/>
+						<VersionInfoKeys Name="persistent"/>
+						<VersionInfoKeys Name="restoreAnyVersion"/>
+						<VersionInfoKeys Name="installLocation"/>
+						<VersionInfoKeys Name="largeHeap"/>
+						<VersionInfoKeys Name="theme"/>
+					</VersionInfoKeys>
+					<Source>
+						<Source Name="MainSource">JppProgressBarDemo.dpr</Source>
+					</Source>
+					<Excluded_Packages>
+						<Excluded_Packages Name="%BDSBIN%\dcloffice2k190.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="%BDSBIN%\dclofficexp190.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+						<Excluded_Packages Name="C:\Users\Public\Documents\RAD Studio\12.0\Bpl\FlatStyle_D7.bpl">File C:\Users\Public\Documents\RAD Studio\12.0\Bpl\FlatStyle_D7.bpl not found</Excluded_Packages>
+					</Excluded_Packages>
+					<Parameters>
+						<Parameters Name="UseLauncher">False</Parameters>
+						<Parameters Name="LoadAllSymbols">True</Parameters>
+						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
+					</Parameters>
+				</Delphi.Personality>
+				<Deployment/>
+				<Platforms>
+					<Platform value="Win32">True</Platform>
+					<Platform value="Win64">True</Platform>
+				</Platforms>
+			</BorlandProject>
+			<ProjectFileVersion>12</ProjectFileVersion>
+		</ProjectExtensions>
+	</Project>
