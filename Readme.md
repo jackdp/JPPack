@@ -21,6 +21,7 @@
     - [TJppColorComboBox](#tjppcolorcombobox)
     - [TJppColorListBox](#tjppcolorlistbox)
     - [TJppColorSwatch, TJppColorSwatchEx](#tjppcolorswatch-tjppcolorswatchex)
+    - [TJppProgressBar](#tjppprogressbar)
     - [TJppLinkLabel](#tjpplinklabel)
     - [TJppDoubleLineLabel](#tjppdoublelinelabel)
     - [TJppDoubleLabel](#tjppdoublelabel)
@@ -45,11 +46,11 @@
 
 ## Overview
 
-**JPPack** is a small collection of VCL components for Delphi and LCL components for [Lazarus](https://www.lazarus-ide.org/) and [CodeTyphon](https://pilotlogic.com/).
+**JPPack** is a small collection of VCL components for [Delphi](https://www.embarcadero.com/products/delphi/starter/free-download) and LCL components for [Lazarus](https://www.lazarus-ide.org/) and [CodeTyphon](https://pilotlogic.com/).
 
-Supported Delphi versions: **2009**, **2010**, **XE**, **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**.  
-**Lazarus**: Required FPC version ~~3.0.2~~ **3.0.4** or newer.  
-**CodeTyphon**: Tested on CodeTyphon 7.00 with FPC 3.3.1
+Supported Delphi versions: **2009**, **2010**, **XE**, **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**, **10.4 Sydney**.  
+**Lazarus**: Required FPC version ~~3.0.2~~ **3.0.4** or newer (tested on Lazarus 2.0.8 + FPC 3.0.4 and Lazarus 2.0.10 + FPC 3.2.0).
+**CodeTyphon**: Tested on CodeTyphon 7.10 with FPC 3.3.1
 
 
 ![JPPack demo app main window](./docs/img/JPPack.png)
@@ -70,9 +71,10 @@ In the source files in which I use functions written by Júlio, I have added rel
 
 After *long and fierce battles* with various buttons from different packages of components for Delphi (commercial and free), I finally found ones that displays the PNG files correctly - **TPngBitBtn** and **TPngSpeedButton** from the *PngComponents* package. I have never had problems with them, unlike many, many others. For this reason, in the implementation of my buttons I decided to rely on the code from this package.
 
-The original author of the *PngComponents* package is Martijn Saly (`www.thany.org`). The project is currently maintained by [Uwe Raabe](http://www.uweraabe.de/Blog/). Sources are available at https://bitbucket.org/uweraabe/pngcomponents
+The original author of the *PngComponents* package is Martijn Saly (`www.thany.org`). The project is currently maintained by [Uwe Raabe](http://www.uweraabe.de/Blog/). Sources are available at ~~https://bitbucket.org/uweraabe/pngcomponents~~ https://github.com/UweRaabe/PngComponents
 
-In the folder [3rd-party](3rd-party) you can find the ZIP file with the *PngComponents* ver. 1.4.1. This is the latest version of the *PngComponents* available when writing this document and it works fine with the *JPPack*.
+In the folder [3rd-party](3rd-party) you can find the ZIP file with the *PngComponents* ver. 1.4.1. This is the latest version of the *PngComponents* available when writing this document and it works fine with the *JPPack*.  
+**2020.08.31 - Version from GitHub works well too.**
 
 ---
 
@@ -286,6 +288,31 @@ If you want to display the color code in some other format, you can do it in the
 
 `BoundLabel` is a standard label (`TCustomLabel` descendant) and can be displayed on the left, right, above or below the component. The buttons are inherited from the `TJppBasicSpeedButton` class, so you can freely set the colors for all button states (normal, hot, down, disabled) and the PNG icon.
 
+---
+
+### TJppProgressBar
+
+A highly customizable progress bar based on **JvSpecialProgress** from JVCL package, but with many of my modifications.
+https://github.com/project-jedi/jvcl/blob/master/jvcl/run/JvSpecialProgress.pas
+
+![TJppComboBox Item Height fixed](./docs/img/TJppProgressBar.gif)
+
+My modifications:
+
+- **Appearance**  
+Here you can modify many parameters related to the appearance of the control: background and progress bar color (solid or gradient), border color and size, fonts (for normal and disabled state), text alignment (top-left, top-center, top-right, left, center...), prefix and postfix, text shadow and more. Unlike the standard progress bar, TJppProgressBar also allows you to set the colors displayed when the component is disabled.  
+EndMarker - A rectangle drawn at the end of the progress bar.  
+TextDisplayMode - position, percentage, position in pixels, caption or none.  
+Stages: Middle and Final - You can make color corrections here.  
+ProgressBarVisible - Here you can block the progress bar from showing and only display the text.
+- AnchoredControls  
+You can pin one external control (e.g. TButton, TEdit) to each edge of a component.
+- BoundLabel - Internal label
+- UpdatePositionIfDisabled - Here you can decide whether to update the progress bar when the component is disabled.
+- OnProgressChanged  
+Triggered when the current position changes. You can perform some additional actions here.
+- TagExt
+  
 ---
 
 ### TJppLinkLabel
@@ -599,8 +626,9 @@ A non-visual component that allows you to store collection of strings with addit
 Before installing the **JPPack** package, you must first install the following packages:
 
 1. **JPLib** from https://github.com/jackdp/JPLib
-1. **PngComponents** from https://bitbucket.org/uweraabe/pngcomponents
-You can use *PngComponents* ver. 1.4.1 package from the [3rd-party](3rd-party) folder. I tested *JPPack* with this version and it looks like everything works OK.
+1. **PngComponents** from ~~https://bitbucket.org/uweraabe/pngcomponents~~ https://github.com/UweRaabe/PngComponents  
+You can use *PngComponents* ver. 1.4.1 package from the [3rd-party](3rd-party) folder. I tested *JPPack* with this version and it looks like everything works OK.  
+2020.08.31 - Version from GitHub works well too.
 1. For Delphi XE2 - Rio: **IGDIPlusMod** from https://github.com/jackdp/IGDIPlusMod
 
 If you have installed the **PNG Components** using the **GetIt Package Manager**, you will probably have to change the name `PngComponents` to `PngComponentsD` in the **JPPack.dpk** file.

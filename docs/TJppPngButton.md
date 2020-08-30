@@ -40,6 +40,5 @@ JppPngButton.LoadColorMapFromIniFile(
 );
 ```
 
-In the folder with the `TJppPngButton Color Maps Designer` program you will find all my color schemes stored in INI files, as well as files with the `*.colors` extension. These are color palettes that you can view and edit in my (not yet finished but fully functioning) [Colors](http://www.pazera-software.com/products/colors/) program.
 
 `TJppPngButton Color Maps Designer` can also be treated as a demonstration program of one of my other components: `TJppColorComboBox`.
