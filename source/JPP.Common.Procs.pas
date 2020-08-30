@@ -1,4 +1,4 @@
-unit JPP.Common.Procs;
+﻿unit JPP.Common.Procs;
 
 {$I jpp.inc}
 {$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
@@ -92,11 +92,23 @@ end;
 
 procedure InflateRectEx(var ARect: TRect; const DeltaLeft, DeltaRight, DeltaTop, DeltaBottom: integer);
 begin
-  //ARect.Inflate(DeltaLeft, DeltaTop, DeltaRight, DeltaBottom);
-  ARect.Left := ARect.Left + DeltaLeft;
-  ARect.Right := ARect.Right + DeltaRight;
-  ARect.Top := ARect.Top + DeltaTop;
-  ARect.Bottom := ARect.Bottom + DeltaBottom;
+{
+  Coś tu spiep..yłem
+
+  https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-inflaterect
+  The InflateRect function increases or decreases the width and height of the specified rectangle.
+  The InflateRect function adds -dx units to the left end and dx to the right end of the rectangle and -dy units
+  to the top and dy to the bottom. The dx and dy parameters are signed values; positive values increase the width
+  and height, and negative values decrease them.
+}
+
+  ARect.Inflate(DeltaLeft, DeltaTop, DeltaRight, DeltaBottom);
+
+// TODO : Poniżej ŹLE - USUNĄĆ! Powyżej jest OK
+//  ARect.Left := ARect.Left + DeltaLeft;
+//  ARect.Right := ARect.Right + DeltaRight;
+//  ARect.Top := ARect.Top + DeltaTop;
+//  ARect.Bottom := ARect.Bottom + DeltaBottom;
 end;
 
 procedure InflateRectEx(var ARect: TRect; const Margins: TJppMargins); overload;
