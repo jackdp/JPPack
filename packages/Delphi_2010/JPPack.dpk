@@ -49,7 +49,6 @@ package JPPack;
 {$LIBSUFFIX '2010'}
 {$IMPLICITBUILD ON}
 
-//{$I ..\..\source\jpp.inc}
 {$DEFINE USE_GDIPLUS_CONTROLS}
 {$IFDEF VER220}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
 {$IFDEF VER210}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
@@ -102,6 +101,7 @@ contains
   JPP.Timer in '..\..\source\JPP.Timer.pas',
   JPP.Types in '..\..\source\JPP.Types.pas',
   JPP.ProgressBar in '..\..\source\JPP.ProgressBar.pas',
+  JPP.HtmlHint in '..\..\source\JPP.HtmlHint.pas',
   {$IFDEF USE_GDIPLUS_CONTROLS}
   JPP.GPHatchStyleComboBox in '..\..\source\JPP.GPHatchStyleComboBox.pas',
   {$ENDIF}

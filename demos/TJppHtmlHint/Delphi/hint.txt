@@ -1,0 +1,24 @@
+﻿<fs:+3><b>Test panel - <c:mclLightBlue>HTML hint</c></b></fs>
+
+<c:mclLightRed>Light red</c>, <c:mclLightGreen>Light green</c>, <c:mclDarkYellow>Dark yellow</c>
+<ind:10>1. Indent 10 - <b>Bold text</b>
+<ind:10>2. Indent 10 - <i>Italic</i>
+<ind:30>- Indent 30 - <u>Underline</u>
+<ind:10>3. Indent 10 - <s>strike out</s>
+--------------------------------------------------------
+<fn:Fira Mono><b>function</b> GetMonoFontName: <b>string</b>;
+<b>begin</b>
+  Result <c:#E4990C>:=</c> JPP.Procs.Common.GetFontName<c:mclDarkCyan>(</c>
+    <c:#BC3FAF>[</c><c:mclLightBlue>'Fira Mono'</c>, <c:mclLightBlue>'Roboto Mono'</c>, <c:mclLightBlue>'Trąbka Mono'</c>, <c:mclLightBlue>'Consolas'</c><c:#BC3FAF>]</c>
+  <c:mclDarkCyan>)</c>;
+<b>end</b>;</fn>
+--------------------------------------------------------
+<fs:+4><fn:Courier New>&Delta; = b&sup2;&ndash;4ac    sin&sup2;&alpha; + cos&sup2;&alpha; = 1    &euro; &copy; &deg; &Omega;</fn></fs>
+
+<fn:Verdana>Verdana</fn>   <fn:Georgia>Georgia</fn>   <fn:Tahoma>Tahoma</fn>   <fn:Arial>Arial</fn>   <fn:Wingdings>Wingdings</fn><fn:default>
+
+<b>Unicode strings</b>
+PL: <c:mclDarkCyan>zażółć gęślą jaźń</c> - GR: <c:mclLightRed>Αποσύμπλεξη</c> - RU: <c:mclLightMagenta>Аутоматски</c> - JP: <c:mclLightBlue>自動的に</c>
+
+<bg:#FFED88><c:black> Yellow background / Black text </c></bg>  <b><bg:mclDarkRed><c:#f0f0f0> Error! </c></bg></b> <b><bg:mclDarkGreen><c:#f0f0f0> OK </c></bg></b>
+&lt;&lt;&lt;HINT END&gt;&gt;&gt;

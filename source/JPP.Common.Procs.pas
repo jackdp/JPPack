@@ -93,8 +93,6 @@ end;
 procedure InflateRectEx(var ARect: TRect; const DeltaLeft, DeltaRight, DeltaTop, DeltaBottom: integer);
 begin
 {
-  Coś tu spiep..yłem
-
   https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-inflaterect
   The InflateRect function increases or decreases the width and height of the specified rectangle.
   The InflateRect function adds -dx units to the left end and dx to the right end of the rectangle and -dy units
@@ -102,13 +100,19 @@ begin
   and height, and negative values decrease them.
 }
 
+  {$IFDEF FPC}
   ARect.Inflate(DeltaLeft, DeltaTop, DeltaRight, DeltaBottom);
+  {$ENDIF}
 
-// TODO : Poniżej ŹLE - USUNĄĆ! Powyżej jest OK
-//  ARect.Left := ARect.Left + DeltaLeft;
-//  ARect.Right := ARect.Right + DeltaRight;
-//  ARect.Top := ARect.Top + DeltaTop;
-//  ARect.Bottom := ARect.Bottom + DeltaBottom;
+  {$IFDEF DELPHIXE2_OR_ABOVE}
+  //ARect.Inflate(DeltaLeft, DeltaTop, DeltaRight, DeltaBottom);
+  {$ELSE}
+  ARect.Left := ARect.Left - DeltaLeft;
+  ARect.Right := ARect.Right + DeltaRight;
+  ARect.Top := ARect.Top - DeltaTop;
+  ARect.Bottom := ARect.Bottom + DeltaBottom;
+  {$ENDIF}
+
 end;
 
 procedure InflateRectEx(var ARect: TRect; const Margins: TJppMargins); overload;

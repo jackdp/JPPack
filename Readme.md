@@ -22,6 +22,7 @@
     - [TJppColorListBox](#tjppcolorlistbox)
     - [TJppColorSwatch, TJppColorSwatchEx](#tjppcolorswatch-tjppcolorswatchex)
     - [TJppProgressBar](#tjppprogressbar)
+    - [TJppHtmlHint](#tjpphtmlhint)
     - [TJppLinkLabel](#tjpplinklabel)
     - [TJppDoubleLineLabel](#tjppdoublelinelabel)
     - [TJppDoubleLabel](#tjppdoublelabel)
@@ -295,7 +296,7 @@ If you want to display the color code in some other format, you can do it in the
 A highly customizable progress bar based on **JvSpecialProgress** from JVCL package, but with many of my modifications.
 https://github.com/project-jedi/jvcl/blob/master/jvcl/run/JvSpecialProgress.pas
 
-![TJppComboBox Item Height fixed](./docs/img/TJppProgressBar.gif)
+![TJppProgressBar](./docs/img/TJppProgressBar.gif)
 
 My modifications:
 
@@ -313,6 +314,51 @@ You can pin one external control (e.g. TButton, TEdit) to each edge of a compone
 Triggered when the current position changes. You can perform some additional actions here.
 - TagExt
   
+---
+
+### TJppHtmlHint
+
+Currently **only for Delphi**.  
+A lightweight HTML hint component for Delphi (in Lazarus it compiles but doesn't work).
+
+![TJppHtmlHint](./docs/img/TJppHtmlHint.gif)
+
+This component was created by combining two Pascal units:
+
+1. **TFlatHintUnit.pas** from the FlatStyle package  
+   https://github.com/jackdp/FlatStyle/blob/master/Source/TFlatHintUnit.pas  
+   License: Free (no additional information)
+
+2. **HtHint.pas** from the JVCL package
+  https://github.com/project-jedi/jvcl/blob/master/jvcl/install/JVCLInstall/Helpers/HtHint.pas  
+  License: MPL 1.1
+
+License for my modifications: no license (public domain)
+
+TJppHtmlHint is not a full-featured HTML component. This is a lightweight and **very simple** component with support for just a few HTML tags, in addition, with a slightly unusual syntax.
+
+Supported tags:
+
+**B** - `<b>bold text</b>`  
+**I** - `<i>italic</i>`  
+**U** - `<u>underline</u>`  
+**S** - `<s>strike out</s>`
+
+**C**:color - text color, eg: `<c:clRed>text</cl>`, `<cl:Red>text</c>`, `<c:#FF0000>text</c>`, `<c:255,0,0>RGB color</c>`  
+**BG**:color - background color, eg. `<bg:clYellow>yellow background</bg>`
+
+**IND**:x - indentation from current position. `eg. <ind:10>`  
+**AIND**:x - absolute indentation, eg. `<aind:20>`
+
+**FS**:x - font size, eg. `<fs:12>some text</fs>`, `<fs:+4>text</fs>`  
+**FN**:name - font name, eg. `<fn:Verdana>text</fn>`, `<fn:Courier New>text</fn>`, `<fn:default>restore default font</fn>`
+
+
+Metacolors (or mode-colors): Colors taken from the `Appearance.DarkModeColors` or `Appearance.LightModeColors` palette  
+Example: `<c:mclDarkBlue><bg:mclLightGray>dark blue text on light gray background</bg></c>`
+
+HTML entities: see function `ReplaceHtmlEntities` in the `JPP.HtmlHint.pas` file.
+
 ---
 
 ### TJppLinkLabel
