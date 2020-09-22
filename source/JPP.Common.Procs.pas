@@ -30,6 +30,7 @@ procedure DrawTopBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = 
 procedure DrawBottomBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = True);
 procedure DrawLeftBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = True);
 procedure DrawRightBorder(Canvas: TCanvas; Rect: TRect; Pen: TPen; b3D: Boolean = True);
+procedure DrawRectEx(const Canvas: TCanvas; const ARect: TRect; bDrawLeft, bDrawRight, bDrawTop, bDrawBottom: Boolean);
 
 
 function GetMiddlePosY(const R: TRect; const TextHeight: integer): integer;
@@ -49,6 +50,9 @@ function PointInRect(Point: TPoint; Rect: TRect): Boolean;
 function RectHeight(R: TRect): integer;
 function RectWidth(R: TRect): integer;
 
+procedure DrawShadowText(const Canvas: TCanvas; const Text: string; ARect: TRect; const Flags: Cardinal; const NormalColor, ShadowColor: TColor;
+  ShadowShiftX: ShortInt = 1; ShadowShiftY: ShortInt = 1);
+
 
 implementation
 
@@ -57,9 +61,26 @@ uses
 
 
 
+
+procedure DrawShadowText(const Canvas: TCanvas; const Text: string; ARect: TRect; const Flags: Cardinal; const NormalColor, ShadowColor: TColor;
+  ShadowShiftX: ShortInt = 1; ShadowShiftY: ShortInt = 1);
+begin
+  if ShadowColor <> clNone then
+  begin
+    OffsetRect(ARect, ShadowShiftX, ShadowShiftY);
+    Canvas.Font.Color := ShadowColor;
+    DrawText(Canvas.Handle, PChar(Text), Length(Text), ARect, Flags);
+    OffsetRect(ARect, -ShadowShiftX, -ShadowShiftY);
+  end;
+
+  Canvas.Font.Color := NormalColor;
+  DrawText(Canvas.Handle, PChar(Text), Length(Text), ARect, Flags);
+end;
+
+
 function RectWidth(R: TRect): integer;
 begin
-  Result := R.Right - R.Left; // R.Left - R.Right;
+  Result := R.Right - R.Left;
 end;
 
 function RectHeight(R: TRect): integer;
@@ -355,24 +376,50 @@ begin
   Canvas.Pen.Width := OldWidth;
 end;
 
+procedure DrawRectEx(const Canvas: TCanvas; const ARect: TRect; bDrawLeft, bDrawRight, bDrawTop, bDrawBottom: Boolean);
+begin
+  if bDrawLeft then DrawLeftBorder(Canvas, ARect, Canvas.Pen, False);
+  if bDrawRight then DrawRightBorder(Canvas, ARect, Canvas.Pen, False);
+  if bDrawTop then DrawTopBorder(Canvas, ARect, Canvas.Pen, False);
+  if bDrawBottom then DrawBottomBorder(Canvas, ARect, Canvas.Pen, False);
+end;
+
 procedure JppFrame3D(Canvas: TCanvas; var Rect: TRect; LeftColor, RightColor, TopColor, BottomColor: TColor; Width: Integer);
 
   procedure DoRect;
   begin
     with Canvas, Rect do
     begin
-      Pen.Color := TopColor;
-      MoveTo(Left, Top);
-      LineTo(Right, Top);
 
-      Pen.Color := RightColor;
-      LineTo(Right, Bottom);
+      if TopColor <> clNone then
+      begin
+        Pen.Color := TopColor;
+        MoveTo(Left, Top);
+        LineTo(Right, Top);
+      end
+      else MoveTo(Right, Top);
 
-      Pen.Color := BottomColor;
-      LineTo(Left, Bottom);
+      if RightColor <> clNone then
+      begin
+        Pen.Color := RightColor;
+        LineTo(Right, Bottom);
+      end
+      else MoveTo(Right, Bottom);
 
-      Pen.Color := LeftColor;
-      LineTo(Left, Top);
+      if BottomColor <> clNone then
+      begin
+        Pen.Color := BottomColor;
+        LineTo(Left, Bottom);
+      end
+      else MoveTo(Left, Bottom);
+
+      if LeftColor <> clNone then
+      begin
+        Pen.Color := LeftColor;
+        LineTo(Left, Top);
+      end
+      else MoveTo(Left, Top);
+
     end;
   end;
 
