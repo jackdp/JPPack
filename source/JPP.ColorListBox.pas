@@ -14,7 +14,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  Messages, SysUtils, Classes, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Messages, SysUtils, Classes, Types, {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF}
   Controls, ExtCtrls, Graphics, Dialogs, StdCtrls,
   {$IFDEF FPC}LCLType, LCLIntf,{$ENDIF}
   JPL.Strings, JPL.Colors, JPL.ColorArrays,

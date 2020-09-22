@@ -28,7 +28,7 @@ uses
   Vcl.Controls, Vcl.StdCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Buttons, Vcl.Clipbrd, Vcl.ExtCtrls,
   {$ELSE}
   SysUtils, Classes, Types, Controls, StdCtrls, Graphics, Dialogs, Buttons, Clipbrd, ExtCtrls, LCLType, LCLIntf, Messages, LMessages,
-  {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF}
   {$ENDIF}
 
   IGDIPlus, IGDIPlusHelpers,

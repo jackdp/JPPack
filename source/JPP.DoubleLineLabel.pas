@@ -83,7 +83,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  Messages, Classes, Graphics, Controls, StdCtrls, {$IFDEF HAS_SYSTEM_UITYPES}System.UItypes,{$ENDIF}
+  Messages, Classes, Graphics, Controls, StdCtrls, {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UItypes,{$ENDIF}{$ENDIF}
   {$IFDEF FPC}LCLType, Types, LCLIntf, {$ENDIF}
   JPP.Common, JPP.AnchoredControls
   ;

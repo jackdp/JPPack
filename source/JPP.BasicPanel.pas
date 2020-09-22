@@ -13,7 +13,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  Messages, SysUtils, Classes, Types, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
+  Messages, SysUtils, Classes, Types, {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF}
   Controls, Forms, Menus, Graphics, StdCtrls, GraphUtil, Themes, ExtCtrls, Dialogs,
   {$IFDEF FPC}LMessages, LCLType, LCLIntf,{$ENDIF}
   JPL.Colors,
