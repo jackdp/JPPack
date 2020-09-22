@@ -163,7 +163,8 @@ type
   protected
     {$IFDEF DCC}procedure AdjustBounds; override;{$ENDIF}
   public
-    constructor Create(AOwner: TComponent); override;
+    constructor Create(AOwner: TComponent); overload; override;
+    constructor Create(AOwner: TComponent; AName: string); overload;
   published
     property OnAdjustBounds: TNotifyEvent read FOnAdjustBounds write SetOnAdjustBounds;
 
@@ -397,6 +398,30 @@ type
   {$endregion}
 
 
+  {$Region '   TJppTextShadowParams   '}
+  TJppTextShadowParams = class(TJppPersistent)
+  private
+    FShiftX: ShortInt;
+    FShiftY: ShortInt;
+    FColor: TColor;
+    FEnabled: Boolean;
+    procedure SetShiftX(const Value: ShortInt);
+    procedure SetShiftY(const Value: ShortInt);
+    procedure SetColor(const Value: TColor);
+    procedure SetEnabled(const Value: Boolean);
+  protected
+  public
+    constructor Create(AOwner: TComponent);
+    destructor Destroy; override;
+    procedure Assign(const Source: TJppTextShadowParams); reintroduce;
+  published
+    property ShiftX: ShortInt read FShiftX write SetShiftX default 1;
+    property ShiftY: ShortInt read FShiftY write SetShiftY default 1;
+    property Color: TColor read FColor write SetColor default clSilver;
+    property Enabled: Boolean read FEnabled write SetEnabled default False;
+  end;
+  {$endregion TJppTextShadowParams}
+
 
   
 implementation
@@ -501,8 +526,13 @@ end;
 
 constructor TJppControlBoundLabel.Create(AOwner: TComponent);
 begin
+  Create(AOwner, 'SubLabel');
+end;
+
+constructor TJppControlBoundLabel.Create(AOwner: TComponent; AName: string);
+begin
   inherited Create(AOwner);
-  Name := 'SubLabel';  { do not localize }
+  Name := AName;
   SetSubComponent(True);
   if Assigned(AOwner) then Caption := AOwner.Name;
 end;
@@ -1128,6 +1158,60 @@ end;
 {$endregion TJppMargins}
 
 
+{$Region '                    TJppTextShadowParams                    '}
+
+constructor TJppTextShadowParams.Create(AOwner: TComponent);
+begin
+  inherited Create;
+  FShiftX := 1;
+  FShiftY := 1;
+  FColor := clSilver;
+  FEnabled := False;
+end;
+
+destructor TJppTextShadowParams.Destroy;
+begin
+  inherited;
+end;
+
+procedure TJppTextShadowParams.Assign(const Source: TJppTextShadowParams);
+begin
+  FShiftX := Source.ShiftX;
+  FShiftY := Source.ShiftY;
+  FColor := Source.Color;
+  FEnabled := Source.Enabled;
+end;
+
+procedure TJppTextShadowParams.SetColor(const Value: TColor);
+begin
+  if FColor = Value then Exit;
+  FColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppTextShadowParams.SetEnabled(const Value: Boolean);
+begin
+  if FEnabled = Value then Exit;
+  FEnabled := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppTextShadowParams.SetShiftX(const Value: ShortInt);
+begin
+  if FShiftX = Value then Exit;
+  FShiftX := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppTextShadowParams.SetShiftY(const Value: ShortInt);
+begin
+  if FShiftY = Value then Exit;
+  FShiftY := Value;
+  PropsChanged(Self);
+end;
+
+{$endregion TJppTextShadowParams}
+
 
 {$IFDEF DELPHIXE_OR_BELOW}
 
@@ -1245,6 +1329,10 @@ begin
   Result := Items[Count - 1];
 end;
 {$ENDIF}
+
+
+
+
 
 end.
 
