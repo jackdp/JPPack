@@ -39,6 +39,7 @@ type
     destructor Destroy; override;
     procedure Start;
     procedure Stop;
+    procedure Restart;
 
     property Counter: Cardinal read FCounter write FCounter;
     property ClearCounterOnStart: Boolean read FClearCounterOnStart write SetClearCounterOnStart default True;
@@ -92,6 +93,12 @@ end;
 procedure TJppCustomTimer.Stop;
 begin
   Enabled := False;
+end;
+
+procedure TJppCustomTimer.Restart;
+begin
+  Stop;
+  Start;
 end;
 
 {$IFDEF DCC}procedure TJppCustomTimer.Timer;{$ENDIF}
