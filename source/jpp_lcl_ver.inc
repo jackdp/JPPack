@@ -1,0 +1,24 @@
+
+// --------------- Free Pascal -------------------
+{$IFDEF FPC}
+
+
+  //{$IF DEFINED(LCL_FULLVERSION)}
+
+    {$IF LCL_FULLVERSION >= 2010000}
+      {$DEFINE LCLVER_2010000_OR_ABOVE}
+    {$IFEND}
+
+    {$IF LCL_FULLVERSION >= 2000000}
+      {$DEFINE LCLVER_2000000_OR_ABOVE}
+    {$IFEND}
+
+    {$IF LCL_FULLVERSION >= 1080100}
+      {$DEFINE LCLVER_1080100_OR_ABOVE}
+    {$IFEND}
+
+  //{$IFEND}
+
+{$ENDIF} // FPC
+
+

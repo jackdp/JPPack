@@ -1,6 +1,6 @@
 # JPPack
 
-**A small collection of VCL/LCL components for Delphi 2009 - 10.3 Rio and Lazarus**
+**A collection of VCL/LCL components for Delphi 2009 - 10.4 Sydney and Lazarus**
 
 - [JPPack](#jppack)
   - [Overview](#overview)
@@ -12,6 +12,7 @@
     - [TJppPanel](#tjpppanel)
     - [TJppBasicPanel](#tjppbasicpanel)
     - [TJppSimplePanel](#tjppsimplepanel)
+    - [TJppFlipPanel](#tjppflippanel)
     - [TJppStdPanel](#tjppstdpanel)
     - [TJppPngButton](#tjpppngbutton)
     - [TJppBasicPngButton](#tjppbasicpngbutton)
@@ -138,6 +139,20 @@ A truncated version of the `TJppPanel`. It does not have built-in collections of
 A truncated version of the `TJppBasicPanel`. It has only one gradient, all borders have the same color (`Appearance.BorderColor`), but each border can be hidden/shown (`Appearance`: `DrawTopBorder`, `DrawBottomBorder`, `DrawLeftBorder`, `DrawRightBorder`).
 
 This panel is great for creating a basic UI layout.
+
+---
+
+### TJppFlipPanel
+
+Highly customizable collapsible panel based on the `TJvRollOut` panel from the JVCL package
+https://github.com/project-jedi/jvcl/blob/master/jvcl/run/JvRollOut.pas
+
+Original license: MPL 1.1  
+My modifications: public domain
+
+![TJppFlipPanel](./docs/img/TJppFlipPanel.gif)
+
+You can put top-aligned panels on the `ScrollBox` to simulate `CategoryPanelGroup` from Delphi.
 
 ---
 
@@ -675,11 +690,11 @@ Before installing the **JPPack** package, you must first install the following p
 1. **PngComponents** from ~~https://bitbucket.org/uweraabe/pngcomponents~~ https://github.com/UweRaabe/PngComponents  
 You can use *PngComponents* ver. 1.4.1 package from the [3rd-party](3rd-party) folder. I tested *JPPack* with this version and it looks like everything works OK.  
 2020.08.31 - Version from GitHub works well too.
-1. For Delphi XE2 - Rio: **IGDIPlusMod** from https://github.com/jackdp/IGDIPlusMod
+1. For Delphi XE2 - Sydney: **IGDIPlusMod** from https://github.com/jackdp/IGDIPlusMod
 
 If you have installed the **PNG Components** using the **GetIt Package Manager**, you will probably have to change the name `PngComponents` to `PngComponentsD` in the **JPPack.dpk** file.
 
-In the [packages](packages) folder you can find installation packages for all Delphi versions from **XE2** to **10.3 Rio**.
+In the [packages](packages) folder you can find installation packages for all Delphi versions from **Delphi 2009** to **10.4 Sydney**.
 Go to the subfolder with the name of your Delphi version (eg `Delphi_XE7` for XE7 version) and open the file `JPPack.dproj` or `JPPack.dpk`. In the *Project Manager*, right-click the `JPPack.bpl` file, then select `Install` in the popup menu. After a short time, a message should appear displaying information about the correct installation of the package and with the list of newly installed components. All components you can find ont the **JPPack** page in the *Tool Palette*.
 
 You can also compile package for **Win64** target.
@@ -710,6 +725,6 @@ All components you can find ont the **JPPackLCL** page in the *Component Palette
 
 ## License
 
-The license for my work is the simplest in the world: **You can do with my code whatever you want without any cost.**
+The license for my work: **Public domain. You can do with my code whatever you want without any limitations.**
 
 But, in some units I use code from other open source projects, so you should look at the PAS source files and license of the authors of these projects for more information.

@@ -49,19 +49,13 @@ package JPPack;
 {$LIBSUFFIX 'XE5'}
 {$IMPLICITBUILD ON}
 
-{$DEFINE USE_GDIPLUS_CONTROLS}
-{$IFDEF VER220}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
-{$IFDEF VER210}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
-{$IFDEF VER200}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
-
 requires
   vcl,
   rtl,
   vclimg,
   JPLib,
-  PngComponents
-  {$IFDEF USE_GDIPLUS_CONTROLS}, IGDIPlusMod {$ENDIF}
-  ;
+  PngComponents,
+  IGDIPlusMod;
 
 contains
   JPP.AnchoredControls in '..\..\source\JPP.AnchoredControls.pas',
@@ -102,9 +96,8 @@ contains
   JPP.Types in '..\..\source\JPP.Types.pas',
   JPP.ProgressBar in '..\..\source\JPP.ProgressBar.pas',
   JPP.HtmlHint in '..\..\source\JPP.HtmlHint.pas',
-  {$IFDEF USE_GDIPLUS_CONTROLS}
+  JPP.FlipPanel in '..\..\source\JPP.FlipPanel.pas',
   JPP.GPHatchStyleComboBox in '..\..\source\JPP.GPHatchStyleComboBox.pas',
-  {$ENDIF}
   LDPngFunctions in '..\..\source\LDPngFunctions.pas',
   JPP.Register in '..\..\source\JPP.Register.pas';
 

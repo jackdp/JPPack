@@ -13,7 +13,7 @@ uses
   JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.BasicPanel, JPP.Panel,
   JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ComboBox, JPP.ComboBoxEx, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
   JPP.Edit, JPP.Memo,
-  JPP.BrushStyleComboBox, JPP.PenStyleComboBox, JPP.ProgressBar, JPP.HtmlHint,
+  JPP.BrushStyleComboBox, JPP.PenStyleComboBox, JPP.ProgressBar, JPP.FlipPanel,
   {$IFDEF USE_GDIPLUS_CONTROLS}
   JPP.GPHatchStyleComboBox,
   {$ENDIF}
@@ -49,7 +49,8 @@ begin
   RegisterComponents(JPPackPageName, [TJppEdit, TJppMemo]);
   RegisterComponents(JPPackPageName, [TJppComboBox, TJppComboBoxEx]);
   RegisterComponents(JPPackPageName, [TJppBrushStyleComboBox, TJppPenStyleComboBox]);
-  RegisterComponents(JPPackPageName, [TJppProgressBar, TJppHtmlHint]);
+  RegisterComponents(JPPackPageName, [TJppProgressBar]);
+  RegisterComponents(JPPackPageName, [TJppFlipPanel]);
 
   {$IFDEF USE_GDIPLUS_CONTROLS}
   RegisterComponents(JPPackPageName, [TJppGPHatchStyleComboBox]);

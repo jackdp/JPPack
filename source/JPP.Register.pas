@@ -19,7 +19,8 @@ uses
   JPP.ComboBox, JPP.ComboBoxEx,
   JPP.Memo, JPP.MemoEx,
   JPP.BrushStyleComboBox, JPP.PenStyleComboBox,
-  JPP.ProgressBar, JPP.HtmlHint
+  JPP.ProgressBar, JPP.HtmlHint,
+  JPP.FlipPanel
   {$IFDEF USE_GDIPLUS_CONTROLS}
   , JPP.GPHatchStyleComboBox
   {$ENDIF}
@@ -52,7 +53,8 @@ begin
       TJppComboBox, TJppComboBoxEx,
       TJppMemo, TJppMemoEx,
       TJppBrushStyleComboBox, TJppPenStyleComboBox,
-      TJppProgressBar, TJppHtmlHint
+      TJppProgressBar, TJppHtmlHint,
+      TJppFlipPanel
       {$IFDEF USE_GDIPLUS_CONTROLS}
       , TJppGPHatchStyleComboBox
       {$ENDIF}

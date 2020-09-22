@@ -102,6 +102,7 @@ contains
   JPP.Types in '..\..\source\JPP.Types.pas',
   JPP.ProgressBar in '..\..\source\JPP.ProgressBar.pas',
   JPP.HtmlHint in '..\..\source\JPP.HtmlHint.pas',
+  JPP.FlipPanel in '..\..\source\JPP.FlipPanel.pas',
   {$IFDEF USE_GDIPLUS_CONTROLS}
   JPP.GPHatchStyleComboBox in '..\..\source\JPP.GPHatchStyleComboBox.pas',
   {$ENDIF}

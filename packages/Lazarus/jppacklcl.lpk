@@ -13,7 +13,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="33">
+    <Files Count="34">
       <Item1>
         <Filename Value="..\..\source\JPP.AnchoredControls.pas"/>
         <UnitName Value="JPP.AnchoredControls"/>
@@ -147,6 +147,10 @@
         <Filename Value="..\..\source\JPP.ProgressBar.pas"/>
         <UnitName Value="JPP.ProgressBar"/>
       </Item33>
+      <Item34>
+        <Filename Value="..\..\source\JPP.FlipPanel.pas"/>
+        <UnitName Value="JPP.FlipPanel"/>
+      </Item34>
     </Files>
     <RequiredPkgs Count="3">
       <Item1>

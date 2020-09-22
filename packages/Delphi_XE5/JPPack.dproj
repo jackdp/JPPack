@@ -159,6 +159,7 @@
         <DCCReference Include="..\..\source\JPP.Types.pas"/>
         <DCCReference Include="..\..\source\JPP.ProgressBar.pas"/>
         <DCCReference Include="..\..\source\JPP.HtmlHint.pas"/>
+        <DCCReference Include="..\..\source\JPP.FlipPanel.pas"/>
         <DCCReference Include="..\..\source\JPP.GPHatchStyleComboBox.pas"/>
         <DCCReference Include="..\..\source\LDPngFunctions.pas"/>
         <DCCReference Include="..\..\source\JPP.Register.pas"/>

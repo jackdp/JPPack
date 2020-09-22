@@ -5,7 +5,9 @@
   {$IFEND}
 {$ENDIF}
 
+
 // --------------- Free Pascal -------------------
+
 {$IFDEF FPC}
 
   {$UNDEF HAS_TSTRINGS_WRITEBOM}
@@ -51,11 +53,12 @@
     {$DEFINE HAS_READ_WITH_OFFSET}
   {$IFEND}
 
-{$ENDIF} // FPC
 
+{$ENDIF}
 
 
 // --------------------- Delphi ----------------------
+
 {$IFDEF DCC}
 
   {$IFDEF VER200}
