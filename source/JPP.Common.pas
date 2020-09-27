@@ -164,7 +164,8 @@ type
     {$IFDEF DCC}procedure AdjustBounds; override;{$ENDIF}
   public
     constructor Create(AOwner: TComponent); overload; override;
-    constructor Create(AOwner: TComponent; AName: string); overload;
+    constructor Create(AOwner: TComponent; AName: string); {overload;} reintroduce; overload;  //XE5: TCustomLabel - TGraphicControl - TControl - TComponent.Create (virtual)
+    // http://docwiki.embarcadero.com/RADStudio/Sydney/en/W1010_Method_'%25s'_hides_virtual_method_of_base_type_'%25s'_(Delphi)
   published
     property OnAdjustBounds: TNotifyEvent read FOnAdjustBounds write SetOnAdjustBounds;
 
