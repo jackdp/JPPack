@@ -198,7 +198,7 @@ This button is a slightly truncated version of the `TJppPngButton`. It has only 
 ### TJppBasicPngButtonEx
 
 Currently **only for Delphi**.  
-Similar to `TJppPngButton` but with subcaption support.
+Similar to `TJppBasicPngButton` but with support for subcaption.
 
 ![TJppBasicPngButtonEx](./docs/img/TJppBasicPngButtonEx.png)
 
