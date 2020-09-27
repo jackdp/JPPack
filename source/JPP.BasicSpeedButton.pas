@@ -474,10 +474,8 @@ begin
         imgHot := TPngImage.Create;
         try
           imgHot.Assign(FPngImage);
-          //if PngGetCopy(FPngImage, imgHot) then
           begin
             PngSetGamma(imgHot, Appearance.GlyphHotGammaFactor / 100);
-            //PngSetBrightness(imgHot, 20);
             Draw(GlyphPos.X, GlyphPos.Y, imgHot);
           end;
         finally
@@ -493,11 +491,6 @@ begin
         imgDisabled := TPngImage.Create;
         try
           imgDisabled.Assign(FPngImage);
-          //if pngGrayscaleOnDisabled in FPngOptions then
-          //MakeImageGrayscale(imgDisabled, 179);
-          //MakeImageBlended(imgDisabled, 220);
-          //if pngGrayscaleOnDisabled in FPngOptions then MakeImageGrayscale(imgDisabled, Appearance.GlyphDisabledGrayscaleFactor);
-          //if pngBlendOnDisabled in FPngOptions then MakeImageBlended(imgDisabled, Appearance.GlyphDisabledBlendFactor);
           MakeDisabledImage(
             imgDisabled,
             FAppearance.GlyphDisabledBlendIntensity, FAppearance.GlyphDisabledGrayscaleIntensity,
@@ -539,7 +532,7 @@ begin
       Canvas.Font.Color := dp.FontColor;
 
 
-      if FAutoWidth then
+      if FAutoWidth and (Align <> alClient) and (Align <> alTop) and (Align <> alBottom) then
       begin
         xw := Width;
         Inc(ButtonWidth, Canvas.TextWidth(Caption));
