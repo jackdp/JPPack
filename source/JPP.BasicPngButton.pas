@@ -306,7 +306,8 @@ end;
 
 procedure TJppBasicPngButtonStateParams.SetFont(const Value: TFont);
 begin
-  FFont := Value;
+  //FFont := Value;
+  FFont.Assign(Value);
   PropsChanged(Self);
 end;
 
