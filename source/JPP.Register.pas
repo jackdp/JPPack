@@ -9,7 +9,7 @@ uses
 
   JPP.Types,
   JPP.BasicPanel, JPP.Panel, JPP.SimplePanel, JPP.StdPanel,
-  JPP.BasicPngButton, JPP.PngButton, JPP.BasicSpeedButton,
+  JPP.BasicPngButton, JPP.BasicPngButtonEx, JPP.PngButton, JPP.BasicSpeedButton,
   JPP.ColorComboBox, JPP.ColorListBox, JPP.ColorSwatch,
   JPP.LinkLabel, JPP.Timer, JPP.StorageCtrl, JPP.StringStorageCtrl,
   {$IFDEF DELPHI2010_OR_ABOVE}JPP.FormIniStorage,{$ENDIF}
@@ -40,7 +40,7 @@ begin
     JPPackPageName,
     [
       TJppStdPanel, TJppSimplePanel, TJppBasicPanel, TJppPanel,
-      TJppBasicSpeedButton, TJppBasicPngButton, TJppPngButton,
+      TJppBasicSpeedButton, TJppBasicPngButton, TJppBasicPngButtonEx, TJppPngButton,
       TJppColorComboBox, TJppColorListBox, TJppColorSwatch, TJppColorSwatchEx,
       TJppLinkLabel,
       TJppTimer,

@@ -16,6 +16,7 @@
     - [TJppStdPanel](#tjppstdpanel)
     - [TJppPngButton](#tjpppngbutton)
     - [TJppBasicPngButton](#tjppbasicpngbutton)
+    - [TJppBasicPngButtonEx](#tjppbasicpngbuttonex)
     - [TJppBasicSpeedButton](#tjppbasicspeedbutton)
     - [TJppComboBox](#tjppcombobox)
     - [TJppComboBoxEx](#tjppcomboboxex)
@@ -191,6 +192,15 @@ Color schemes can be edited with the `TJppPngButton Color Maps Designer` program
 
 Currently **only for Delphi**.  
 This button is a slightly truncated version of the `TJppPngButton`. It has only one gradient for each button state and does not support color schemes.
+
+---
+
+### TJppBasicPngButtonEx
+
+Currently **only for Delphi**.  
+Similar to `TJppPngButton` but with subcaption support.
+
+![TJppBasicPngButtonEx](./docs/img/TJppBasicPngButtonEx.png)
 
 ---
 

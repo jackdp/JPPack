@@ -49,18 +49,26 @@ package JPPack;
 {$LIBSUFFIX 'XE5'}
 {$IMPLICITBUILD ON}
 
+{$DEFINE USE_GDIPLUS_CONTROLS}
+{$IFDEF VER220}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
+{$IFDEF VER210}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
+{$IFDEF VER200}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
+
 requires
   vcl,
   rtl,
   vclimg,
   JPLib,
-  PngComponents,
-  IGDIPlusMod;
+  PngComponents
+  {$IFDEF USE_GDIPLUS_CONTROLS}, IGDIPlusMod {$ENDIF}
+  ;
 
 contains
   JPP.AnchoredControls in '..\..\source\JPP.AnchoredControls.pas',
+  JPP.Helpers in '..\..\source\JPP.Helpers.pas',
   JPP.BasicPanel in '..\..\source\JPP.BasicPanel.pas',
   JPP.BasicPngButton in '..\..\source\JPP.BasicPngButton.pas',
+  JPP.BasicPngButtonEx in '..\..\source\JPP.BasicPngButtonEx.pas',
   JPP.BasicSpeedButton in '..\..\source\JPP.BasicSpeedButton.pas',
   JPP.BrushStyleComboBox in '..\..\source\JPP.BrushStyleComboBox.pas',
   JPP.ColorComboBox in '..\..\source\JPP.ColorComboBox.pas',
@@ -97,7 +105,9 @@ contains
   JPP.ProgressBar in '..\..\source\JPP.ProgressBar.pas',
   JPP.HtmlHint in '..\..\source\JPP.HtmlHint.pas',
   JPP.FlipPanel in '..\..\source\JPP.FlipPanel.pas',
+  {$IFDEF USE_GDIPLUS_CONTROLS}
   JPP.GPHatchStyleComboBox in '..\..\source\JPP.GPHatchStyleComboBox.pas',
+  {$ENDIF}
   LDPngFunctions in '..\..\source\LDPngFunctions.pas',
   JPP.Register in '..\..\source\JPP.Register.pas';
 

@@ -91,6 +91,8 @@ end;
 function PointInRect(Point: TPoint; Rect: TRect): Boolean;
 begin
   Result := (Point.X >= Rect.Left) and (Point.X <= RectWidth(Rect)) and (Point.Y >= Rect.Top) and (Point.Y <= Rect.Bottom);
+  { TODO : Check PointInRect }
+  // Czy nie powinno być: Result := (Point.X >= Rect.Left) and (Point.X <= Rect.Right) and (Point.Y >= Rect.Top) and (Point.Y <= Rect.Bottom);
 end;
 
 
