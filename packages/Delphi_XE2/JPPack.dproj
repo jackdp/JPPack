@@ -93,6 +93,7 @@
         <DCCReference Include="..\DCR\JppMemoEx.dcr"/>
         <DCCReference Include="..\DCR\JppPngCollection.dcr"/>
         <DCCReference Include="..\DCR\JppComboBox.dcr"/>
+        <DCCReference Include="..\DCR\JppFlatComboBox.dcr"/>
         <DCCReference Include="..\DCR\JppComboBoxEx.dcr"/>
         <DCCReference Include="..\DCR\JppStdPanel.dcr"/>
         <DCCReference Include="..\DCR\JppDoubleLabel.dcr"/>
@@ -102,8 +103,10 @@
         <DCCReference Include="JPLib.dcp"/>
         <DCCReference Include="PngComponents.dcp"/>
         <DCCReference Include="..\..\source\JPP.AnchoredControls.pas"/>
+        <DCCReference Include="..\..\source\JPP.Helpers.pas"/>
         <DCCReference Include="..\..\source\JPP.BasicPanel.pas"/>
         <DCCReference Include="..\..\source\JPP.BasicPngButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.BasicPngButtonEx.pas"/>
         <DCCReference Include="..\..\source\JPP.BasicSpeedButton.pas"/>
         <DCCReference Include="..\..\source\JPP.BrushStyleComboBox.pas"/>
         <DCCReference Include="..\..\source\JPP.ColorComboBox.pas"/>
@@ -140,6 +143,7 @@
         <DCCReference Include="..\..\source\JPP.ProgressBar.pas"/>
         <DCCReference Include="..\..\source\JPP.HtmlHint.pas"/>
         <DCCReference Include="..\..\source\JPP.FlipPanel.pas"/>
+        <DCCReference Include="..\..\source\JPP.FlatComboBox.pas"/>
         <DCCReference Include="..\..\source\LDPngFunctions.pas"/>
         <DCCReference Include="..\..\source\JPP.Register.pas"/>
         <BuildConfiguration Include="Base">

@@ -11,7 +11,7 @@ uses
   JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel, JPP.LinkLabel,
   JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.BasicPanel, JPP.Panel,
   JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ComboBox, JPP.ComboBoxEx, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
-  JPP.Edit, JPP.Memo,
+  JPP.Edit, JPP.Memo, JPP.FlipPanel,
   JPP.BrushStyleComboBox, JPP.PenStyleComboBox, JPP.ProgressBar,
   {$IFDEF USE_GDIPLUS_CONTROLS}
   JPP.GPHatchStyleComboBox,
@@ -49,6 +49,7 @@ begin
   RegisterComponents(JPPackPageName, [TJppComboBox, TJppComboBoxEx]);
   RegisterComponents(JPPackPageName, [TJppBrushStyleComboBox, TJppPenStyleComboBox]);
   RegisterComponents(JPPackPageName, [TJppProgressBar]);
+  RegisterComponents(JPPackPageName, [TJppFlipPanel]);
 
   {$IFDEF USE_GDIPLUS_CONTROLS}
   RegisterComponents(JPPackPageName, [TJppGPHatchStyleComboBox]);

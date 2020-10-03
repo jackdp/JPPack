@@ -2,7 +2,7 @@
 {
   Routines related to PNG processing.
 
-  Most of the code from PngFunctions.pas (PngComponents)
+  Most of the code from PngFunctions.pas (PngComponents: https://github.com/UweRaabe/PngComponents)
 
 }
 unit LDPngFunctions;

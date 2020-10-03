@@ -20,7 +20,8 @@ uses
   JPP.Memo, JPP.MemoEx,
   JPP.BrushStyleComboBox, JPP.PenStyleComboBox,
   JPP.ProgressBar, JPP.HtmlHint,
-  JPP.FlipPanel
+  JPP.FlipPanel,
+  JPP.FlatComboBox
   {$IFDEF USE_GDIPLUS_CONTROLS}
   , JPP.GPHatchStyleComboBox
   {$ENDIF}
@@ -50,7 +51,7 @@ begin
       TJppPngCollection,
       TJppDoubleLineLabel, TJppDoubleLabel,
       TJppEdit, TJppEditEx,
-      TJppComboBox, TJppComboBoxEx,
+      TJppComboBox, TJppComboBoxEx, TJppFlatComboBox,
       TJppMemo, TJppMemoEx,
       TJppBrushStyleComboBox, TJppPenStyleComboBox,
       TJppProgressBar, TJppHtmlHint,

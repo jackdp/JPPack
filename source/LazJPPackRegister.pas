@@ -11,7 +11,7 @@ uses
   TypInfo, lresources,
   JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel, JPP.LinkLabel,
   JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.BasicPanel, JPP.Panel,
-  JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ComboBox, JPP.ComboBoxEx, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
+  JPP.BasicSpeedButton, JPP.BasicPngButtonEx, JPP.ColorListBox, JPP.ComboBox, JPP.ComboBoxEx, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
   JPP.Edit, JPP.Memo,
   JPP.BrushStyleComboBox, JPP.PenStyleComboBox, JPP.ProgressBar, JPP.FlipPanel,
   {$IFDEF USE_GDIPLUS_CONTROLS}
@@ -39,7 +39,7 @@ begin
   RegisterComponents(JPPackPageName, [TJppPanel]);
 
   RegisterComponents(JPPackPageName, [TJppBasicSpeedButton]);
-  //RegisterComponents(JPPackPageName, [TJppButton]);
+  RegisterComponents(JPPackPageName, [TJppBasicPngButtonEx]);
   //RegisterComponents(JPPackPageName, [TJppPngButton]);
 
   RegisterComponents(JPPackPageName, [TJppColorListBox]);
