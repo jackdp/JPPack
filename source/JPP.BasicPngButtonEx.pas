@@ -1,15 +1,30 @@
 unit JPP.BasicPngButtonEx;
 
+{
+  Jacek Pazera
+  https://www.pazera-software.com
+  https://github.com/jackdp
+
+  Based on the TPngBitBtn from then PngComponents package: https://github.com/UweRaabe/PngComponents
+  PngComponents license: https://github.com/UweRaabe/PngComponents/blob/master/Docs/License.txt
+
+  My modifications: public domain
+}
+
 {$I jpp.inc}
+{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
 
 interface
 
 uses
   {$IFDEF MSWINDOWS}Windows, Messages,{$ENDIF}
-  Classes, SysUtils, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF} StrUtils,
-  Graphics, Controls, Buttons, GraphUtil, Dialogs, StdCtrls, {$IFDEF HAS_UNIT_SCOPE}Vcl.Imaging.pngimage,{$ELSE}pngimage,{$ENDIF}
+  {$IFDEF FPC}LCLType, LCLIntf, LMessages,{$ENDIF}
+  Classes, SysUtils, {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF} StrUtils,
+  Graphics, Controls, Buttons, GraphUtil, Dialogs, StdCtrls,
+  {$IFDEF DCC}{$IFDEF HAS_UNIT_SCOPE}Vcl.Imaging.pngimage,{$ELSE}pngimage,{$ENDIF}{$ENDIF}
+  {$IFDEF DCC}PngFunctions,{$ENDIF}
 
-  PngFunctions,
+  LDPngFunctions,
   JPL.Strings, JPL.Colors,
   JPP.Types, JPP.Common, JPP.Common.Procs, JPP.Helpers, JPP.AnchoredControls, JPP.Gradient, JPP.Graphics
   ;
@@ -133,16 +148,15 @@ type
   {$endregion}
 
 
-
-  //TJppBasicPngButtonTagExt = class(TJppTagExt);
-
   {$region ' -------------- TJppBasicPngButtonEx -------------- '}
   TJppBasicPngButtonEx = class(TBitBtn)
+  {$IFDEF DCC}
   {$IF RTLVersion >= 24.0 }
   strict private
     class constructor Create;
     class destructor Destroy;
   {$IFEND}
+  {$ENDIF}
   private
     bOver: Boolean;
     FPngImage: TPngImage;
@@ -150,7 +164,7 @@ type
     FCanvas: TCanvas;
     FLastKind: TBitBtnKind;
     FImageFromAction: Boolean;
-    FMouseInControl: Boolean;
+    {$IFDEF DELPHIXE2_OR_ABOVE}FMouseInControl: Boolean;{$ENDIF}
     IsFocused: Boolean;
     FOnMouseEnter: TNotifyEvent;
     FOnMouseLeave: TNotifyEvent;
@@ -160,7 +174,11 @@ type
     function PngImageStored: Boolean;
     procedure SetPngImage(const Value: TPngImage);
     procedure SetPngOptions(const Value: TPngOptions);
+    {$IFDEF DCC}
     procedure CNDrawItem(var Message: TWMDrawItem); message CN_DRAWITEM;
+    {$ELSE}
+    procedure CNDrawItem(var Message: TLMDrawItems); message CN_DRAWITEM;
+    {$ENDIF}
     procedure CMMouseEnter(var Message: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave(var Message: TMessage); message CM_MOUSELEAVE;
     procedure SetOnMouseEnter(const Value: TNotifyEvent);
@@ -170,9 +188,18 @@ type
     procedure SetAnchoredControls(const Value: TJppAnchoredControls);
   protected
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean); override;
+    {$IFDEF DCC}
     procedure SetButtonStyle(ADefault: Boolean); override;
+    {$ENDIF}
     procedure PropsChanged(Sender: TObject);
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    {$IFDEF FPC}
+    function DrawTextBiDiModeFlags(Flags: Longint): Longint;
+    procedure WndProc(var TheMessage : TLMessage); override;
+    procedure LMDrawItem(var Message: TLMDrawItems); message LM_DRAWITEM;
+    procedure CreateParams(var Params: TCreateParams); override;
+    {$ENDIF}
+    procedure DrawItem(const DrawItemStruct: TDrawItemStruct);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -186,19 +213,24 @@ type
     property Appearance: TJppBasicPngButtonExAppearance read FAppearance write SetAppearance;
     property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
   end;
-  {$endregion TJppBasicPngButton}
+  {$endregion TJppBasicPngButtonEx}
 
 
+  {$IFDEF DCC}
   {$IF RTLVersion >= 24.0 }
   TJppBasicPngButtonExStyleHook = class(TBitBtnStyleHook)
   strict protected
     procedure DrawButton(ACanvas: TCanvas; AMouseInControl: Boolean); override;
   end;
   {$IFEND}
+  {$ENDIF}
 
 
 
 
+{$IFDEF FPC}
+function DrawCtrlTextBiDiModeFlags(AControl: TControl; Flags: Longint): Longint;
+{$ENDIF}
 procedure SetJppBasicPngButtonExFonts(Button: TJppBasicPngButtonEx; FontName: string = 'Segoe UI'; FontSize: integer = 9);
 
 
@@ -206,12 +238,33 @@ implementation
 
 
 uses
-  ActnList, Themes, PngButtonFunctions, PngImageList;
-
+  ActnList {$IFDEF DCC}, Themes, PngButtonFunctions, PngImageList{$ENDIF};
 
 
 
 {$region ' -------------- helpers ------------ '}
+
+{$IFDEF FPC}
+function DrawCtrlTextBiDiModeFlags(AControl: TControl; Flags: Longint): Longint;
+var
+  Alignment: TAlignment;
+begin
+  Result := Flags;
+  if AControl.UseRightToLeftAlignment then
+  begin
+    if Flags and DT_RIGHT <> 0 then Alignment := taRightJustify
+    else if Flags and DT_CENTER <> 0 then Alignment := taCenter
+    else Alignment := taLeftJustify;
+
+    case Alignment of
+      taLeftJustify: Result := Result or DT_RIGHT;
+      taRightJustify: Result := Result and not DT_RIGHT;
+    end;
+  end;
+
+  if AControl.UseRightToLeftReading then Result := Result or DT_RTLREADING;
+end;
+{$ENDIF}
 
 procedure SetJppBasicPngButtonExFonts(Button: TJppBasicPngButtonEx; FontName: string = 'Segoe UI'; FontSize: integer = 9);
 begin
@@ -231,439 +284,8 @@ end;
 
 {$endregion}
 
-{$region ' ---------------- Themes ------------------------- '}
-{$IF RTLVersion < 23.0 }
-type
-  TThemeServicesHelper = class helper for TThemeServices
-  private
-    function GetEnabled: Boolean;
-  public
-    function GetElementContentRect(DC: HDC; Details: TThemedElementDetails; const BoundingRect: TRect; out ContentRect: TRect): Boolean; overload;
-    property Enabled: Boolean read GetEnabled;
-  end;
 
-function TThemeServicesHelper.GetElementContentRect(DC: HDC; Details: TThemedElementDetails; const BoundingRect: TRect; out ContentRect: TRect): Boolean;
-begin
-  ContentRect := Self.ContentRect(DC, Details, BoundingRect);
-  Result := true;
-end;
-
-function TThemeServicesHelper.GetEnabled: Boolean;
-begin
-  Result := ThemesEnabled;
-end;
-
-function StyleServices: TThemeServices;
-begin
-  Result := ThemeServices;
-end;
-{$IFEND}
-
-
-
-{$IFDEF DELPHIXE3_OR_ABOVE}
-class constructor TJppBasicPngButtonEx.Create;
-begin
-  TCustomStyleEngine.RegisterStyleHook(TJppBasicPngButtonEx, TJppBasicPngButtonExStyleHook);
-end;
-
-class destructor TJppBasicPngButtonEx.Destroy;
-begin
-  TCustomStyleEngine.UnRegisterStyleHook(TJppBasicPngButtonEx, TJppBasicPngButtonExStyleHook);
-end;
-{$ENDIF}
-{$endregion Themes}
-
-
-
-{$region ' -------------------- TJppBasicPngButtonStateParams ---------------------- '}
-constructor TJppBasicPngButtonExStateParams.Create(AOwner: TComponent);
-begin
-  inherited Create;
-  FGradient := TJppGradientEx.Create(AOwner);
-  FGradientEnabled := True;
-  FBorderToGradientMargin := 2;
-  FFont := TFont.Create;
-  FBorder := TPen.Create;
-  FTransparentBackground := False;
-  FTransparentFrame := False;
-
-  FGradient.OnChange := PropsChanged;
-  FFont.OnChange := PropsChanged;
-  FBorder.OnChange := PropsChanged;
-
-  FSubCaptionColor := clWindowText;
-end;
-
-destructor TJppBasicPngButtonExStateParams.Destroy;
-begin
-  FGradient.Free;
-  FFont.Free;
-  FBorder.Free;
-  inherited;
-end;
-
-procedure TJppBasicPngButtonExStateParams.PropsChanged(Sender: TObject);
-begin
-  if Assigned(OnChange) then OnChange(Self);
-end;
-
-procedure TJppBasicPngButtonExStateParams.SetBorder(const Value: TPen);
-begin
-  FBorder := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExStateParams.SetBorderToGradientMargin(const Value: integer);
-begin
-  FBorderToGradientMargin := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExStateParams.SetColor(const Value: TColor);
-begin
-  FColor := Value;
-  PropsChanged(Self);
-end;
-
-
-procedure TJppBasicPngButtonExStateParams.SetFont(const Value: TFont);
-begin
-  //FFont := Value;
-  FFont.Assign(Value);
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExStateParams.SetGradientEnabled(const Value: Boolean);
-begin
-  FGradientEnabled := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExStateParams.SetOnChange(const Value: TNotifyEvent);
-begin
-  FOnChange := Value;
-end;
-
-procedure TJppBasicPngButtonExStateParams.SetSubCaptionColor(const Value: TColor);
-begin
-  if FSubCaptionColor = Value then Exit;
-  FSubCaptionColor := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExStateParams.SetTransparentBackground(const Value: Boolean);
-begin
-  FTransparentBackground := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExStateParams.SetTransparentFrame(const Value: Boolean);
-begin
-  FTransparentFrame := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExStateParams.SetGradient(const Value: TJppGradientEx);
-begin
-  FGradient := Value;
-  PropsChanged(Self);
-end;
-
-
-{$endregion}
-
-
-{$region ' --------------------- TJppBasicPngButtonAppearance -------------------- '}
-constructor TJppBasicPngButtonExAppearance.Create(AOwner: TComponent);
-begin
-  inherited Create;
-
-  FNormal := TJppBasicPngButtonExStateParams.Create(AOwner);
-  FNormal.Color := $00F3F3F3;
-  FNormal.Gradient.ColorFrom := $00F1F1F1;
-  FNormal.Gradient.ColorTo := $00CFCFCF;
-  FNormal.Border.Color := $00707070;
-  FNormal.Font.Color := 0;
-
-  FHot := TJppBasicPngButtonExStateParams.Create(AOwner);
-  FHot.Color := $00FCF5E8;
-  FHot.Gradient.ColorFrom := $00FDF6EA;
-  FHot.Gradient.ColorTo := $00F5D9A7;
-  FHot.Border.Color := $00B17F3C;
-  FHot.Font.Color := 0;
-
-  FFocused := TJppBasicPngButtonExStateParams.Create(AOwner);
-  FFocused.Color := FNormal.Color;
-  FFocused.Gradient.ColorFrom := FNormal.Gradient.ColorFrom;
-  FFocused.Gradient.ColorTo := FNormal.Gradient.ColorTo;
-  FFocused.Border.Color := $00D0AA24;
-  FFocused.Font.Color := FNormal.Font.Color;
-
-  FDown := TJppBasicPngButtonExStateParams.Create(AOwner);
-  FDown.Color := $00F1E2C5;
-  FDown.Gradient.ColorFrom := $00FCF4E5;
-  FDown.Gradient.ColorTo := $00DFB972;
-  FDown.Border.Color := GetSimilarColor(FHot.Border.Color , 50, False);
-  FDown.Font.Color := 0;
-
-  FDisabled := TJppBasicPngButtonExStateParams.Create(AOwner);
-  FDisabled.Color := $00F4F4F4;
-  FDisabled.Gradient.ColorFrom := $00F4F4F4;
-  FDisabled.Gradient.ColorTo := $00F4F4F4;
-  FDisabled.Border.Color := $00B5B2AD;
-  FDisabled.Font.Color := RGB(160,160,160);
-  FDisabled.SubCaptionColor := FDisabled.Font.Color;
-
-  FFocusRect := TJppFocusRectParams.Create(AOwner);
-  FFocusRect.Pen.Color := $00D0AA24;
-
-  FBorderWhenDefault := TPen.Create;
-  FBorderWhenDefault.Color := $00D0AA24;
-
-  FGlyphDisabledGrayscaleFactor := 255;
-  FGlyphDisabledBlendFactor := 127;
-  FGlyphHotGammaFactor := 130;
-
-
-  FNormal.OnChange := PropsChanged;
-  FHot.OnChange := PropsChanged;
-  FFocused.OnChange := PropsChanged;
-  FDown.OnChange := PropsChanged;
-  FDisabled.OnChange := PropsChanged;
-  FFocusRect.OnChange := PropsChanged;
-
-  FShowCaption := True;
-
-  FSubCaptionFont := TFont.Create;
-  FSubCaptionFont.OnChange := PropsChanged;
-  FSubCaption := '';
-  FCaptionsMargin := 2;
-  FSubCaptionEllipsis := epEndEllipsis;
-  FCaptionAlignment := taCenter;
-  FCaptionEllipsis := epNone;
-
-end;
-
-destructor TJppBasicPngButtonExAppearance.Destroy;
-begin
-  FNormal.Free;
-  FHot.Free;
-  FFocused.Free;
-  FDefaultDrawing := False;
-  FDown.Free;
-  FDisabled.Free;
-  FFocusRect.Free;
-  FBorderWhenDefault.Free;
-  FSubCaptionFont.Free;
-  inherited;
-end;
-
-procedure TJppBasicPngButtonExAppearance.PropsChanged(Sender: TObject);
-begin
-  if Assigned(OnChange) then OnChange(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.Assign(Source: TJppBasicPngButtonExAppearance);
-begin
-
-  DefaultDrawing := Source.DefaultDrawing;
-  GlyphDisabledGrayscaleFactor := Source.GlyphDisabledGrayscaleFactor;
-  GlyphDisabledBlendFactor := Source.GlyphDisabledBlendFactor;
-  GlyphHotGammaFactor := Source.GlyphHotGammaFactor;
-  MoveWhenDown := Source.MoveWhenDown;
-  BorderWhenDefault.Assign(Source.BorderWhenDefault);
-
-  FocusRect.FocusType := Source.FocusRect.FocusType;
-  FocusRect.Spacing := Source.FocusRect.Spacing;
-  FocusRect.Pen.Assign(Source.FocusRect.Pen);
-
-  ShowCaption := Source.ShowCaption;
-  SubCaptionFont.Assign(Source.SubCaptionFont);
-  SubCaptionEllipsis := Source.SubCaptionEllipsis;
-  CaptionAlignment := Source.CaptionAlignment;
-
-
-  Normal.Font.Assign(Source.Normal.Font);
-  Normal.Border.Assign(Source.Normal.Border);
-  Normal.Color := Source.Normal.Color;
-  Normal.GradientEnabled := Source.Normal.GradientEnabled;
-  Normal.Gradient.Assign(Source.Normal.Gradient);
-  Normal.BorderToGradientMargin := Source.Normal.BorderToGradientMargin;
-  Normal.TransparentBackground := Source.Normal.TransparentBackground;
-  Normal.TransparentFrame := Source.Normal.TransparentFrame;
-  Normal.SubCaptionColor := Source.Normal.SubCaptionColor;
-
-  Hot.Font.Assign(Source.Hot.Font);
-  Hot.Border.Assign(Source.Hot.Border);
-  Hot.Color := Source.Hot.Color;
-  Hot.GradientEnabled := Source.Hot.GradientEnabled;
-  Hot.Gradient.Assign(Source.Hot.Gradient);
-  Hot.BorderToGradientMargin := Source.Hot.BorderToGradientMargin;
-  Hot.TransparentBackground := Source.Hot.TransparentBackground;
-  Hot.TransparentFrame := Source.Hot.TransparentFrame;
-  Hot.SubCaptionColor := Source.Hot.SubCaptionColor;
-
-  Down.Font.Assign(Source.Down.Font);
-  Down.Border.Assign(Source.Down.Border);
-  Down.Color := Source.Down.Color;
-  Down.GradientEnabled := Source.Down.GradientEnabled;
-  Down.Gradient.Assign(Source.Down.Gradient);
-  Down.BorderToGradientMargin := Source.Down.BorderToGradientMargin;
-  Down.TransparentBackground := Source.Down.TransparentBackground;
-  Down.TransparentFrame := Source.Down.TransparentFrame;
-  Down.SubCaptionColor := Source.Down.SubCaptionColor;
-
-  Focused.Font.Assign(Source.Focused.Font);
-  Focused.Border.Assign(Source.Focused.Border);
-  Focused.Color := Source.Focused.Color;
-  Focused.GradientEnabled := Source.Focused.GradientEnabled;
-  Focused.Gradient.Assign(Source.Focused.Gradient);
-  Focused.BorderToGradientMargin := Source.Focused.BorderToGradientMargin;
-  Focused.TransparentBackground := Source.Focused.TransparentBackground;
-  Focused.TransparentFrame := Source.Focused.TransparentFrame;
-  Focused.SubCaptionColor := Source.Focused.SubCaptionColor;
-
-  Disabled.Font.Assign(Source.Disabled.Font);
-  Disabled.Border.Assign(Source.Disabled.Border);
-  Disabled.Color := Source.Disabled.Color;
-  Disabled.GradientEnabled := Source.Disabled.GradientEnabled;
-  Disabled.Gradient.Assign(Source.Disabled.Gradient);
-  Disabled.BorderToGradientMargin := Source.Disabled.BorderToGradientMargin;
-  Disabled.TransparentBackground := Source.Disabled.TransparentBackground;
-  Disabled.TransparentFrame := Source.Disabled.TransparentFrame;
-  Disabled.SubCaptionColor := Source.Disabled.SubCaptionColor;
-
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetBorderWhenDefault(const Value: TPen);
-begin
-  FBorderWhenDefault := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetCaptionAlignment(const Value: TAlignment);
-begin
-  if FCaptionAlignment = Value then Exit;
-  FCaptionAlignment := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetCaptionEllipsis(const Value: TEllipsisPosition);
-begin
-  if FCaptionEllipsis = Value then Exit;
-  FCaptionEllipsis := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetCaptionsMargin(const Value: integer);
-begin
-  if FCaptionsMargin = Value then Exit;
-  FCaptionsMargin := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetDefaultDrawing(const Value: Boolean);
-begin
-  FDefaultDrawing := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetDisabled(const Value: TJppBasicPngButtonExStateParams);
-begin
-  FDisabled := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetGlyphDisabledBlendFactor(const Value: Byte);
-begin
-  FGlyphDisabledBlendFactor := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetGlyphDisabledGrayscaleFactor(const Value: Byte);
-begin
-  FGlyphDisabledGrayscaleFactor := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetDown(const Value: TJppBasicPngButtonExStateParams);
-begin
-  FDown := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetFocusRect(const Value: TJppFocusRectParams);
-begin
-  FFocusRect := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetFocused(const Value: TJppBasicPngButtonExStateParams);
-begin
-  FFocused := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetHot(const Value: TJppBasicPngButtonExStateParams);
-begin
-  FHot := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetGlyphHotGammaFactor(const Value: Byte);
-begin
-  FGlyphHotGammaFactor := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetMoveWhenDown(const Value: Boolean);
-begin
-  FMoveWhenDown := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetNormal(const Value: TJppBasicPngButtonExStateParams);
-begin
-  FNormal := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetOnChange(const Value: TNotifyEvent);
-begin
-  FOnChange := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetShowCaption(const Value: Boolean);
-begin
-  FShowCaption := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetSubCaption(const Value: string);
-begin
-  FSubCaption := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetSubCaptionEllipsis(const Value: TEllipsisPosition);
-begin
-  if FSubCaptionEllipsis = Value then Exit;
-  FSubCaptionEllipsis := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppBasicPngButtonExAppearance.SetSubCaptionFont(const Value: TFont);
-begin
-  FSubCaptionFont.Assign(Value);
-end;
-
-{$endregion}
-
-
-
-{$region ' -------------------------------- TJppBasicPngButton ------------------------------------- '}
+{$region ' -------------------------------- TJppBasicPngButtonEx ------------------------------------- '}
 
 
   {$region ' ---------------------- Cretae & Destroy ----------------------------- '}
@@ -691,7 +313,6 @@ begin
   FAnchoredControls.Free;
   inherited Destroy;
 end;
-
 
 
 {$endregion Create & Destroy}
@@ -723,6 +344,44 @@ begin
       end;
 end;
 
+{$IFDEF FPC}
+function TJppBasicPngButtonEx.DrawTextBiDiModeFlags(Flags: Longint): Longint;
+begin
+  Result := DrawCtrlTextBiDiModeFlags(Self, Flags);
+end;
+
+procedure TJppBasicPngButtonEx.WndProc(var TheMessage: TLMessage);
+var
+  dis: TDrawItemStruct;
+begin
+  //inherited WndProc(TheMessage);
+  case TheMessage.msg of
+    LM_DRAWITEM:
+      begin
+        dis := PDrawItemStruct(TheMessage.lParam)^;
+        DrawItem(dis);
+      end;
+    //LM_PAINT
+  else
+    inherited WndProc(TheMessage);
+  end;
+
+end;
+
+procedure TJppBasicPngButtonEx.LMDrawItem(var Message: TLMDrawItems);
+begin
+  inherited;
+  DrawItem(Message.DrawItemStruct^);
+end;
+
+procedure TJppBasicPngButtonEx.CreateParams(var Params: TCreateParams);
+begin
+  inherited CreateParams(Params);
+  with Params do Style := Style or BS_OWNERDRAW;
+end;
+
+{$ENDIF}
+
 
   {$region ' --------------------------------- misc ------------------------------------ '}
 procedure TJppBasicPngButtonEx.ActionChange(Sender: TObject; CheckDefaults: Boolean);
@@ -749,6 +408,7 @@ begin
   FAppearance := Value;
 end;
 
+{$IFDEF DCC}
 procedure TJppBasicPngButtonEx.SetButtonStyle(ADefault: Boolean);
 begin
   inherited SetButtonStyle(ADefault);
@@ -758,6 +418,7 @@ begin
     Refresh;
   end;
 end;
+{$ENDIF}
 
 function TJppBasicPngButtonEx.PngImageStored: Boolean;
 begin
@@ -783,9 +444,11 @@ begin
     FPngImage.Assign(Value);
   end;
 
+  {$IFDEF DCC}
   //To work around the gamma-problem
   with FPngImage do
     if not Empty and (Header.ColorType in [COLOR_RGB, COLOR_RGBALPHA, COLOR_PALETTE]) then Chunks.RemoveChunk(Chunks.ItemFromClass(TChunkgAMA));
+  {$ENDIF}
 
   FImageFromAction := False;
   Repaint;
@@ -1143,7 +806,14 @@ end;
 
 
   {$region ' -------------------------------------------------------- CNDrawItem ------------------------------------------------------------ '}
-procedure TJppBasicPngButtonEx.CNDrawItem(var Message: TWMDrawItem);
+
+procedure TJppBasicPngButtonEx.CNDrawItem(var Message: {$IFDEF DCC}TWMDrawItem{$ELSE}TLMDrawItems{$ENDIF});
+begin
+  DrawItem(TDrawItemStruct(Message.DrawItemStruct^));
+end;
+
+
+procedure TJppBasicPngButtonEx.DrawItem(const DrawItemStruct: TDrawItemStruct);
 
 type
   TGradientParams = record
@@ -1188,8 +858,10 @@ var
   PaintRect: TRect;
   GlyphPos: TPoint;
   Flags: Cardinal;
+  {$IFDEF DCC}
   Button: TThemedButton;
   Details: TThemedElementDetails;
+  {$ENDIF}
 
   bDown, bDefault, bSubCaption: Boolean;
   R, R2, BgRect: TRect;
@@ -1216,8 +888,8 @@ begin
     epWordEllipsis: CaptionTextFlags := CaptionTextFlags or DT_WORD_ELLIPSIS;
   end;
 
-  bDown := Message.DrawItemStruct^.itemState and ODS_SELECTED <> 0;
-  bDefault := Message.DrawItemStruct^.itemState and ODS_FOCUS <> 0;
+  bDown := DrawItemStruct.itemState and ODS_SELECTED <> 0;
+  bDefault := DrawItemStruct.itemState and ODS_FOCUS <> 0;
   bSubCaption := (FAppearance.SubCaption <> '') and FAppearance.ShowCaption;
 
   dp.Font := Self.Font;
@@ -1233,7 +905,7 @@ begin
     Canvas := TCanvas.Create;
     try
 
-      Canvas.Handle := Message.DrawItemStruct^.hDC;
+      Canvas.Handle := DrawItemStruct.{$IFDEF FPC}_hDC{$ELSE}hDC{$ENDIF};
       R := ClientRect;
 
       with Canvas do
@@ -1351,20 +1023,14 @@ begin
 
         if dp.bGradientEnabled and (not dp.TransparentBackground) then
         begin
-
-          // ------------- Gradient --------------
           BgRect := R;
 
           if dp.BorderToGradientMargin < 0 then dp.BorderToGradientMargin := 0;
-          //if dp.UpperGradientPercent > 100 then dp.UpperGradientPercent := 100;
 
-          //BgRect.Bottom := Round((dp.UpperGradientPercent * BgRect.Height) / 100);
           BgRect.Bottom := BgRect.Bottom - dp.BorderToGradientMargin;
-
           BgRect.Left := BgRect.Left + dp.BorderToGradientMargin;
           BgRect.Right := BgRect.Right - dp.BorderToGradientMargin;
           BgRect.Top := BgRect.Top + dp.BorderToGradientMargin;
-          //xBottomGradientTop := BgRect.Bottom + 0;
 
           Jpp.Gradient.cyGradientFill(
             Canvas,
@@ -1378,7 +1044,6 @@ begin
             dp.GradientParams.MaxDegrade,
             dp.GradientParams.SpeedPercent
           );
-
         end;
         {$endregion Background}
 
@@ -1435,7 +1100,8 @@ begin
           sSubCaption := FAppearance.SubCaption;
         end;
         CalcButtonLayoutEx(Canvas, sCaption, sSubCaption, FAppearance.CaptionAlignment, dp.Font, dp.SubCaptionFont, FPngImage, ClientRect,
-          Layout, Margin, Spacing, FAppearance.CaptionsMargin, GlyphPos, CaptionRect, SubCaptionRect, DrawTextBiDiModeFlags(0));
+          Layout, Margin, Spacing, FAppearance.CaptionsMargin, GlyphPos, CaptionRect, SubCaptionRect,
+          DrawTextBiDiModeFlags(0));
         {$endregion Calculating layout}
 
 
@@ -1531,15 +1197,16 @@ begin
 
 
 
-  // ------------------------------------------------- Deafult Drawing ---------------------------------------------------------
+  {$region ' ------------------- Deafult Drawing -------------------- '}
 
   begin
 
     R := ClientRect;
-    FCanvas.Handle := Message.DrawItemStruct^.HDC;
+    FCanvas.Handle := DrawItemStruct.{$IFDEF FPC}_hDC{$ELSE}hDC{$ENDIF};
     FCanvas.Font := Self.Font;
 
 
+    {$IFDEF DELPHIXE2_OR_ABOVE}
     //Draw the border
     if StyleServices.Enabled then
     begin
@@ -1552,12 +1219,13 @@ begin
 
       //Paint the background, border, and finally get the inner rect
       Details := StyleServices.GetElementDetails(Button);
-      StyleServices.DrawParentBackground(Handle, Message.DrawItemStruct.HDC, @Details, true);
-      StyleServices.DrawElement(Message.DrawItemStruct.HDC, Details, Message.DrawItemStruct.rcItem);
-      StyleServices.GetElementContentRect(FCanvas.Handle, Details, Message.DrawItemStruct.rcItem, R);
+      StyleServices.DrawParentBackground(Handle, DrawItemStruct.HDC, @Details, true);
+      StyleServices.DrawElement(DrawItemStruct.HDC, Details, DrawItemStruct.rcItem);
+      StyleServices.GetElementContentRect(FCanvas.Handle, Details, DrawItemStruct.rcItem, R);
     end
 
     else
+    {$ENDIF}
 
     begin
 
@@ -1585,8 +1253,8 @@ begin
 
       begin
         Flags := DFCS_BUTTONPUSH or DFCS_ADJUSTRECT;
-        if Message.DrawItemStruct.itemState and ODS_DISABLED <> 0 then Flags := Flags or DFCS_INACTIVE;
-        DrawFrameControl(Message.DrawItemStruct.HDC, R, DFC_BUTTON, Flags);
+        if DrawItemStruct.itemState and ODS_DISABLED <> 0 then Flags := Flags or DFCS_INACTIVE;
+        DrawFrameControl(DrawItemStruct.{$IFDEF FPC}_hDC{$ELSE}hDC{$ENDIF}, R, DFC_BUTTON, Flags);
       end;
 
 
@@ -1690,7 +1358,7 @@ begin
     //Draw the focus rectangle
     if IsFocused and bDefault then
     begin
-      if not StyleServices.Enabled then
+      {$IFDEF DELPHIXE2_OR_ABOVE}if not StyleServices.Enabled then{$ENDIF}
       begin
         R := ClientRect;
         InflateRect(R, -3, -3);
@@ -1703,9 +1371,12 @@ begin
     FLastKind := Kind;
     FCanvas.Handle := 0;
 
-
   end;
+  {$endregion Default Drawing}
+
+
 end;
+
   {$endregion CNDrawItem}
 
 
@@ -1724,12 +1395,14 @@ procedure TJppBasicPngButtonEx.CMMouseEnter(var Message: TMessage);
 begin
   inherited;
   bOver := True;
+  {$IFDEF DELPHIXE2_OR_ABOVE}
   if StyleServices.Enabled and not FMouseInControl and not(csDesigning in ComponentState) then
   begin
     FMouseInControl := true;
     Repaint;
   end
   else
+  {$ENDIF}
   begin
     if csDesigning in ComponentState then Exit;
     if Assigned(FOnMouseEnter) then OnMouseEnter(Self);
@@ -1741,12 +1414,14 @@ procedure TJppBasicPngButtonEx.CMMouseLeave(var Message: TMessage);
 begin
   inherited;
   bOver := False;
+  {$IFDEF DELPHIXE2_OR_ABOVE}
   if StyleServices.Enabled and FMouseInControl then
   begin
     FMouseInControl := False;
     Repaint;
   end
   else
+  {$ENDIF}
   begin
     if csDesigning in ComponentState then Exit;
     if Assigned(FOnMouseLeave) then OnMouseLeave(Self);
@@ -1756,10 +1431,442 @@ end;
   {$endregion Mouse Enter & Leave}
 
 
-{$endregion TJppBasicPngButton}
+{$endregion TJppBasicPngButtonEx}
+
+
+{$region ' --------------------- TJppBasicPngButtonExAppearance -------------------- '}
+constructor TJppBasicPngButtonExAppearance.Create(AOwner: TComponent);
+begin
+  inherited Create;
+
+  FNormal := TJppBasicPngButtonExStateParams.Create(AOwner);
+  FNormal.Color := $00F3F3F3;
+  FNormal.Gradient.ColorFrom := $00F1F1F1;
+  FNormal.Gradient.ColorTo := $00CFCFCF;
+  FNormal.Border.Color := $00707070;
+  FNormal.Font.Color := 0;
+
+  FHot := TJppBasicPngButtonExStateParams.Create(AOwner);
+  FHot.Color := $00FCF5E8;
+  FHot.Gradient.ColorFrom := $00FDF6EA;
+  FHot.Gradient.ColorTo := $00F5D9A7;
+  FHot.Border.Color := $00B17F3C;
+  FHot.Font.Color := 0;
+
+  FFocused := TJppBasicPngButtonExStateParams.Create(AOwner);
+  FFocused.Color := FNormal.Color;
+  FFocused.Gradient.ColorFrom := FNormal.Gradient.ColorFrom;
+  FFocused.Gradient.ColorTo := FNormal.Gradient.ColorTo;
+  FFocused.Border.Color := $00D0AA24;
+  FFocused.Font.Color := FNormal.Font.Color;
+
+  FDown := TJppBasicPngButtonExStateParams.Create(AOwner);
+  FDown.Color := $00F1E2C5;
+  FDown.Gradient.ColorFrom := $00FCF4E5;
+  FDown.Gradient.ColorTo := $00DFB972;
+  FDown.Border.Color := GetSimilarColor(FHot.Border.Color , 50, False);
+  FDown.Font.Color := 0;
+
+  FDisabled := TJppBasicPngButtonExStateParams.Create(AOwner);
+  FDisabled.Color := $00F4F4F4;
+  FDisabled.Gradient.ColorFrom := $00F4F4F4;
+  FDisabled.Gradient.ColorTo := $00F4F4F4;
+  FDisabled.Border.Color := $00B5B2AD;
+  FDisabled.Font.Color := RGB(160,160,160);
+  FDisabled.SubCaptionColor := FDisabled.Font.Color;
+
+  FFocusRect := TJppFocusRectParams.Create(AOwner);
+  FFocusRect.Pen.Color := $00D0AA24;
+
+  FBorderWhenDefault := TPen.Create;
+  FBorderWhenDefault.Color := $00D0AA24;
+
+  FGlyphDisabledGrayscaleFactor := 255;
+  FGlyphDisabledBlendFactor := 127;
+  FGlyphHotGammaFactor := 130;
+
+
+  FNormal.OnChange := PropsChanged;
+  FHot.OnChange := PropsChanged;
+  FFocused.OnChange := PropsChanged;
+  FDown.OnChange := PropsChanged;
+  FDisabled.OnChange := PropsChanged;
+  FFocusRect.OnChange := PropsChanged;
+
+  FShowCaption := True;
+
+  FSubCaptionFont := TFont.Create;
+  FSubCaptionFont.OnChange := PropsChanged;
+  FSubCaption := '';
+  FCaptionsMargin := 2;
+  FSubCaptionEllipsis := epEndEllipsis;
+  FCaptionAlignment := taCenter;
+  FCaptionEllipsis := epNone;
+
+end;
+
+destructor TJppBasicPngButtonExAppearance.Destroy;
+begin
+  FNormal.Free;
+  FHot.Free;
+  FFocused.Free;
+  FDefaultDrawing := False;
+  FDown.Free;
+  FDisabled.Free;
+  FFocusRect.Free;
+  FBorderWhenDefault.Free;
+  FSubCaptionFont.Free;
+  inherited;
+end;
+
+procedure TJppBasicPngButtonExAppearance.PropsChanged(Sender: TObject);
+begin
+  if Assigned(OnChange) then OnChange(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.Assign(Source: TJppBasicPngButtonExAppearance);
+begin
+
+  DefaultDrawing := Source.DefaultDrawing;
+  GlyphDisabledGrayscaleFactor := Source.GlyphDisabledGrayscaleFactor;
+  GlyphDisabledBlendFactor := Source.GlyphDisabledBlendFactor;
+  GlyphHotGammaFactor := Source.GlyphHotGammaFactor;
+  MoveWhenDown := Source.MoveWhenDown;
+  BorderWhenDefault.Assign(Source.BorderWhenDefault);
+
+  FocusRect.FocusType := Source.FocusRect.FocusType;
+  FocusRect.Spacing := Source.FocusRect.Spacing;
+  FocusRect.Pen.Assign(Source.FocusRect.Pen);
+
+  ShowCaption := Source.ShowCaption;
+  SubCaptionFont.Assign(Source.SubCaptionFont);
+  SubCaptionEllipsis := Source.SubCaptionEllipsis;
+  CaptionAlignment := Source.CaptionAlignment;
+
+
+  Normal.Font.Assign(Source.Normal.Font);
+  Normal.Border.Assign(Source.Normal.Border);
+  Normal.Color := Source.Normal.Color;
+  Normal.GradientEnabled := Source.Normal.GradientEnabled;
+  Normal.Gradient.Assign(Source.Normal.Gradient);
+  Normal.BorderToGradientMargin := Source.Normal.BorderToGradientMargin;
+  Normal.TransparentBackground := Source.Normal.TransparentBackground;
+  Normal.TransparentFrame := Source.Normal.TransparentFrame;
+  Normal.SubCaptionColor := Source.Normal.SubCaptionColor;
+
+  Hot.Font.Assign(Source.Hot.Font);
+  Hot.Border.Assign(Source.Hot.Border);
+  Hot.Color := Source.Hot.Color;
+  Hot.GradientEnabled := Source.Hot.GradientEnabled;
+  Hot.Gradient.Assign(Source.Hot.Gradient);
+  Hot.BorderToGradientMargin := Source.Hot.BorderToGradientMargin;
+  Hot.TransparentBackground := Source.Hot.TransparentBackground;
+  Hot.TransparentFrame := Source.Hot.TransparentFrame;
+  Hot.SubCaptionColor := Source.Hot.SubCaptionColor;
+
+  Down.Font.Assign(Source.Down.Font);
+  Down.Border.Assign(Source.Down.Border);
+  Down.Color := Source.Down.Color;
+  Down.GradientEnabled := Source.Down.GradientEnabled;
+  Down.Gradient.Assign(Source.Down.Gradient);
+  Down.BorderToGradientMargin := Source.Down.BorderToGradientMargin;
+  Down.TransparentBackground := Source.Down.TransparentBackground;
+  Down.TransparentFrame := Source.Down.TransparentFrame;
+  Down.SubCaptionColor := Source.Down.SubCaptionColor;
+
+  Focused.Font.Assign(Source.Focused.Font);
+  Focused.Border.Assign(Source.Focused.Border);
+  Focused.Color := Source.Focused.Color;
+  Focused.GradientEnabled := Source.Focused.GradientEnabled;
+  Focused.Gradient.Assign(Source.Focused.Gradient);
+  Focused.BorderToGradientMargin := Source.Focused.BorderToGradientMargin;
+  Focused.TransparentBackground := Source.Focused.TransparentBackground;
+  Focused.TransparentFrame := Source.Focused.TransparentFrame;
+  Focused.SubCaptionColor := Source.Focused.SubCaptionColor;
+
+  Disabled.Font.Assign(Source.Disabled.Font);
+  Disabled.Border.Assign(Source.Disabled.Border);
+  Disabled.Color := Source.Disabled.Color;
+  Disabled.GradientEnabled := Source.Disabled.GradientEnabled;
+  Disabled.Gradient.Assign(Source.Disabled.Gradient);
+  Disabled.BorderToGradientMargin := Source.Disabled.BorderToGradientMargin;
+  Disabled.TransparentBackground := Source.Disabled.TransparentBackground;
+  Disabled.TransparentFrame := Source.Disabled.TransparentFrame;
+  Disabled.SubCaptionColor := Source.Disabled.SubCaptionColor;
+
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetBorderWhenDefault(const Value: TPen);
+begin
+  FBorderWhenDefault := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetCaptionAlignment(const Value: TAlignment);
+begin
+  if FCaptionAlignment = Value then Exit;
+  FCaptionAlignment := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetCaptionEllipsis(const Value: TEllipsisPosition);
+begin
+  if FCaptionEllipsis = Value then Exit;
+  FCaptionEllipsis := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetCaptionsMargin(const Value: integer);
+begin
+  if FCaptionsMargin = Value then Exit;
+  FCaptionsMargin := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetDefaultDrawing(const Value: Boolean);
+begin
+  FDefaultDrawing := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetDisabled(const Value: TJppBasicPngButtonExStateParams);
+begin
+  FDisabled := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetGlyphDisabledBlendFactor(const Value: Byte);
+begin
+  FGlyphDisabledBlendFactor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetGlyphDisabledGrayscaleFactor(const Value: Byte);
+begin
+  FGlyphDisabledGrayscaleFactor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetDown(const Value: TJppBasicPngButtonExStateParams);
+begin
+  FDown := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetFocusRect(const Value: TJppFocusRectParams);
+begin
+  FFocusRect := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetFocused(const Value: TJppBasicPngButtonExStateParams);
+begin
+  FFocused := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetHot(const Value: TJppBasicPngButtonExStateParams);
+begin
+  FHot := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetGlyphHotGammaFactor(const Value: Byte);
+begin
+  FGlyphHotGammaFactor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetMoveWhenDown(const Value: Boolean);
+begin
+  FMoveWhenDown := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetNormal(const Value: TJppBasicPngButtonExStateParams);
+begin
+  FNormal := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetOnChange(const Value: TNotifyEvent);
+begin
+  FOnChange := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetShowCaption(const Value: Boolean);
+begin
+  FShowCaption := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetSubCaption(const Value: string);
+begin
+  FSubCaption := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetSubCaptionEllipsis(const Value: TEllipsisPosition);
+begin
+  if FSubCaptionEllipsis = Value then Exit;
+  FSubCaptionEllipsis := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExAppearance.SetSubCaptionFont(const Value: TFont);
+begin
+  FSubCaptionFont.Assign(Value);
+end;
+
+{$endregion TJppBasicPngButtonExAppearance}
+
+
+{$region ' -------------------- TJppBasicPngButtonExStateParams ---------------------- '}
+constructor TJppBasicPngButtonExStateParams.Create(AOwner: TComponent);
+begin
+  inherited Create;
+  FGradient := TJppGradientEx.Create(AOwner);
+  FGradientEnabled := True;
+  FBorderToGradientMargin := 2;
+  FFont := TFont.Create;
+  FBorder := TPen.Create;
+  FTransparentBackground := False;
+  FTransparentFrame := False;
+
+  FGradient.OnChange := PropsChanged;
+  FFont.OnChange := PropsChanged;
+  FBorder.OnChange := PropsChanged;
+
+  FSubCaptionColor := clWindowText;
+end;
+
+destructor TJppBasicPngButtonExStateParams.Destroy;
+begin
+  FGradient.Free;
+  FFont.Free;
+  FBorder.Free;
+  inherited;
+end;
+
+procedure TJppBasicPngButtonExStateParams.PropsChanged(Sender: TObject);
+begin
+  if Assigned(OnChange) then OnChange(Self);
+end;
+
+procedure TJppBasicPngButtonExStateParams.SetBorder(const Value: TPen);
+begin
+  FBorder := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExStateParams.SetBorderToGradientMargin(const Value: integer);
+begin
+  FBorderToGradientMargin := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExStateParams.SetColor(const Value: TColor);
+begin
+  FColor := Value;
+  PropsChanged(Self);
+end;
+
+
+procedure TJppBasicPngButtonExStateParams.SetFont(const Value: TFont);
+begin
+  FFont.Assign(Value);
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExStateParams.SetGradientEnabled(const Value: Boolean);
+begin
+  FGradientEnabled := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExStateParams.SetOnChange(const Value: TNotifyEvent);
+begin
+  FOnChange := Value;
+end;
+
+procedure TJppBasicPngButtonExStateParams.SetSubCaptionColor(const Value: TColor);
+begin
+  if FSubCaptionColor = Value then Exit;
+  FSubCaptionColor := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExStateParams.SetTransparentBackground(const Value: Boolean);
+begin
+  FTransparentBackground := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExStateParams.SetTransparentFrame(const Value: Boolean);
+begin
+  FTransparentFrame := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppBasicPngButtonExStateParams.SetGradient(const Value: TJppGradientEx);
+begin
+  FGradient := Value;
+  PropsChanged(Self);
+end;
+
+
+{$endregion TJppBasicPngButtonExStateParams}
+
+
+{$region ' --------------------- Themes ------------------------- '}
+{$IFDEF DCC}
+{$IF RTLVersion < 23.0 }
+type
+  TThemeServicesHelper = class helper for TThemeServices
+  private
+    function GetEnabled: Boolean;
+  public
+    function GetElementContentRect(DC: HDC; Details: TThemedElementDetails; const BoundingRect: TRect; out ContentRect: TRect): Boolean; overload;
+    property Enabled: Boolean read GetEnabled;
+  end;
+
+function TThemeServicesHelper.GetElementContentRect(DC: HDC; Details: TThemedElementDetails; const BoundingRect: TRect; out ContentRect: TRect): Boolean;
+begin
+  ContentRect := Self.ContentRect(DC, Details, BoundingRect);
+  Result := true;
+end;
+
+function TThemeServicesHelper.GetEnabled: Boolean;
+begin
+  Result := ThemesEnabled;
+end;
+
+function StyleServices: TThemeServices;
+begin
+  Result := ThemeServices;
+end;
+{$IFEND}
+{$ENDIF} // DCC
+
+
+
+{$IFDEF DELPHIXE3_OR_ABOVE}
+class constructor TJppBasicPngButtonEx.Create;
+begin
+  TCustomStyleEngine.RegisterStyleHook(TJppBasicPngButtonEx, TJppBasicPngButtonExStyleHook);
+end;
+
+class destructor TJppBasicPngButtonEx.Destroy;
+begin
+  TCustomStyleEngine.UnRegisterStyleHook(TJppBasicPngButtonEx, TJppBasicPngButtonExStyleHook);
+end;
+{$ENDIF}
+{$endregion Themes}
 
 
 {$region ' ------------------------- StyleHook -------------------------- '}
+{$IFDEF DCC}
 {$IF RTLVersion >= 24.0 }
 procedure TJppBasicPngButtonExStyleHook.DrawButton(ACanvas: TCanvas; AMouseInControl: Boolean);
 const
@@ -1829,7 +1936,8 @@ begin
 
 end;
 {$IFEND}
-{$endregion}
+{$ENDIF} // DCC
+{$endregion StyleHook}
 
 
 
