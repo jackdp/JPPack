@@ -20,6 +20,7 @@
     - [TJppBasicSpeedButton](#tjppbasicspeedbutton)
     - [TJppComboBox](#tjppcombobox)
     - [TJppComboBoxEx](#tjppcomboboxex)
+    - [TJppFlatComboBox](#tjppflatcombobox)
     - [TJppColorComboBox](#tjppcolorcombobox)
     - [TJppColorListBox](#tjppcolorlistbox)
     - [TJppColorSwatch, TJppColorSwatchEx](#tjppcolorswatch-tjppcolorswatchex)
@@ -230,7 +231,7 @@ Additional properties:
 
 Fixed item height bug in older Delphi versions.
 
-![TJppComboBox Item Height fixed](./docs/img/JppComboBoxEx_ItemHeight.gif)
+![TJppComboBoxEx Item Height fixed](./docs/img/JppComboBoxEx_ItemHeight.gif)
 
 Additional properties:
 
@@ -240,6 +241,17 @@ Additional properties:
 - `ShowLabel` - Show / hide bound label.
 - `TagExt`
 - published `ItemIndex`
+
+---
+
+### TJppFlatComboBox
+
+Currently **only for Delphi**. 
+
+Highly customizable ComboBox based on the `TFlatComboBox`  
+https://github.com/jackdp/FlatStyle/blob/master/Source/TFlatComboBoxUnit.pas
+
+![TJppFlatComboBox](./docs/img/TJppFlatComboBox.gif)
 
 ---
 
