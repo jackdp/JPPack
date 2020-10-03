@@ -1,5 +1,15 @@
 unit JPP.PngButton;
 
+{
+  Jacek Pazera
+  https://www.pazera-software.com
+  https://github.com/jackdp
+
+  Based on the TPngBitBtn from then PngComponents package: https://github.com/UweRaabe/PngComponents
+  PngComponents license: https://github.com/UweRaabe/PngComponents/blob/master/Docs/License.txt
+
+  My modifications: public domain
+}
 
 {$I jpp.inc}
 {$IFDEF FPC} {$mode delphi} {$ENDIF}
@@ -127,8 +137,6 @@ type
   {$endregion}
 
 
-  //TJppPngButtonTagExt = class(TJppTagExt);
-
   {$region ' ----------------- TJppPngButton ------------------- '}
   TJppPngButton = class(TBitBtn)
   {$IFDEF DELPHIXE3_OR_ABOVE}
@@ -143,7 +151,7 @@ type
     FCanvas: TCanvas;
     FLastKind: TBitBtnKind;
     FImageFromAction: Boolean;
-    {$IFDEF DCC} FMouseInControl: Boolean; {$ENDIF}
+    {$IFDEF DELPHIXE2_OR_ABOVE} FMouseInControl: Boolean; {$ENDIF}
     IsFocused: Boolean;
     FOnMouseEnter: TNotifyEvent;
     FOnMouseLeave: TNotifyEvent;
@@ -163,8 +171,6 @@ type
     procedure SetAppearance(const Value: TJppButtonAppearance);
     procedure SetColorMapType(const Value: TJppPngButtonColorMapType);
     procedure SetAnchoredControls(const Value: TJppAnchoredControls);
-    //property Glyph stored False;
-    //property NumGlyphs stored False;
   protected
     procedure ActionChange(Sender: TObject; CheckDefaults: Boolean); override;
     {$IFDEF DCC} procedure SetButtonStyle(ADefault: Boolean); override; {$ENDIF}
@@ -202,7 +208,7 @@ type
 
 procedure SetJppPngButtonColorMap(Button: TJppPngButton; ColorMap: TJppPngButtonColorMap);
 procedure GetJppPngButtonColorMap(Button: TJppPngButton; var ColorMap: TJppPngButtonColorMap);
-procedure SetJppPngButtonFonts(Button: TJppPngButton; FontName: string = 'Segoe UI'; FontSize: integer = 8);
+procedure SetJppPngButtonFonts(Button: TJppPngButton; FontName: string = 'Segoe UI'; FontSize: integer = 9);
 procedure SetJppPngButtonVclStyle(Button: TJppPngButton; StyleName: string);
 
 
@@ -246,7 +252,7 @@ begin
   end;
 end;
 
-procedure SetJppPngButtonFonts(Button: TJppPngButton; FontName: string = 'Segoe UI'; FontSize: integer = 8);
+procedure SetJppPngButtonFonts(Button: TJppPngButton; FontName: string = 'Segoe UI'; FontSize: integer = 9);
 begin
   Button.Font.Name := FontName;
   Button.Font.Size := FontSize;
@@ -353,162 +359,761 @@ begin
   Button.Appearance.Disabled.UpperGradient.ColorTo := ColorMap.Disabled.UpperGradientColorTo;
   Button.Appearance.Disabled.BottomGradient.ColorFrom := ColorMap.Disabled.BottomGradientColorFrom;
   Button.Appearance.Disabled.BottomGradient.ColorTo := ColorMap.Disabled.BottomGradientColorTo;
-
 end;
-{$endregion}
+{$endregion helpers}
 
 
-{$region ' ---------------- Themes ------------------------- '}
+{$region ' ------------------------------- TJppPngButton ------------------------------------- '}
+
+  {$region ' ---------------------- Cretae & Destroy ----------------------------- '}
+constructor TJppPngButton.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FPngImage := TPngImage.Create;
+  FPngOptions := [pngBlendOnDisabled];
+  FCanvas := TCanvas.Create;
+  FLastKind := bkCustom;
+  FImageFromAction := False;
+  FTagExt := TJppTagExt.Create(Self);
+  FAppearance := TJppButtonAppearance.Create(Self);
+  FAppearance.OnChange := PropsChanged;
+  FColorMapType := cmtCustom;
+  FAnchoredControls := TJppAnchoredControls.Create(Self);
+
+  bOver := False;
+end;
+
+destructor TJppPngButton.Destroy;
+begin
+  FPngImage.Free;
+  FCanvas.Free;
+  FTagExt.Free;
+  FAppearance.Free;
+  FAnchoredControls.Free;
+  inherited Destroy;
+end;
+  {$endregion Create & Destroy}
+
+
+procedure TJppPngButton.SetAnchoredControls(const Value: TJppAnchoredControls);
+begin
+  FAnchoredControls := Value;
+end;
+
+procedure TJppPngButton.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+begin
+  inherited;
+  if not (csDestroying in ComponentState) then
+    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppPngButton.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited;
+  if Operation = opRemove then
+    if not (csDestroying in ComponentState) then
+      if Assigned(FAnchoredControls) then
+      begin
+        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
+        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
+        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
+        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
+      end;
+end;
+
+
+  {$region ' ---------------------- Color Maps -------------------------- '}
+
+procedure TJppPngButton.SetColorMapType(const Value: TJppPngButtonColorMapType);
+var
+  ColorMap: TJppPngButtonColorMap;
+begin
+  FColorMapType := Value;
+  if Value = cmtCustom then Exit;
+
+  GetJppPngButtonColorMap(Self, ColorMap);
+  GetJppPngButtonColorMapByType(Value, ColorMap);
+  ApplyColorMap(ColorMap);
+end;
+
+procedure TJppPngButton.SaveColorMapToIniFile(FileName: string; Section: string; Format: TJppPngButtonIniColorFormat);
+var
+  ColorMap: TJppPngButtonColorMap;
+begin
+  GetJppPngButtonColorMap(Self, ColorMap);
+  ColorMap.SaveToIniFile(FileName, Section, Format);
+end;
+
+procedure TJppPngButton.LoadColorMapFromIniFile(FileName: string; Section: string = COLORMAP_DEFAULT_INI_SECTION; Format: TJppPngButtonIniColorFormat = icfDefault);
+var
+  ColorMap: TJppPngButtonColorMap;
+begin
+  ColorMap.LoadFromIniFile(FileName, Section, Format);
+  ApplyColorMap(ColorMap);
+end;
+
+
+procedure TJppPngButton.ApplyColorMap(ColorMap: TJppPngButtonColorMap);
+begin
+  SetJppPngButtonColorMap(Self, ColorMap);
+end;
+  {$endregion Color Maps}
+
+
+  {$region ' --------------------------------- misc ------------------------------------ '}
+procedure TJppPngButton.ActionChange(Sender: TObject; CheckDefaults: Boolean);
+begin
+  inherited ActionChange(Sender, CheckDefaults);
+  if Sender is TCustomAction then
+  begin
+    with TCustomAction(Sender) do
+    begin
+      //Copy image from action's imagelist
+      if (pngimage.Empty or FImageFromAction) and (ActionList <> nil) and (ActionList.Images <> nil) and (ImageIndex >= 0) and
+        (ImageIndex < ActionList.Images.Count) then
+      begin
+        CopyImageFromImageList(FPngImage, ActionList.Images, ImageIndex);
+        FImageFromAction := true;
+      end;
+    end;
+  end;
+end;
+
+procedure TJppPngButton.SetAppearance(const Value: TJppButtonAppearance);
+begin
+  FAppearance := Value;
+end;
+
 {$IFDEF DCC}
+procedure TJppPngButton.SetButtonStyle(ADefault: Boolean);
+begin
+  inherited SetButtonStyle(ADefault);
+  if ADefault <> IsFocused then
+  begin
+    IsFocused := ADefault;
+    Refresh;
+  end;
+end;
+{$ENDIF}
 
-{$IFDEF DELPHIXE_OR_BELOW}
-type
-  TThemeServicesHelper = class helper for TThemeServices
-  private
-    function GetEnabled: Boolean;
-  public
-    function GetElementContentRect(DC: HDC; Details: TThemedElementDetails; const BoundingRect: TRect; out ContentRect: TRect): Boolean; overload;
-    property Enabled: Boolean read GetEnabled;
+function TJppPngButton.PngImageStored: Boolean;
+begin
+  Result := not FImageFromAction;
+end;
+
+procedure TJppPngButton.PropsChanged(Sender: TObject);
+begin
+  if csLoading in ComponentState then Exit;
+  Invalidate;
+end;
+
+procedure TJppPngButton.Paint;
+begin
+  //inherited;
+  with FCanvas do
+  begin
+    Brush.Style := bsSolid;
+    Brush.Color := clRed;
+    Rectangle(ClientRect);
+  end;
+end;
+
+procedure TJppPngButton.SetPngImage(const Value: TPngImage);
+begin
+  //This is all neccesary, because you can't assign a nil to a TPngImage
+  if Value = nil then
+  begin
+    FPngImage.Free;
+    FPngImage := TPngImage.Create;
+  end
+  else
+  begin
+    FPngImage.Assign(Value);
   end;
 
-function TThemeServicesHelper.GetElementContentRect(DC: HDC; Details: TThemedElementDetails; const BoundingRect: TRect; out ContentRect: TRect): Boolean;
-begin
-  ContentRect := Self.ContentRect(DC, Details, BoundingRect);
-  Result := true;
+  {$IFDEF DCC}
+  //To work around the gamma-problem
+  with FPngImage do
+    if not Empty and (Header.ColorType in [COLOR_RGB, COLOR_RGBALPHA, COLOR_PALETTE]) then Chunks.RemoveChunk(Chunks.ItemFromClass(TChunkgAMA));
+  {$ENDIF}
+
+  FImageFromAction := False;
+  Repaint;
 end;
 
-function TThemeServicesHelper.GetEnabled: Boolean;
+procedure TJppPngButton.SetPngOptions(const Value: TPngOptions);
 begin
-  Result := ThemesEnabled;
+  if FPngOptions <> Value then
+  begin
+    FPngOptions := Value;
+    Repaint;
+  end;
 end;
 
-function StyleServices: TThemeServices;
+procedure TJppPngButton.SetTagExt(const Value: TJppTagExt);
 begin
-  Result := ThemeServices;
-end;
-{$ENDIF}
-
-{$IFDEF DELPHIXE3_OR_ABOVE}
-class constructor TJppPngButton.Create;
-begin
-  TCustomStyleEngine.RegisterStyleHook(TJppPngButton, TJppPngButtonStyleHook);
+  FTagExt := Value;
 end;
 
-class destructor TJppPngButton.Destroy;
+{$endregion misc}
+
+  {$region ' -------------------------------------- CNDrawItem --------------------------------------- '}
+procedure TJppPngButton.CNDrawItem(var Message: TWMDrawItem);
+
+type
+  TGradientParams = record
+    AngleDegree: Word;
+    Balance: Word;
+    BalanceMode: JPP.Gradient.TDgradBalanceMode;
+    MaxDegrade: Byte;
+    Orientation: JPP.Gradient.TDgradOrientation;
+    SpeedPercent: integer;
+    ColorFrom, ColorTo: TColor;
+  end;
+
+  TDrawingParams = record
+    ColorGradientStart, ColorGradientEnd, Color: TColor;
+    bGradientEnabled: Boolean;
+    GradientType: TJppGradientType;
+    GradientSteps: Byte;
+    Pen: TPen;
+    Font: TFont;
+    UpperGradientParams, BottomGradientParams: TGradientParams;
+    UpperGradientPercent: Byte;
+    BorderToGradientMargin: integer;
+    TransparentBackground: Boolean;
+    TransparentFrame: Boolean;
+  end;
+
+  procedure CopyGradientParams(var GradientParams: TGradientParams; GradientEx: TJppGradientEx);
+  begin
+    if not Assigned(GradientEx) then Exit;
+    GradientParams.AngleDegree := GradientEx.AngleDegree;
+    GradientParams.Balance := GradientEx.Balance;
+    GradientParams.BalanceMode := GradientEx.BalanceMode;
+    GradientParams.MaxDegrade := GradientEx.MaxDegrade;
+    GradientParams.Orientation := GradientEx.Orientation;
+    GradientParams.SpeedPercent := GradientEx.SpeedPercent;
+    GradientParams.ColorFrom := GradientEx.ColorFrom;
+    GradientParams.ColorTo := GradientEx.ColorTo;
+  end;
+
+var
+  PaintRect: TRect;
+  GlyphPos, TextPos: TPoint;
+  IsDown, IsDefault: Boolean;
+  Flags: Cardinal;
+  {$IFDEF DCC}
+  Button: TThemedButton;
+  Details: TThemedElementDetails;
+  {$ENDIF}
+
+  bDown, bDefault: Boolean;
+  R, R2, BgRect: TRect;
+  Canvas: TCanvas;
+  imgDisabled, imgHot: TPngImage;
+  dp: TDrawingParams;
+  xBottomGradientTop: integer;
+  s: string;
+
 begin
-  TCustomStyleEngine.UnRegisterStyleHook(TJppPngButton, TJppPngButtonStyleHook);
+
+
+  if not Appearance.DefaultDrawing then
+  begin
+
+    dp.TransparentBackground := true;
+
+    bDown := Message.DrawItemStruct^.itemState and ODS_SELECTED <> 0;
+    bDefault := Message.DrawItemStruct^.itemState and ODS_FOCUS <> 0;
+
+    Canvas := TCanvas.Create;
+    try
+      {$IFDEF MSWINDOWS}
+      Canvas.Handle := Message.DrawItemStruct^.hDC;
+      {$ELSE}
+      Canvas.Handle := Message.DrawItemStruct^._hDC;
+      {$ENDIF}
+      R := ClientRect;
+
+      with Canvas do
+      begin
+
+        dp.bGradientEnabled := True;
+        dp.TransparentBackground := False;
+        dp.TransparentFrame := False;
+        dp.Pen := Pen;
+        dp.Font := Font;
+
+
+        {$region ' ----------- Disabled, Hot, Down, Focused, Normal ------------ '}
+
+        // Disabled
+        if not Enabled then
+        begin
+          dp.bGradientEnabled := Appearance.Disabled.GradientEnabled;
+          if dp.bGradientEnabled then
+          begin
+            CopyGradientParams(dp.UpperGradientParams, Appearance.Disabled.UpperGradient);
+            CopyGradientParams(dp.BottomGradientParams, Appearance.Disabled.BottomGradient);
+          end;
+          dp.Color := Appearance.Disabled.Color;
+          dp.Pen := Appearance.Disabled.Border;
+          dp.Font := Appearance.Disabled.Font;
+          dp.UpperGradientPercent := Appearance.Disabled.UpperGradientPercent;
+          dp.BorderToGradientMargin := Appearance.Disabled.BorderToGradientMargin;
+          dp.TransparentBackground := Appearance.Disabled.TransparentBackground;
+          dp.TransparentFrame := Appearance.Disabled.TransparentFrame;
+        end
+
+        else
+
+        begin
+
+          // Hot
+          if bOver and (not bDown) then
+          begin
+            dp.bGradientEnabled := Appearance.Hot.GradientEnabled;
+            if dp.bGradientEnabled then
+            begin
+              CopyGradientParams(dp.UpperGradientParams, Appearance.Hot.UpperGradient);
+              CopyGradientParams(dp.BottomGradientParams, Appearance.Hot.BottomGradient);
+            end;
+            dp.Color := Appearance.Hot.Color;
+            dp.Pen := Appearance.Hot.Border;
+            dp.Font := Appearance.Hot.Font;
+            dp.UpperGradientPercent := Appearance.Hot.UpperGradientPercent;
+            dp.BorderToGradientMargin := Appearance.Hot.BorderToGradientMargin;
+            dp.TransparentBackground := Appearance.Hot.TransparentBackground;
+            dp.TransparentFrame := Appearance.Hot.TransparentFrame;
+          end
+
+          // Pressed
+          else if bDown then
+          begin
+            dp.bGradientEnabled := Appearance.Down.GradientEnabled;
+            if dp.bGradientEnabled then
+            begin
+              CopyGradientParams(dp.UpperGradientParams, Appearance.Down.UpperGradient);
+              CopyGradientParams(dp.BottomGradientParams, Appearance.Down.BottomGradient);
+            end;
+            dp.Color := Appearance.Down.Color;
+            dp.Pen := Appearance.Down.Border;
+            dp.Font := Appearance.Down.Font;
+            dp.UpperGradientPercent := Appearance.Down.UpperGradientPercent;
+            dp.BorderToGradientMargin := Appearance.Down.BorderToGradientMargin;
+            dp.TransparentBackground := Appearance.Down.TransparentBackground;
+            dp.TransparentFrame := Appearance.Down.TransparentFrame;
+          end
+
+          // Focused
+          else if Focused then
+          begin
+            dp.bGradientEnabled := Appearance.Focused.GradientEnabled;
+            if dp.bGradientEnabled then
+            begin
+              CopyGradientParams(dp.UpperGradientParams, Appearance.Focused.UpperGradient);
+              CopyGradientParams(dp.BottomGradientParams, Appearance.Focused.BottomGradient);
+            end;
+            dp.Color := Appearance.Focused.Color;
+            dp.Pen := Appearance.Focused.Border;
+            dp.Font := Appearance.Focused.Font;
+            dp.UpperGradientPercent := Appearance.Focused.UpperGradientPercent;
+            dp.BorderToGradientMargin := Appearance.Focused.BorderToGradientMargin;
+            dp.TransparentBackground := Appearance.Focused.TransparentBackground;
+            dp.TransparentFrame := Appearance.Focused.TransparentFrame;
+          end
+
+          else
+
+          // Normal
+          begin
+            dp.bGradientEnabled := Appearance.Normal.GradientEnabled;
+            if dp.bGradientEnabled then
+            begin
+              CopyGradientParams(dp.UpperGradientParams, Appearance.Normal.UpperGradient);
+              CopyGradientParams(dp.BottomGradientParams, Appearance.Normal.BottomGradient);
+            end;
+            dp.Color := Appearance.Normal.Color;
+            dp.Pen := Appearance.Normal.Border;
+            dp.Font := Appearance.Normal.Font;
+            dp.UpperGradientPercent := Appearance.Normal.UpperGradientPercent;
+            dp.BorderToGradientMargin := Appearance.Normal.BorderToGradientMargin;
+            dp.TransparentBackground := Appearance.Normal.TransparentBackground;
+            dp.TransparentFrame := Appearance.Normal.TransparentFrame;
+          end;
+
+        end;
+        {$endregion Disabled, Hot, Down, Focused, Normal}
+
+
+        {$region ' ------- Background --------- '}
+        Brush.Style := bsSolid;
+        Brush.Color := dp.Color;
+        if not dp.TransparentBackground then FillRect(Canvas.ClipRect);
+
+        if dp.bGradientEnabled and (not dp.TransparentBackground) then
+        begin
+
+          // ------------- Upper gradient --------------
+          BgRect := R;
+
+          if dp.BorderToGradientMargin < 0 then dp.BorderToGradientMargin := 0;
+          if dp.UpperGradientPercent > 100 then dp.UpperGradientPercent := 100;
+
+          BgRect.Bottom := Round((dp.UpperGradientPercent * BgRect.Height) / 100);
+
+          BgRect.Left := BgRect.Left + dp.BorderToGradientMargin;
+          BgRect.Right := BgRect.Right - dp.BorderToGradientMargin;
+          BgRect.Top := BgRect.Top + dp.BorderToGradientMargin;
+          xBottomGradientTop := BgRect.Bottom + 0;
+
+          JPP.Gradient.cyGradientFill(
+            Canvas,
+            BgRect,
+            dp.UpperGradientParams.ColorFrom,
+            dp.UpperGradientParams.ColorTo,
+            dp.UpperGradientParams.Orientation,
+            dp.UpperGradientParams.Balance,
+            dp.UpperGradientParams.AngleDegree,
+            dp.UpperGradientParams.BalanceMode,
+            dp.UpperGradientParams.MaxDegrade,
+            dp.UpperGradientParams.SpeedPercent
+          );
+
+          // -------------- Bottom gradient -------------------
+          BgRect := R;
+          BgRect.Left := BgRect.Left + dp.BorderToGradientMargin;
+          BgRect.Right := BgRect.Right - dp.BorderToGradientMargin;
+          BgRect.Bottom := BgRect.Bottom - dp.BorderToGradientMargin;
+          BgRect.Top := xBottomGradientTop;
+
+          JPP.Gradient.cyGradientFill(
+            Canvas,
+            BgRect,
+            dp.BottomGradientParams.ColorFrom,
+            dp.BottomGradientParams.ColorTo,
+            dp.BottomGradientParams.Orientation,
+            dp.BottomGradientParams.Balance,
+            dp.BottomGradientParams.AngleDegree,
+            dp.BottomGradientParams.BalanceMode,
+            dp.BottomGradientParams.MaxDegrade,
+            dp.BottomGradientParams.SpeedPercent
+          );
+
+        end;
+        {$endregion Background}
+
+
+        {$region ' --------- Frame ----------- '}
+        Brush.Style := bsClear;
+
+        if not dp.TransparentFrame then
+        begin
+          if bDefault and Enabled and (not bDown) and (not Focused) then Pen.Assign(Appearance.BorderWhenDefault)
+          else Pen.Assign(dp.Pen);
+          JppFrame3D(Canvas, R, Pen.Color, Pen.Width);
+        end;
+        {$endregion Frame}
+
+
+        {$region ' --------- Focus Rectangle ----------- '}
+        if Focused and (not dp.TransparentFrame) then
+        begin
+
+          if Appearance.FocusRect.FocusType = frtNone then
+          begin
+            // do not draw the focus rectangle
+          end
+          else
+          begin
+            R2 := R;
+            InflateRect(R2, -Appearance.FocusRect.Spacing, -Appearance.FocusRect.Spacing);
+
+            if Appearance.FocusRect.FocusType = frtCustom then
+            begin
+              Brush.Style := bsClear;
+              Pen.Assign(Appearance.FocusRect.Pen);
+              JppFrame3D(Canvas, R2, Pen.Color, Pen.Width);
+            end
+            else if Appearance.FocusRect.FocusType = frtSystem then
+            begin
+              Brush.Style := bsSolid;
+              Brush.Color := clBtnFace;
+              DrawFocusRect(R2);
+            end;
+          end;
+
+        end;
+        {$endregion Focus rectangle}
+
+
+        {$region ' --------------- PNG --------------- '}
+        Canvas.Font := dp.Font; // <-- potrzebne aby dopasowaæ pozycjê obrazka i tekstu
+        if Appearance.ShowCaption then s := Caption else s := '';
+
+        CalcButtonLayout(
+          Canvas, FPngImage, ClientRect, bDown and Appearance.MoveWhenDown, False, s, Layout, Margin, Spacing, GlyphPos, TextPos,
+          {$IFDEF DCC}DrawTextBiDiModeFlags(0){$ELSE}0{$ENDIF}
+        );
+
+        if (FPngImage <> nil) {and (Kind = bkCustom)} and not FPngImage.Empty then
+        begin
+          PaintRect := Bounds(GlyphPos.X, GlyphPos.Y, FPngImage.Width, FPngImage.Height);
+
+          if Enabled and (bOver or bDown) then
+          begin
+            imgHot := TPngImage.Create;
+            try
+              imgHot.Assign(FPngImage);
+              PngSetGamma(imgHot, Appearance.GlyphHotGammaFactor / 100);
+              Draw(GlyphPos.X, GlyphPos.Y, imgHot)
+            finally
+              imgHot.Free;
+            end;
+          end
+
+          else if Enabled then Draw(GlyphPos.X, GlyphPos.Y, FPngImage)
+
+          else
+          // disabled
+          begin
+            imgDisabled := TPngImage.Create;
+            try
+              imgDisabled.Assign(FPngImage);
+              MakeImageGrayscale(imgDisabled, Appearance.GlyphDisabledGrayscaleFactor);
+              MakeImageBlended(imgDisabled, Appearance.GlyphDisabledBlendFactor);
+              Draw(GlyphPos.X, GlyphPos.Y, imgDisabled)
+            finally
+              imgDisabled.Free;
+            end;
+          end;
+
+        end;
+        {$endregion PNG}
+
+
+        {$region ' -------------- Caption ------------- '}
+        if Appearance.ShowCaption and (Length(Caption) > 0) then
+        begin
+          PaintRect := Rect(TextPos.X, TextPos.Y, Width, Height);
+          Canvas.Brush.Style := bsClear;
+          DrawText(
+            Canvas.Handle, PChar(Caption), -1, PaintRect,
+            {$IFDEF DCC}DrawTextBiDiModeFlags(0) or {$ENDIF} DT_TOP or DT_LEFT or DT_SINGLELINE
+          );
+        end;
+        {$endregion Caption}
+
+
+
+      end; // with Canvas
+
+
+
+    finally
+      Canvas.Free;
+    end;
+
+
+  end
+
+
+
+  else
+
+
+  {$region ' --------------------- Deafult Drawing -------------------------- '}
+
+  begin
+
+    R := ClientRect;
+    FCanvas.Handle := Message.DrawItemStruct^.{$IFDEF MSWINDOWS}HDC{$ELSE}_hDC{$ENDIF};
+    FCanvas.Font := Self.Font;
+    IsDown := Message.DrawItemStruct^.itemState and ODS_SELECTED <> 0;   //IsDown := False;
+    IsDefault := Message.DrawItemStruct^.itemState and ODS_FOCUS <> 0;
+
+
+    //Draw border
+    {$IFDEF DELPHIXE2_OR_ABOVE}
+    if StyleServices.Enabled then
+    begin
+      //Themed border
+      if not Enabled then Button := tbPushButtonDisabled
+      else if IsDown then Button := tbPushButtonPressed
+      else if FMouseInControl then Button := tbPushButtonHot
+      else if IsFocused or IsDefault then Button := tbPushButtonDefaulted
+      else Button := tbPushButtonNormal;
+
+      //Paint the background, border, and finally get the inner rect
+      Details := StyleServices.GetElementDetails(Button);
+      StyleServices.DrawParentBackground(Handle, Message.DrawItemStruct.HDC, @Details, true);
+      StyleServices.DrawElement(Message.DrawItemStruct.HDC, Details, Message.DrawItemStruct.rcItem);
+      StyleServices.GetElementContentRect(FCanvas.Handle, Details, Message.DrawItemStruct.rcItem, R);
+    end
+
+    else
+    {$ENDIF}
+
+    begin
+
+      //Draw the outer border, when focused
+      if IsFocused or IsDefault then
+      begin
+        FCanvas.Pen.Color := clWindowFrame;
+        FCanvas.Pen.Width := 1;
+        FCanvas.Brush.Style := bsClear;
+        FCanvas.Rectangle(R.Left, R.Top, R.Right, R.Bottom);
+        InflateRect(R, -1, -1);
+      end;
+
+      //Draw the inner border
+      if IsDown then
+      begin
+        FCanvas.Pen.Color := clBtnShadow;
+        FCanvas.Pen.Width := 1;
+        FCanvas.Brush.Color := clBtnFace;
+        FCanvas.Rectangle(R.Left, R.Top, R.Right, R.Bottom);
+        InflateRect(R, -1, -1);
+      end
+
+      else
+
+      begin
+        Flags := DFCS_BUTTONPUSH or DFCS_ADJUSTRECT;
+        if Message.DrawItemStruct.itemState and ODS_DISABLED <> 0 then Flags := Flags or DFCS_INACTIVE;
+        DrawFrameControl(Message.DrawItemStruct^.{$IFDEF MSWINDOWS}HDC{$ELSE}_hDC{$ENDIF}, R, DFC_BUTTON, Flags);
+      end;
+
+
+      //Adjust the rect when focused and/or down
+      if IsFocused then
+      begin
+        R := ClientRect;
+        InflateRect(R, -1, -1);
+      end;
+
+      if IsDown then OffsetRect(R, 1, 1);
+    end;
+
+
+
+    //Calculate the position of the PNG glyph
+    if Appearance.ShowCaption then s := Caption else s := '';
+
+    if not FAppearance.MoveWhenDown then
+      CalcButtonLayout(
+        FCanvas, FPngImage, ClientRect, False, False, s, Layout, Margin, Spacing, GlyphPos, TextPos,
+        {$IFDEF DCC}DrawTextBiDiModeFlags(0){$ELSE}0{$ENDIF}
+      )
+    else
+      CalcButtonLayout(
+        FCanvas, FPngImage, ClientRect, IsDown, False, s, Layout, Margin, Spacing, GlyphPos, TextPos,
+        {$IFDEF DCC}DrawTextBiDiModeFlags(0){$ELSE}0{$ENDIF}
+      );
+
+    //Draw the image
+    if (FPngImage <> nil) and (Kind = bkCustom) and not FPngImage.Empty then
+    begin
+      PaintRect := Bounds(GlyphPos.X, GlyphPos.Y, FPngImage.Width, FPngImage.Height);
+      if Enabled then DrawPNG(FPngImage, FCanvas, PaintRect, [])
+      else DrawPNG(FPngImage, FCanvas, PaintRect, FPngOptions);
+    end;
+
+    //Draw the text
+    if Appearance.ShowCaption and (Length(Caption) > 0) then
+    begin
+      PaintRect := Rect(TextPos.X, TextPos.Y, Width, Height);
+      FCanvas.Brush.Style := bsClear;
+      //grayed Caption when disabled
+      if not Enabled then
+      begin
+        OffsetRect(PaintRect, 1, 1);
+        FCanvas.Font.Color := clBtnHighlight;
+        DrawText(FCanvas.Handle, PChar(Caption), -1, PaintRect, {$IFDEF DCC}DrawTextBiDiModeFlags(0) or {$ENDIF} DT_TOP or DT_LEFT or DT_SINGLELINE);
+        OffsetRect(PaintRect, -1, -1);
+        FCanvas.Font.Color := clBtnShadow;
+      end;
+      DrawText(FCanvas.Handle, PChar(Caption), -1, PaintRect, {$IFDEF DCC}DrawTextBiDiModeFlags(0) or {$ENDIF} DT_TOP or DT_LEFT or DT_SINGLELINE);
+    end;
+
+    //Draw the focus rectangle
+    if IsFocused and IsDefault then
+    begin
+      {$IFDEF DELPHIXE2_OR_ABOVE} if not StyleServices.Enabled then {$ENDIF}
+      begin
+        R := ClientRect;
+        InflateRect(R, -3, -3);
+      end;
+      FCanvas.Pen.Color := clWindowFrame;
+      FCanvas.Brush.Color := clBtnFace;
+      DrawFocusRect(FCanvas.Handle, R);
+    end;
+
+    FLastKind := Kind;
+    FCanvas.Handle := 0;
+
+  end;
+  {$endregion Default Drawing}
+
+
+  //{$IFDEF FPC}Invalidate;{$ENDIF}
 end;
-{$ENDIF}
-
-{$ENDIF}
-{$endregion Themes}
+  {$endregion CNDrawItem}
 
 
-
-{$region ' -------------------- TJppItemStateParams ------------------------ '}
-constructor TJppItemStateParams.Create(AOwner: TComponent);
+  {$region ' ---------------------- Mouse Enter & Leave --------------------------- '}
+procedure TJppPngButton.SetOnMouseEnter(const Value: TNotifyEvent);
 begin
-  inherited Create;
-  //FGradient := TJppGradient.Create(AOwner);
-  FUpperGradient := TJppGradientEx.Create(AOwner);
-  FBottomGradient := TJppGradientEx.Create(AOwner);
-  FGradientEnabled := True;
-  FBorderToGradientMargin := 2;
-  FFont := TFont.Create;
-  FBorder := TPen.Create;
-  FTransparentBackground := False;
-  FTransparentFrame := False;
-
-  FUpperGradient.OnChange := PropsChanged;
-  FBottomGradient.OnChange := PropsChanged;
-  FFont.OnChange := PropsChanged;
-  FBorder.OnChange := PropsChanged;
+  FOnMouseEnter := Value;
 end;
 
-destructor TJppItemStateParams.Destroy;
+procedure TJppPngButton.SetOnMouseLeave(const Value: TNotifyEvent);
 begin
-  //FGradient.Free;
-  FUpperGradient.Free;
-  FBottomGradient.Free;
-  FFont.Free;
-  FBorder.Free;
+  FOnMouseLeave := Value;
+end;
+
+procedure TJppPngButton.CMMouseEnter(var Message: TMessage);
+begin
   inherited;
+  bOver := True;
+  {$IFDEF DELPHIXE2_OR_ABOVE}
+  if StyleServices.Enabled and not FMouseInControl and not(csDesigning in ComponentState) then
+  begin
+    FMouseInControl := True;
+    Repaint;
+  end
+  else
+  {$ENDIF}
+  begin
+    if csDesigning in ComponentState then Exit;
+    if Assigned(FOnMouseEnter) then OnMouseEnter(Self);
+    Repaint;
+  end;
 end;
 
-procedure TJppItemStateParams.PropsChanged(Sender: TObject);
+procedure TJppPngButton.CMMouseLeave(var Message: TMessage);
 begin
-  if Assigned(OnChange) then OnChange(Self);
+  inherited;
+  bOver := False;
+  {$IFDEF DELPHIXE2_OR_ABOVE}
+  if StyleServices.Enabled and FMouseInControl then
+  begin
+    FMouseInControl := False;
+    Repaint;
+  end
+  else
+  {$ENDIF}
+  begin
+    if csDesigning in ComponentState then Exit;
+    if Assigned(FOnMouseLeave) then OnMouseLeave(Self);
+    Repaint;
+  end;
 end;
-
-procedure TJppItemStateParams.SetBorder(const Value: TPen);
-begin
-  FBorder := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppItemStateParams.SetBorderToGradientMargin(const Value: integer);
-begin
-  FBorderToGradientMargin := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppItemStateParams.SetBottomGradient(const Value: TJppGradientEx);
-begin
-  FBottomGradient := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppItemStateParams.SetColor(const Value: TColor);
-begin
-  FColor := Value;
-  PropsChanged(Self);
-end;
+  {$endregion Mouse Enter & Leave}
 
 
-procedure TJppItemStateParams.SetFont(const Value: TFont);
-begin
-  //FFont := Value;
-  FFont.Assign(Value);
-  PropsChanged(Self);
-end;
-
-procedure TJppItemStateParams.SetGradientEnabled(const Value: Boolean);
-begin
-  FGradientEnabled := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppItemStateParams.SetOnChange(const Value: TNotifyEvent);
-begin
-  FOnChange := Value;
-end;
-
-procedure TJppItemStateParams.SetTransparentBackground(const Value: Boolean);
-begin
-  FTransparentBackground := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppItemStateParams.SetTransparentFrame(const Value: Boolean);
-begin
-  FTransparentFrame := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppItemStateParams.SetUpperGradient(const Value: TJppGradientEx);
-begin
-  FUpperGradient := Value;
-  PropsChanged(Self);
-end;
-
-procedure TJppItemStateParams.SetUpperGradientPercent(const Value: Byte);
-begin
-  FUpperGradientPercent := Value;
-  PropsChanged(Self);
-end;
-
-{$endregion}
-
+{$endregion TJppPngButton}
 
 
 {$region ' -------------------- TJppButtonAppearance --------------------- '}
@@ -554,7 +1159,6 @@ begin
   FDown.BottomGradient.ColorTo := $00DFB972;
   FDown.Border.Color := GetSimilarColor(FHot.Border.Color , 50, False);
   FDown.UpperGradientPercent := 52;
-  //FDown.BorderToGradientMargin := 0;
   FDown.Font.Color := 0;
 
   FDisabled := TJppItemStateParams.Create(AOwner);
@@ -571,7 +1175,6 @@ begin
   FFocusRect.Pen.Color := $00D0AA24;
 
   FBorderWhenDefault := TPen.Create;
-  //FBorderWhenDefault.Width := 3;
   FBorderWhenDefault.Color := $00D0AA24; // FNormal.Border.Color;
 
   FGlyphDisabledGrayscaleFactor := 255;
@@ -766,777 +1369,157 @@ begin
   PropsChanged(Self);
 end;
 
-{$endregion}
+{$endregion TJppButtonAppearance}
 
 
-
-{$region ' ------------------------------- TJppPngButton ------------------------------------- '}
-
-  {$region ' ---------------------- Cretae & Destroy ----------------------------- '}
-constructor TJppPngButton.Create(AOwner: TComponent);
+{$region ' -------------------- TJppItemStateParams ------------------------ '}
+constructor TJppItemStateParams.Create(AOwner: TComponent);
 begin
-  inherited Create(AOwner);
-  FPngImage := TPngImage.Create;
-  FPngOptions := [pngBlendOnDisabled];
-  FCanvas := TCanvas.Create;
-  FLastKind := bkCustom;
-  FImageFromAction := False;
-  FTagExt := TJppTagExt.Create(Self);
-  FAppearance := TJppButtonAppearance.Create(Self);
-  FAppearance.OnChange := PropsChanged;
-  FColorMapType := cmtCustom;
-  FAnchoredControls := TJppAnchoredControls.Create(Self);
+  inherited Create;
+  FUpperGradient := TJppGradientEx.Create(AOwner);
+  FBottomGradient := TJppGradientEx.Create(AOwner);
+  FGradientEnabled := True;
+  FBorderToGradientMargin := 2;
+  FFont := TFont.Create;
+  FBorder := TPen.Create;
+  FTransparentBackground := False;
+  FTransparentFrame := False;
 
-  bOver := False;
+  FUpperGradient.OnChange := PropsChanged;
+  FBottomGradient.OnChange := PropsChanged;
+  FFont.OnChange := PropsChanged;
+  FBorder.OnChange := PropsChanged;
 end;
 
-destructor TJppPngButton.Destroy;
+destructor TJppItemStateParams.Destroy;
 begin
-  FPngImage.Free;
-  FCanvas.Free;
-  FTagExt.Free;
-  FAppearance.Free;
-  FAnchoredControls.Free;
-  inherited Destroy;
-end;
-  {$endregion Create & Destroy}
-
-
-procedure TJppPngButton.SetAnchoredControls(const Value: TJppAnchoredControls);
-begin
-  FAnchoredControls := Value;
-end;
-
-procedure TJppPngButton.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
-begin
+  FUpperGradient.Free;
+  FBottomGradient.Free;
+  FFont.Free;
+  FBorder.Free;
   inherited;
-  if not (csDestroying in ComponentState) then
-    if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
 end;
 
-procedure TJppPngButton.Notification(AComponent: TComponent; Operation: TOperation);
+procedure TJppItemStateParams.PropsChanged(Sender: TObject);
 begin
-  inherited;
-  if Operation = opRemove then
-    if not (csDestroying in ComponentState) then
-      if Assigned(FAnchoredControls) then
-      begin
-        if AComponent = FAnchoredControls.Top.Control then FAnchoredControls.Top.Control := nil
-        else if AComponent = FAnchoredControls.Bottom.Control then FAnchoredControls.Bottom.Control := nil
-        else if AComponent = FAnchoredControls.Left.Control then FAnchoredControls.Left.Control := nil
-        else if AComponent = FAnchoredControls.Right.Control then FAnchoredControls.Right.Control := nil;
-      end;
+  if Assigned(OnChange) then OnChange(Self);
 end;
 
-
-  {$region ' ---------------------- Color Maps -------------------------- '}
-
-procedure TJppPngButton.SetColorMapType(const Value: TJppPngButtonColorMapType);
-var
-  ColorMap: TJppPngButtonColorMap;
+procedure TJppItemStateParams.SetBorder(const Value: TPen);
 begin
-  FColorMapType := Value;
-  if Value = cmtCustom then Exit;
-
-  GetJppPngButtonColorMap(Self, ColorMap);
-  GetJppPngButtonColorMapByType(Value, ColorMap);
-  ApplyColorMap(ColorMap);
+  FBorder := Value;
+  PropsChanged(Self);
 end;
 
-procedure TJppPngButton.SaveColorMapToIniFile(FileName: string; Section: string; Format: TJppPngButtonIniColorFormat);
-var
-  ColorMap: TJppPngButtonColorMap;
+procedure TJppItemStateParams.SetBorderToGradientMargin(const Value: integer);
 begin
-  GetJppPngButtonColorMap(Self, ColorMap);
-  ColorMap.SaveToIniFile(FileName, Section, Format);
+  FBorderToGradientMargin := Value;
+  PropsChanged(Self);
 end;
 
-procedure TJppPngButton.LoadColorMapFromIniFile(FileName: string; Section: string = COLORMAP_DEFAULT_INI_SECTION; Format: TJppPngButtonIniColorFormat = icfDefault);
-var
-  ColorMap: TJppPngButtonColorMap;
+procedure TJppItemStateParams.SetBottomGradient(const Value: TJppGradientEx);
 begin
-  ColorMap.LoadFromIniFile(FileName, Section, Format);
-  ApplyColorMap(ColorMap);
+  FBottomGradient := Value;
+  PropsChanged(Self);
 end;
 
-
-procedure TJppPngButton.ApplyColorMap(ColorMap: TJppPngButtonColorMap);
+procedure TJppItemStateParams.SetColor(const Value: TColor);
 begin
-  SetJppPngButtonColorMap(Self, ColorMap);
+  FColor := Value;
+  PropsChanged(Self);
 end;
-  {$endregion}
 
 
-  {$region ' --------------------------------- misc ------------------------------------ '}
-procedure TJppPngButton.ActionChange(Sender: TObject; CheckDefaults: Boolean);
+procedure TJppItemStateParams.SetFont(const Value: TFont);
 begin
-  inherited ActionChange(Sender, CheckDefaults);
-  if Sender is TCustomAction then
-  begin
-    with TCustomAction(Sender) do
-    begin
-      //Copy image from action's imagelist
-      if (pngimage.Empty or FImageFromAction) and (ActionList <> nil) and (ActionList.Images <> nil) and (ImageIndex >= 0) and
-        (ImageIndex < ActionList.Images.Count) then
-      begin
-        CopyImageFromImageList(FPngImage, ActionList.Images, ImageIndex);
-        FImageFromAction := true;
-      end;
-    end;
-  end;
+  FFont.Assign(Value);
+  PropsChanged(Self);
 end;
 
-procedure TJppPngButton.SetAppearance(const Value: TJppButtonAppearance);
+procedure TJppItemStateParams.SetGradientEnabled(const Value: Boolean);
 begin
-  FAppearance := Value;
+  FGradientEnabled := Value;
+  PropsChanged(Self);
 end;
+
+procedure TJppItemStateParams.SetOnChange(const Value: TNotifyEvent);
+begin
+  FOnChange := Value;
+end;
+
+procedure TJppItemStateParams.SetTransparentBackground(const Value: Boolean);
+begin
+  FTransparentBackground := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppItemStateParams.SetTransparentFrame(const Value: Boolean);
+begin
+  FTransparentFrame := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppItemStateParams.SetUpperGradient(const Value: TJppGradientEx);
+begin
+  FUpperGradient := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppItemStateParams.SetUpperGradientPercent(const Value: Byte);
+begin
+  FUpperGradientPercent := Value;
+  PropsChanged(Self);
+end;
+
+{$endregion TJppItemStateParams}
+
+
+{$region ' ---------------- Themes ------------------------- '}
 
 {$IFDEF DCC}
-procedure TJppPngButton.SetButtonStyle(ADefault: Boolean);
-begin
-  inherited SetButtonStyle(ADefault);
-  if ADefault <> IsFocused then
-  begin
-    IsFocused := ADefault;
-    Refresh;
+
+{$IFDEF DELPHIXE_OR_BELOW}
+type
+  TThemeServicesHelper = class helper for TThemeServices
+  private
+    function GetEnabled: Boolean;
+  public
+    function GetElementContentRect(DC: HDC; Details: TThemedElementDetails; const BoundingRect: TRect; out ContentRect: TRect): Boolean; overload;
+    property Enabled: Boolean read GetEnabled;
   end;
+
+function TThemeServicesHelper.GetElementContentRect(DC: HDC; Details: TThemedElementDetails; const BoundingRect: TRect; out ContentRect: TRect): Boolean;
+begin
+  ContentRect := Self.ContentRect(DC, Details, BoundingRect);
+  Result := true;
+end;
+
+function TThemeServicesHelper.GetEnabled: Boolean;
+begin
+  Result := ThemesEnabled;
+end;
+
+function StyleServices: TThemeServices;
+begin
+  Result := ThemeServices;
 end;
 {$ENDIF}
 
-function TJppPngButton.PngImageStored: Boolean;
+{$IFDEF DELPHIXE3_OR_ABOVE}
+class constructor TJppPngButton.Create;
 begin
-  Result := not FImageFromAction;
+  TCustomStyleEngine.RegisterStyleHook(TJppPngButton, TJppPngButtonStyleHook);
 end;
 
-procedure TJppPngButton.PropsChanged(Sender: TObject);
+class destructor TJppPngButton.Destroy;
 begin
-  if csLoading in ComponentState then Exit;
-  Invalidate;
+  TCustomStyleEngine.UnRegisterStyleHook(TJppPngButton, TJppPngButtonStyleHook);
 end;
+{$ENDIF}
 
-procedure TJppPngButton.Paint;
-begin
-  //inherited;
-  with FCanvas do
-  begin
-    Brush.Style := bsSolid;
-    Brush.Color := clRed;
-    Rectangle(ClientRect);
-  end;
-end;
+{$ENDIF} // DCC
 
-procedure TJppPngButton.SetPngImage(const Value: TPngImage);
-begin
-  //This is all neccesary, because you can't assign a nil to a TPngImage
-  if Value = nil then
-  begin
-    FPngImage.Free;
-    FPngImage := TPngImage.Create;
-  end
-  else
-  begin
-    FPngImage.Assign(Value);
-  end;
-
-  {$IFDEF DCC}
-  //To work around the gamma-problem
-  with FPngImage do
-    if not Empty and (Header.ColorType in [COLOR_RGB, COLOR_RGBALPHA, COLOR_PALETTE]) then Chunks.RemoveChunk(Chunks.ItemFromClass(TChunkgAMA));
-  {$ENDIF}
-
-  FImageFromAction := False;
-  Repaint;
-end;
-
-procedure TJppPngButton.SetPngOptions(const Value: TPngOptions);
-begin
-  if FPngOptions <> Value then
-  begin
-    FPngOptions := Value;
-    Repaint;
-  end;
-end;
-
-procedure TJppPngButton.SetTagExt(const Value: TJppTagExt);
-begin
-  FTagExt := Value;
-end;
-
-{$endregion misc}
-
-  {$region ' -------------------------------------- CNDrawItem --------------------------------------- '}
-procedure TJppPngButton.CNDrawItem(var Message: TWMDrawItem);
-
-type
-  TGradientParams = record
-    AngleDegree: Word;
-    Balance: Word;
-    BalanceMode: JPP.Gradient.TDgradBalanceMode;
-    MaxDegrade: Byte;
-    Orientation: JPP.Gradient.TDgradOrientation;
-    SpeedPercent: integer;
-    ColorFrom, ColorTo: TColor;
-  end;
-
-  TDrawingParams = record
-    ColorGradientStart, ColorGradientEnd, Color: TColor;
-    bGradientEnabled: Boolean;
-    GradientType: TJppGradientType;
-    GradientSteps: Byte;
-    Pen: TPen;
-    Font: TFont;
-    UpperGradientParams, BottomGradientParams: TGradientParams;
-    UpperGradientPercent: Byte;
-    BorderToGradientMargin: integer;
-    TransparentBackground: Boolean;
-    TransparentFrame: Boolean;
-  end;
-
-  procedure CopyGradientParams(var GradientParams: TGradientParams; GradientEx: TJppGradientEx);
-  begin
-    if not Assigned(GradientEx) then Exit;
-    GradientParams.AngleDegree := GradientEx.AngleDegree;
-    GradientParams.Balance := GradientEx.Balance;
-    GradientParams.BalanceMode := GradientEx.BalanceMode;
-    GradientParams.MaxDegrade := GradientEx.MaxDegrade;
-    GradientParams.Orientation := GradientEx.Orientation;
-    GradientParams.SpeedPercent := GradientEx.SpeedPercent;
-    GradientParams.ColorFrom := GradientEx.ColorFrom;
-    GradientParams.ColorTo := GradientEx.ColorTo;
-  end;
-
-var
-  PaintRect: TRect;
-  GlyphPos, TextPos: TPoint;
-  IsDown, IsDefault: Boolean;
-  Flags: Cardinal;
-  {$IFDEF DCC}
-  Button: TThemedButton;
-  Details: TThemedElementDetails;
-  {$ENDIF}
-
-  bDown, bDefault: Boolean;
-  R, R2, BgRect: TRect;
-  Canvas: TCanvas;
-  //xRound: integer;
-  imgDisabled, imgHot: TPngImage;
-  dp: TDrawingParams;
-  xBottomGradientTop: integer;
-  s: string;
-
-begin
-
-
-  if not Appearance.DefaultDrawing then
-  begin
-
-
-    //xRound := 0;
-    dp.TransparentBackground := true;
-
-    bDown := Message.DrawItemStruct^.itemState and ODS_SELECTED <> 0;
-    bDefault := Message.DrawItemStruct^.itemState and ODS_FOCUS <> 0;
-
-    Canvas := TCanvas.Create;
-    try
-      {$IFDEF MSWINDOWS}
-      Canvas.Handle := Message.DrawItemStruct^.hDC;
-      {$ELSE}
-      Canvas.Handle := Message.DrawItemStruct^._hDC;
-      {$ENDIF}
-      R := ClientRect;
-
-      with Canvas do
-      begin
-
-        //RectWidth := R.Right - R.Left; // rect width
-        //RectHeight := R.Bottom - R.Top; // rect height
-
-        dp.bGradientEnabled := True;
-        dp.TransparentBackground := False;
-        dp.TransparentFrame := False;
-        dp.Pen := Pen;
-        dp.Font := Font;
-
-
-        {$region ' ----------- Disabled, Hot, Down, Focused, Normal ------------ '}
-        // Disabled
-        if not Enabled then
-        begin
-          dp.bGradientEnabled := Appearance.Disabled.GradientEnabled;
-          if dp.bGradientEnabled then
-          begin
-            CopyGradientParams(dp.UpperGradientParams, Appearance.Disabled.UpperGradient);
-            CopyGradientParams(dp.BottomGradientParams, Appearance.Disabled.BottomGradient);
-          end;
-          dp.Color := Appearance.Disabled.Color;
-          dp.Pen := Appearance.Disabled.Border;
-          dp.Font := Appearance.Disabled.Font;
-          dp.UpperGradientPercent := Appearance.Disabled.UpperGradientPercent;
-          dp.BorderToGradientMargin := Appearance.Disabled.BorderToGradientMargin;
-          dp.TransparentBackground := Appearance.Disabled.TransparentBackground;
-          dp.TransparentFrame := Appearance.Disabled.TransparentFrame;
-        end
-
-        else
-
-        begin
-
-
-          // Hot
-          if bOver and (not bDown) then
-          begin
-            dp.bGradientEnabled := Appearance.Hot.GradientEnabled;
-            if dp.bGradientEnabled then
-            begin
-              CopyGradientParams(dp.UpperGradientParams, Appearance.Hot.UpperGradient);
-              CopyGradientParams(dp.BottomGradientParams, Appearance.Hot.BottomGradient);
-            end;
-            dp.Color := Appearance.Hot.Color;
-            dp.Pen := Appearance.Hot.Border;
-            dp.Font := Appearance.Hot.Font;
-            dp.UpperGradientPercent := Appearance.Hot.UpperGradientPercent;
-            dp.BorderToGradientMargin := Appearance.Hot.BorderToGradientMargin;
-            dp.TransparentBackground := Appearance.Hot.TransparentBackground;
-            dp.TransparentFrame := Appearance.Hot.TransparentFrame;
-          end
-
-          // Pressed
-          else if bDown then
-          begin
-            dp.bGradientEnabled := Appearance.Down.GradientEnabled;
-            if dp.bGradientEnabled then
-            begin
-              CopyGradientParams(dp.UpperGradientParams, Appearance.Down.UpperGradient);
-              CopyGradientParams(dp.BottomGradientParams, Appearance.Down.BottomGradient);
-            end;
-            dp.Color := Appearance.Down.Color;
-            dp.Pen := Appearance.Down.Border;
-            dp.Font := Appearance.Down.Font;
-            dp.UpperGradientPercent := Appearance.Down.UpperGradientPercent;
-            dp.BorderToGradientMargin := Appearance.Down.BorderToGradientMargin;
-            dp.TransparentBackground := Appearance.Down.TransparentBackground;
-            dp.TransparentFrame := Appearance.Down.TransparentFrame;
-          end
-
-          // Focused
-          else if Focused then
-          begin
-            dp.bGradientEnabled := Appearance.Focused.GradientEnabled;
-            if dp.bGradientEnabled then
-            begin
-              CopyGradientParams(dp.UpperGradientParams, Appearance.Focused.UpperGradient);
-              CopyGradientParams(dp.BottomGradientParams, Appearance.Focused.BottomGradient);
-            end;
-            dp.Color := Appearance.Focused.Color;
-            dp.Pen := Appearance.Focused.Border;
-            dp.Font := Appearance.Focused.Font;
-            dp.UpperGradientPercent := Appearance.Focused.UpperGradientPercent;
-            dp.BorderToGradientMargin := Appearance.Focused.BorderToGradientMargin;
-            dp.TransparentBackground := Appearance.Focused.TransparentBackground;
-            dp.TransparentFrame := Appearance.Focused.TransparentFrame;
-          end
-
-          else
-
-          // Normal
-          begin
-            dp.bGradientEnabled := Appearance.Normal.GradientEnabled;
-            if dp.bGradientEnabled then
-            begin
-              CopyGradientParams(dp.UpperGradientParams, Appearance.Normal.UpperGradient);
-              CopyGradientParams(dp.BottomGradientParams, Appearance.Normal.BottomGradient);
-            end;
-            dp.Color := Appearance.Normal.Color;
-            dp.Pen := Appearance.Normal.Border;
-            dp.Font := Appearance.Normal.Font;
-            dp.UpperGradientPercent := Appearance.Normal.UpperGradientPercent;
-            dp.BorderToGradientMargin := Appearance.Normal.BorderToGradientMargin;
-            dp.TransparentBackground := Appearance.Normal.TransparentBackground;
-            dp.TransparentFrame := Appearance.Normal.TransparentFrame;
-          end;
-
-
-        end;
-        {$endregion Disabled, Hot, Down, Focused, Normal}
-
-
-        {$region ' ------- Background --------- '}
-        // -------------------------------------- BACKGROUND ---------------------------------------
-
-        //Pen.Style := psClear;
-        Brush.Style := bsSolid;
-        Brush.Color := dp.Color;
-        if not dp.TransparentBackground then FillRect(Canvas.ClipRect);
-
-        if dp.bGradientEnabled and (not dp.TransparentBackground) then
-        begin
-
-          // ------------- Upper gradient --------------
-          BgRect := R;
-
-          if dp.BorderToGradientMargin < 0 then dp.BorderToGradientMargin := 0;
-          if dp.UpperGradientPercent > 100 then dp.UpperGradientPercent := 100;
-
-          BgRect.Bottom := Round((dp.UpperGradientPercent * BgRect.Height) / 100);
-
-          BgRect.Left := BgRect.Left + dp.BorderToGradientMargin;
-          BgRect.Right := BgRect.Right - dp.BorderToGradientMargin;
-          BgRect.Top := BgRect.Top + dp.BorderToGradientMargin;
-          xBottomGradientTop := BgRect.Bottom + 0;
-
-          JPP.Gradient.cyGradientFill(
-            Canvas,
-            BgRect,
-            dp.UpperGradientParams.ColorFrom,
-            dp.UpperGradientParams.ColorTo,
-            dp.UpperGradientParams.Orientation,
-            dp.UpperGradientParams.Balance,
-            dp.UpperGradientParams.AngleDegree,
-            dp.UpperGradientParams.BalanceMode,
-            dp.UpperGradientParams.MaxDegrade,
-            dp.UpperGradientParams.SpeedPercent
-          );
-
-          // -------------- Bottom gradient -------------------
-          BgRect := R;
-          BgRect.Left := BgRect.Left + dp.BorderToGradientMargin;
-          BgRect.Right := BgRect.Right - dp.BorderToGradientMargin;
-          BgRect.Bottom := BgRect.Bottom - dp.BorderToGradientMargin;
-          BgRect.Top := xBottomGradientTop;
-
-          JPP.Gradient.cyGradientFill(
-            Canvas,
-            BgRect,
-            dp.BottomGradientParams.ColorFrom,
-            dp.BottomGradientParams.ColorTo,
-            dp.BottomGradientParams.Orientation,
-            dp.BottomGradientParams.Balance,
-            dp.BottomGradientParams.AngleDegree,
-            dp.BottomGradientParams.BalanceMode,
-            dp.BottomGradientParams.MaxDegrade,
-            dp.BottomGradientParams.SpeedPercent
-          );
-
-        end;
-        {$endregion Background}
-
-
-        {$region ' --------- Frame ----------- '}
-        // ----------------------------------------- FRAME -----------------------------------------
-
-        Brush.Style := bsClear;
-
-        if not dp.TransparentFrame then
-        begin
-          if bDefault and Enabled and (not bDown) and (not Focused) then Pen.Assign(Appearance.BorderWhenDefault)
-          else Pen.Assign(dp.Pen);
-          JppFrame3D(Canvas, R, Pen.Color, Pen.Width);
-          //RoundRect(R, xRound, xRound);
-        end;
-        {$endregion Frame}
-
-
-        {$region ' --------- Focus Rectangle ----------- '}
-        // ---------------------------------------- FOCUS RECTANGLE ----------------------------------------
-
-        if Focused and (not dp.TransparentFrame) then
-        begin
-
-          if Appearance.FocusRect.FocusType = frtNone then
-          begin
-            // do not draw the focus rectangle
-          end
-          else
-          begin
-            R2 := R;
-            InflateRect(R2, -Appearance.FocusRect.Spacing, -Appearance.FocusRect.Spacing);
-
-            if Appearance.FocusRect.FocusType = frtCustom then
-            begin
-              Brush.Style := bsClear;
-              Pen.Assign(Appearance.FocusRect.Pen);
-              JppFrame3D(Canvas, R2, Pen.Color, Pen.Width);
-              //RoundRect(R2, xRound, xRound);
-            end
-            else if Appearance.FocusRect.FocusType = frtSystem then
-            begin
-              Brush.Style := bsSolid;
-              Brush.Color := clBtnFace;
-              DrawFocusRect(R2);
-            end;
-          end;
-
-        end;
-        {$endregion Focus rectangle}
-
-
-        // --------------------------------------------- IMAGE ------------------------------------------------------
-        Canvas.Font := dp.Font; // <-- potrzebne aby dopasowaæ pozycjê obrazka i tekstu
-        if Appearance.ShowCaption then s := Caption else s := '';
-
-        CalcButtonLayout(
-          Canvas, FPngImage, ClientRect, bDown and Appearance.MoveWhenDown, False, s, Layout, Margin, Spacing, GlyphPos, TextPos,
-          {$IFDEF DCC}DrawTextBiDiModeFlags(0){$ELSE}0{$ENDIF}
-        );
-
-        if (FPngImage <> nil) {and (Kind = bkCustom)} and not FPngImage.Empty then
-        begin
-          PaintRect := Bounds(GlyphPos.X, GlyphPos.Y, FPngImage.Width, FPngImage.Height);
-
-          if Enabled and (bOver or bDown) then
-          begin
-            imgHot := TPngImage.Create;
-            try
-              imgHot.Assign(FPngImage);
-              PngSetGamma(imgHot, Appearance.GlyphHotGammaFactor / 100);
-              Draw(GlyphPos.X, GlyphPos.Y, imgHot)
-            finally
-              imgHot.Free;
-            end;
-          end
-
-          else if Enabled then Draw(GlyphPos.X, GlyphPos.Y, FPngImage)
-
-          else
-          // disabled
-          begin
-            imgDisabled := TPngImage.Create;
-            try
-              imgDisabled.Assign(FPngImage);
-              MakeImageGrayscale(imgDisabled, Appearance.GlyphDisabledGrayscaleFactor);
-              MakeImageBlended(imgDisabled, Appearance.GlyphDisabledBlendFactor);
-              Draw(GlyphPos.X, GlyphPos.Y, imgDisabled)
-            finally
-              imgDisabled.Free;
-            end;
-          end;
-
-        end;
-
-
-        // ------------------------------------------------- TEXT ------------------------------------------------------------
-
-        if Appearance.ShowCaption and (Length(Caption) > 0) then
-        begin
-          //Canvas.Font := dp.Font; <-- to musi byæ wykonane przed obliczeniem pozycji obrazka w CalcButtonLayout
-          PaintRect := Rect(TextPos.X, TextPos.Y, Width, Height);
-          Canvas.Brush.Style := bsClear;
-          DrawText(
-            Canvas.Handle, PChar(Caption), -1, PaintRect,
-            {$IFDEF DCC}DrawTextBiDiModeFlags(0) or {$ENDIF} DT_TOP or DT_LEFT or DT_SINGLELINE
-          );
-        end;
-
-
-
-      end; // with Canvas
-
-
-
-    finally
-      Canvas.Free;
-    end;
-
-
-  end
-
-
-
-  else
-
-
-
-  // ------------------------------------------------- Deafult Drawing ---------------------------------------------------------
-
-  begin
-
-    R := ClientRect;
-    FCanvas.Handle := Message.DrawItemStruct^.{$IFDEF MSWINDOWS}HDC{$ELSE}_hDC{$ENDIF};
-    FCanvas.Font := Self.Font;
-    IsDown := Message.DrawItemStruct^.itemState and ODS_SELECTED <> 0;   //IsDown := False;
-    IsDefault := Message.DrawItemStruct^.itemState and ODS_FOCUS <> 0;
-
-
-    //Draw border
-    {$IFDEF DCC}
-    if StyleServices.Enabled then
-    begin
-      //Themed border
-      if not Enabled then Button := tbPushButtonDisabled
-      else if IsDown then Button := tbPushButtonPressed
-      else if FMouseInControl then Button := tbPushButtonHot
-      else if IsFocused or IsDefault then Button := tbPushButtonDefaulted
-      else Button := tbPushButtonNormal;
-
-      //Paint the background, border, and finally get the inner rect
-      Details := StyleServices.GetElementDetails(Button);
-      StyleServices.DrawParentBackground(Handle, Message.DrawItemStruct.HDC, @Details, true);
-      StyleServices.DrawElement(Message.DrawItemStruct.HDC, Details, Message.DrawItemStruct.rcItem);
-      StyleServices.GetElementContentRect(FCanvas.Handle, Details, Message.DrawItemStruct.rcItem, R);
-    end
-
-    else
-    {$ENDIF}
-
-    begin
-
-      //Draw the outer border, when focused
-      if IsFocused or IsDefault then
-      begin
-        FCanvas.Pen.Color := clWindowFrame;
-        FCanvas.Pen.Width := 1;
-        FCanvas.Brush.Style := bsClear;
-        FCanvas.Rectangle(R.Left, R.Top, R.Right, R.Bottom);
-        InflateRect(R, -1, -1);
-      end;
-
-      //Draw the inner border
-      if IsDown then
-      begin
-        FCanvas.Pen.Color := clBtnShadow;
-        FCanvas.Pen.Width := 1;
-        FCanvas.Brush.Color := clBtnFace;
-        FCanvas.Rectangle(R.Left, R.Top, R.Right, R.Bottom);
-        InflateRect(R, -1, -1);
-      end
-
-      else
-
-      begin
-        Flags := DFCS_BUTTONPUSH or DFCS_ADJUSTRECT;
-        if Message.DrawItemStruct.itemState and ODS_DISABLED <> 0 then Flags := Flags or DFCS_INACTIVE;
-        DrawFrameControl(Message.DrawItemStruct^.{$IFDEF MSWINDOWS}HDC{$ELSE}_hDC{$ENDIF}, R, DFC_BUTTON, Flags);
-      end;
-
-
-      //Adjust the rect when focused and/or down
-      if IsFocused then
-      begin
-        R := ClientRect;
-        InflateRect(R, -1, -1);
-      end;
-
-      if IsDown then OffsetRect(R, 1, 1);
-    end;
-
-
-
-
-    //Calculate the position of the PNG glyph
-    if Appearance.ShowCaption then s := Caption else s := '';
-
-    if not FAppearance.MoveWhenDown then
-      CalcButtonLayout(
-        FCanvas, FPngImage, ClientRect, False, False, s, Layout, Margin, Spacing, GlyphPos, TextPos,
-        {$IFDEF DCC}DrawTextBiDiModeFlags(0){$ELSE}0{$ENDIF}
-      )
-    else
-      CalcButtonLayout(
-        FCanvas, FPngImage, ClientRect, IsDown, False, s, Layout, Margin, Spacing, GlyphPos, TextPos,
-        {$IFDEF DCC}DrawTextBiDiModeFlags(0){$ELSE}0{$ENDIF}
-      );
-
-    //Draw the image
-    if (FPngImage <> nil) and (Kind = bkCustom) and not FPngImage.Empty then
-    begin
-      PaintRect := Bounds(GlyphPos.X, GlyphPos.Y, FPngImage.Width, FPngImage.Height);
-      if Enabled then DrawPNG(FPngImage, FCanvas, PaintRect, [])
-      else DrawPNG(FPngImage, FCanvas, PaintRect, FPngOptions);
-    end;
-
-    //Draw the text
-    if Appearance.ShowCaption and (Length(Caption) > 0) then
-    begin
-      PaintRect := Rect(TextPos.X, TextPos.Y, Width, Height);
-      FCanvas.Brush.Style := bsClear;
-      //grayed Caption when disabled
-      if not Enabled then
-      begin
-        OffsetRect(PaintRect, 1, 1);
-        FCanvas.Font.Color := clBtnHighlight;
-        DrawText(FCanvas.Handle, PChar(Caption), -1, PaintRect, {$IFDEF DCC}DrawTextBiDiModeFlags(0) or {$ENDIF} DT_TOP or DT_LEFT or DT_SINGLELINE);
-        OffsetRect(PaintRect, -1, -1);
-        FCanvas.Font.Color := clBtnShadow;
-      end;
-      DrawText(FCanvas.Handle, PChar(Caption), -1, PaintRect, {$IFDEF DCC}DrawTextBiDiModeFlags(0) or {$ENDIF} DT_TOP or DT_LEFT or DT_SINGLELINE);
-    end;
-
-    //Draw the focus rectangle
-    if IsFocused and IsDefault then
-    begin
-      {$IFDEF DCC} if not StyleServices.Enabled then {$ENDIF}
-      begin
-        R := ClientRect;
-        InflateRect(R, -3, -3);
-      end;
-      FCanvas.Pen.Color := clWindowFrame;
-      FCanvas.Brush.Color := clBtnFace;
-      DrawFocusRect(FCanvas.Handle, R);
-    end;
-
-    FLastKind := Kind;
-    FCanvas.Handle := 0;
-
-
-  end;
-  //{$IFDEF FPC}Invalidate;{$ENDIF}
-end;
-  {$endregion CNDrawItem}
-
-
-  {$region ' ---------------------- Mouse Enter & Leave --------------------------- '}
-procedure TJppPngButton.SetOnMouseEnter(const Value: TNotifyEvent);
-begin
-  FOnMouseEnter := Value;
-end;
-
-procedure TJppPngButton.SetOnMouseLeave(const Value: TNotifyEvent);
-begin
-  FOnMouseLeave := Value;
-end;
-
-procedure TJppPngButton.CMMouseEnter(var Message: TMessage);
-begin
-  inherited;
-  bOver := True;
-  {$IFDEF DCC}
-  if StyleServices.Enabled and not FMouseInControl and not(csDesigning in ComponentState) then
-  begin
-    FMouseInControl := True;
-    Repaint;
-  end
-  else
-  {$ENDIF}
-  begin
-    if csDesigning in ComponentState then Exit;
-    if Assigned(FOnMouseEnter) then OnMouseEnter(Self);
-    Repaint;
-  end;
-end;
-
-procedure TJppPngButton.CMMouseLeave(var Message: TMessage);
-begin
-  inherited;
-  bOver := False;
-  {$IFDEF DCC}
-  if StyleServices.Enabled and FMouseInControl then
-  begin
-    FMouseInControl := False;
-    Repaint;
-  end
-  else
-  {$ENDIF}
-  begin
-    if csDesigning in ComponentState then Exit;
-    if Assigned(FOnMouseLeave) then OnMouseLeave(Self);
-    Repaint;
-  end;
-end;
-  {$endregion}
-
-
-{$endregion TJppPngButton}
+{$endregion Themes}
 
 
 {$region ' ------------------------- StyleHook -------------------------- '}
