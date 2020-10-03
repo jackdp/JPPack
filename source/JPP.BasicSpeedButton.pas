@@ -1,9 +1,14 @@
 unit JPP.BasicSpeedButton;
 
 {
-  ---------------------------------------------------------------------------------------
-  Based on PngSpeedButton from PngComponents https://bitbucket.org/uweraabe/pngcomponents
-  ---------------------------------------------------------------------------------------
+  Jacek Pazera
+  https://www.pazera-software.com
+  https://github.com/jackdp
+
+  Based on the TPngSpeedButton from then PngComponents package: https://github.com/UweRaabe/PngComponents
+  PngComponents license: https://github.com/UweRaabe/PngComponents/blob/master/Docs/License.txt
+
+  My modifications: public domain
 }
 
 {$I jpp.inc}
@@ -61,6 +66,7 @@ type
   end;
   {$endregion}
 
+
   {$region ' ---------- TJppBasicSpeedButtonAppearance ------------- '}
   TJppBasicSpeedButtonAppearance = class(TPersistent)
   private
@@ -71,8 +77,6 @@ type
     FHot: TJppBasicSpeedButtonStateParams;
     FDown: TJppBasicSpeedButtonStateParams;
     FDisabled: TJppBasicSpeedButtonStateParams;
-    //FGlyphDisabledGrayscaleFactor: Byte;
-    //FGlyphDisabledBlendFactor: Byte;
     FGlyphHotGammaFactor: Byte;
     FMoveWhenDown: Boolean;
     FShowCaption: Boolean;
@@ -83,8 +87,6 @@ type
     procedure SetHot(const Value: TJppBasicSpeedButtonStateParams);
     procedure SetDown(const Value: TJppBasicSpeedButtonStateParams);
     procedure SetDisabled(const Value: TJppBasicSpeedButtonStateParams);
-    //procedure SetGlyphDisabledGrayscaleFactor(const Value: Byte);
-    //procedure SetGlyphDisabledBlendFactor(const Value: Byte);
     procedure SetGlyphHotGammaFactor(const Value: Byte);
     procedure SetMoveWhenDown(const Value: Boolean);
     procedure SetShowCaption(const Value: Boolean);
@@ -100,16 +102,14 @@ type
     property Down: TJppBasicSpeedButtonStateParams read FDown write SetDown;
     property Disabled: TJppBasicSpeedButtonStateParams read FDisabled write SetDisabled;
     property OnChange: TNotifyEvent read FOnChange write SetOnChange;
-    //property GlyphDisabledGrayscaleFactor: Byte read FGlyphDisabledGrayscaleFactor write SetGlyphDisabledGrayscaleFactor default 255;
-    //property GlyphDisabledBlendFactor: Byte read FGlyphDisabledBlendFactor write SetGlyphDisabledBlendFactor default 127;
     property GlyphHotGammaFactor: Byte read FGlyphHotGammaFactor write SetGlyphHotGammaFactor default 130;
     property MoveWhenDown: Boolean read FMoveWhenDown write SetMoveWhenDown default False;
     property ShowCaption: Boolean read FShowCaption write SetShowCaption default True;
     property GlyphDisabledBlendIntensity: TJppBlendIntensity read FGlyphDisabledBlendIntensity write SetGlyphDisabledBlendIntensity default biNormal;
-    property GlyphDisabledGrayscaleIntensity: TJppGrayscaleIntensity read FGlyphDisabledGrayscaleIntensity write SetGlyphDisabledGrayscaleIntensity
-      default gi90Percent;
+    property GlyphDisabledGrayscaleIntensity: TJppGrayscaleIntensity read FGlyphDisabledGrayscaleIntensity write SetGlyphDisabledGrayscaleIntensity default gi90Percent;
   end;
   {$endregion}
+
 
   {$region ' ----------------- TJppBasicSpeedButton ----------------- '}
   TJppBasicSpeedButton = class(TGraphicControl)
@@ -308,12 +308,10 @@ begin
   if Enabled then
   begin
     FButtonState := bssOver;
-    //FButtonState := bssNormal;
     CanClick := (X >= 0) and (X < ClientWidth) and (Y >= 0) and (Y <= ClientHeight);
     if CanClick then Click;
     Repaint;
   end;
-
 end;
 
 procedure TJppBasicSpeedButton.ActionChange(Sender: TObject; CheckDefaults: Boolean);
@@ -357,7 +355,6 @@ end;
 procedure TJppBasicSpeedButton.Click;
 begin
   inherited Click;
-  //if Assigned(OnClick) then OnClick(Self);
 end;
 
 procedure TJppBasicSpeedButton.CMEnabledChanged(var Message: TMessage);
@@ -402,7 +399,6 @@ var
   end;
 
 begin
-  //inherited;
   ButtonWidth := 0;
 
   R := ClientRect;
@@ -412,25 +408,11 @@ begin
     dp.Font := Self.Font;
     Canvas.Font := dp.Font;
 
-    if ButtonState = bssDisabled then
-    begin
-      CopyDrawingParams(Appearance.Disabled);
-    end
-
-    else if ButtonState = bssOver then
-    begin
-      CopyDrawingParams(Appearance.Hot);
-    end
-
-    else if ButtonState = bssDown then
-    begin
-      CopyDrawingParams(Appearance.Down);
-    end
-
+    case ButtonState of
+      bssDisabled: CopyDrawingParams(Appearance.Disabled);
+      bssOver: CopyDrawingParams(Appearance.Hot);
+      bssDown: CopyDrawingParams(Appearance.Down);
     else
-
-    // Normal
-    begin
       CopyDrawingParams(Appearance.Normal);
     end;
 
@@ -443,6 +425,7 @@ begin
       FillRect(R);
     end;
 
+
     // ----------------------- BORDER ---------------------------
     if not dp.TransparentBorder then
     begin
@@ -452,13 +435,11 @@ begin
     end;
 
 
-
     // --------------------------------------------- IMAGE ------------------------------------------------------
     bOver := ButtonState = bssOver;
     bDown := ButtonState = bssDown;
     Canvas.Font := dp.Font; // <-- potrzebne aby dopasowaæ pozycjê obrazka i tekstu
     if Appearance.ShowCaption then s := Caption else s := '';
-
 
     CalcButtonLayout(
       Canvas, FPngImage, ClientRect, bDown and Appearance.MoveWhenDown, False, s, Layout, Margin, Spacing, GlyphPos, TextPos,
@@ -509,28 +490,12 @@ begin
 
 
     // ---------------------- TEXT ------------------------------
-//    if Caption <> '' then
-//    begin
-//      Brush.Style := bsClear;
-//      Canvas.Font.Assign(Self.Font);
-//      Canvas.Font.Color := dp.FontColor;
-//      InflateRect(R, dp.BorderWidth, dp.BorderWidth);
-//      xtLeft := (R.Width div 2) - (TextWidth(Caption) div 2);
-//      xtTop := (R.Height div 2) - (TextHeight(Caption) div 2);
-//      //TextOut(xtLeft, xtTop, Caption);
-//      R.Left := xtLeft;
-//      R.Top := xtTop;
-//      DrawText(Canvas.Handle, PChar(Caption), -1, R, DrawTextBiDiModeFlags(0) or DT_TOP or DT_LEFT or DT_SINGLELINE);
-//    end;
-
-
 
     if Appearance.ShowCaption and (Length(Caption) > 0) then
     begin
       Brush.Style := bsClear;
       Canvas.Font.Assign(Self.Font);
       Canvas.Font.Color := dp.FontColor;
-
 
       if FAutoWidth and (Align <> alClient) and (Align <> alTop) and (Align <> alBottom) then
       begin
@@ -549,7 +514,6 @@ begin
       end;
 
       PaintRect := Rect(TextPos.X, TextPos.Y, Width, Height);
-      //Canvas.Brush.Style := bsClear;
       DrawText(
         Canvas.Handle, PChar(Caption), -1, PaintRect,
         {$IFDEF DCC}DrawTextBiDiModeFlags(0) or {$ENDIF} DT_TOP or DT_LEFT or DT_SINGLELINE
@@ -702,12 +666,6 @@ end;
 constructor TJppBasicSpeedButtonStateParams.Create(AOwner: TComponent);
 begin
   inherited Create;
-//  FColor := clBtnFace;
-//  FFontColor := clWindowText;
-//  FBorderColor := clWindowFrame;
-//  FBorderWidth := 1;
-//  FTransparentBorder := False;
-//  FTransparentBackground := False;
 end;
 
 destructor TJppBasicSpeedButtonStateParams.Destroy;
@@ -766,7 +724,6 @@ end;
 
 {$region ' ---------------------- TJppBasicSpeedButtonAppearance ------------------------ '}
 
-
 constructor TJppBasicSpeedButtonAppearance.Create(AOwner: TComponent);
 begin
   FNormal := TJppBasicSpeedButtonStateParams.Create(AOwner);
@@ -808,8 +765,6 @@ begin
   FDown.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
   FDisabled.OnChange := {$IFDEF FPC} @ {$ENDIF}PropsChanged;
 
-  //FGlyphDisabledGrayscaleFactor := 255;
-  //FGlyphDisabledBlendFactor := 127;
   FGlyphHotGammaFactor := 130;
 
   FGlyphDisabledBlendIntensity := biNormal;
@@ -858,8 +813,6 @@ begin
   Disabled.TransparentBorder := A.Disabled.TransparentBorder;
 
   MoveWhenDown := A.MoveWhenDown;
-  //GlyphDisabledGrayscaleFactor := A.GlyphDisabledGrayscaleFactor;
-  //GlyphDisabledBlendFactor := A.GlyphDisabledBlendFactor;
   GlyphHotGammaFactor := A.GlyphHotGammaFactor;
 
   FGlyphDisabledBlendIntensity := A.GlyphDisabledBlendIntensity;
@@ -885,18 +838,6 @@ begin
   PropsChanged(Self);
 end;
 
-//procedure TJppBasicSpeedButtonAppearance.SetGlyphDisabledBlendFactor(const Value: Byte);
-//begin
-//  FGlyphDisabledBlendFactor := Value;
-//  PropsChanged(Self);
-//end;
-
-//procedure TJppBasicSpeedButtonAppearance.SetGlyphDisabledGrayscaleFactor(const Value: Byte);
-//begin
-//  FGlyphDisabledGrayscaleFactor := Value;
-//  PropsChanged(Self);
-//end;
-//
 procedure TJppBasicSpeedButtonAppearance.SetGlyphHotGammaFactor(const Value: Byte);
 begin
   FGlyphHotGammaFactor := Value;
