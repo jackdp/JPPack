@@ -11,7 +11,7 @@ uses
   JPP.BasicPanel, JPP.Panel, JPP.SimplePanel, JPP.StdPanel,
   JPP.BasicPngButton, JPP.BasicPngButtonEx, JPP.PngButton, JPP.BasicSpeedButton,
   JPP.ColorComboBox, JPP.ColorListBox, JPP.ColorSwatch,
-  JPP.LinkLabel, JPP.Timer, JPP.StorageCtrl, JPP.StringStorageCtrl,
+  JPP.Labels, JPP.LinkLabel, JPP.Timer, JPP.StorageCtrl, JPP.StringStorageCtrl,
   {$IFDEF DELPHI2010_OR_ABOVE}JPP.FormIniStorage,{$ENDIF}
   JPP.PngCollection,
   JPP.DoubleLineLabel, JPP.DoubleLabel,
@@ -43,7 +43,7 @@ begin
       TJppStdPanel, TJppSimplePanel, TJppBasicPanel, TJppPanel,
       TJppBasicSpeedButton, TJppBasicPngButton, TJppBasicPngButtonEx, TJppPngButton,
       TJppColorComboBox, TJppColorListBox, TJppColorSwatch, TJppColorSwatchEx,
-      TJppLinkLabel,
+      TJppLabel, TJppShadowLabel, TJppLinkLabel,
       TJppTimer,
       TJppStorageCtrl,
       TJppStringStorageCtrl,

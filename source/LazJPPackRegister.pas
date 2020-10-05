@@ -9,7 +9,8 @@ interface
 uses
   Forms, LCLIntf, LCLType, LMessages, Classes, Graphics, Controls, SysUtils, StdCtrls,
   TypInfo, lresources,
-  JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel, JPP.LinkLabel,
+  JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel,
+  JPP.Labels, JPP.LinkLabel,
   JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.PngCollection, JPP.Timer, JPP.BasicPanel, JPP.Panel,
   JPP.BasicSpeedButton, JPP.BasicPngButtonEx, JPP.ColorListBox, JPP.ComboBox, JPP.ComboBoxEx, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
   JPP.Edit, JPP.Memo,
@@ -30,7 +31,7 @@ procedure Register;
 begin
   RegisterComponents(JPPackPageName, [TJppDoubleLabel]);
   RegisterComponents(JPPackPageName, [TJppDoubleLineLabel]);
-  RegisterComponents(JPPackPageName, [TJppLinkLabel]);
+  RegisterComponents(JPPackPageName, [TJppLabel, TJppShadowLabel, TJppLinkLabel]);
   RegisterComponents(JPPackPageName, [TJppStorageCtrl]);
   RegisterComponents(JPPackPageName, [TJppStringStorageCtrl]);
   RegisterComponents(JPPackPageName, [TJppPngCollection]);
@@ -39,7 +40,7 @@ begin
   RegisterComponents(JPPackPageName, [TJppPanel]);
 
   RegisterComponents(JPPackPageName, [TJppBasicSpeedButton]);
-  RegisterComponents(JPPackPageName, [TJppBasicPngButtonEx]);
+  //RegisterComponents(JPPackPageName, [TJppBasicPngButtonEx]);
   //RegisterComponents(JPPackPageName, [TJppPngButton]);
 
   RegisterComponents(JPPackPageName, [TJppColorListBox]);

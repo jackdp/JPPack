@@ -155,6 +155,10 @@
         <Filename Value="..\..\source\JPP.Helpers.pas"/>
         <UnitName Value="JPP.Helpers"/>
       </Item>
+      <Item>
+        <Filename Value="..\..\source\JPP.Labels.pas"/>
+        <UnitName Value="JPP.Labels"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>
