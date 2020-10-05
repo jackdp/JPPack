@@ -16,7 +16,7 @@ uses
   Messages, SysUtils, Classes, Types, {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF}
   Controls, StdCtrls, Graphics, Dialogs, Buttons, Clipbrd, ExtCtrls,
   {$IFDEF FPC}LCLType, LCLIntf, LMessages,{$ENDIF}
-  JPL.Strings, JPL.Conversion, JPL.Colors, JPL.ColorArrays,
+  JPL.Strings, JPL.Conversion, JPL.Colors, JPL.ColorArrays, JPL.Rects,
   JPP.Types, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.ColorControls.Common, JPP.BasicSpeedButton, JPP.Graphics, JPP.Gradient
   ;
 
@@ -1293,7 +1293,7 @@ begin
         Font.Assign(FAppearance.SeparatorItem.Font);
         if bCustomFontColor then clText := CustomFontColor else clText := Font.Color;
         if not Enabled then clText := FAppearance.SeparatorItem.DisabledFontColor;
-        y := GetMiddlePosY(Rect, TextHeight(sName)) + FAppearance.SeparatorItem.TextPosDeltaY;
+        y := GetTextMiddlePosY(Rect, TextHeight(sName)) + FAppearance.SeparatorItem.TextPosDeltaY;
         if Assigned(FOnGetItemTextColor) then FOnGetItemTextColor(Index, State, ItemData, clText);
         Font.Color := clText;
 
@@ -1404,7 +1404,7 @@ begin
         if Assigned(FOnGetItemTextColor) then FOnGetItemTextColor(Index, State, ItemData, clText);
         Font.Color := clText;
 
-        y := GetMiddlePosY(Rect, TextHeight(sName)) + FAppearance.ChangeColorItem.TextPosDeltaY;
+        y := GetTextMiddlePosY(Rect, TextHeight(sName)) + FAppearance.ChangeColorItem.TextPosDeltaY;
 
         xTextWidth := TextWidth(sName);
 
@@ -1575,7 +1575,7 @@ begin
       if sUserColorStr <> '' then
       begin
         sOut := sUserColorStr;
-        y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
+        y := GetTextMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
         TextOut(xTextLeft, y, sOut);
         xTextLeft := xTextLeft + TextWidth(sOut);
         bCanDrawDataSep := FAppearance.ShowRgbInt or FAppearance.ShowRgbHex or FAppearance.ShowBgrHex or (FAppearance.ShowColorName and (sName <> ''));
@@ -1590,7 +1590,7 @@ begin
       if FAppearance.ShowRgbInt then
       begin
         sOut := {%H-}sRgbInt;
-        y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
+        y := GetTextMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
         TextOut(xTextLeft, y, sOut);
         xTextLeft := xTextLeft + TextWidth(sOut);
         bCanDrawDataSep := FAppearance.ShowRgbHex or FAppearance.ShowBgrHex or (FAppearance.ShowColorName and (sName <> ''));
@@ -1605,7 +1605,7 @@ begin
       if FAppearance.ShowRgbHex then
       begin
         sOut := {%H-}sRgbHex;
-        y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
+        y := GetTextMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
         TextOut(xTextLeft, y, sOut);
         xTextLeft := xTextLeft + TextWidth(sOut);
         bCanDrawDataSep := FAppearance.ShowBgrHex or (FAppearance.ShowColorName and (sName <> ''));
@@ -1620,7 +1620,7 @@ begin
       if FAppearance.ShowBgrHex then
       begin
         sOut := {%H-}sBgrHex;
-        y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
+        y := GetTextMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.NumericTextPosDeltaY;
         TextOut(xTextLeft, y, sOut);
         xTextLeft := xTextLeft + TextWidth(sOut);
         bCanDrawDataSep := FAppearance.ShowColorName and (sName <> '');
@@ -1643,7 +1643,7 @@ begin
       if FAppearance.ShowColorName then
       begin
         sOut := sName;
-        y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.TextPosDeltaY;
+        y := GetTextMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.TextPosDeltaY;
         TextOut(xTextLeft, y, sOut);
       end;
 
@@ -1659,7 +1659,7 @@ begin
       if FAppearance.ShowColorName then sOut := sOut + FAppearance.DataSeparator + sName;
       sOut := TrimFromStart(sOut, FAppearance.DataSeparator);
 
-      y := GetMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.TextPosDeltaY;
+      y := GetTextMiddlePosY(OutTextRect, TextHeight(sOut)) + FAppearance.TextPosDeltaY;
 
       if bCustomFontColor then clText := CustomFontColor else clText := Font.Color;
       if bSelected then clText := FAppearance.SelectedItem.FontColor;
