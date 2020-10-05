@@ -26,6 +26,8 @@
     - [TJppColorSwatch, TJppColorSwatchEx](#tjppcolorswatch-tjppcolorswatchex)
     - [TJppProgressBar](#tjppprogressbar)
     - [TJppHtmlHint](#tjpphtmlhint)
+    - [TJppLabel](#tjpplabel)
+    - [TJppShadowLabel](#tjppshadowlabel)
     - [TJppLinkLabel](#tjpplinklabel)
     - [TJppDoubleLineLabel](#tjppdoublelinelabel)
     - [TJppDoubleLabel](#tjppdoublelabel)
@@ -395,6 +397,22 @@ Metacolors (or mode-colors): Colors taken from the `Appearance.DarkModeColors` o
 Example: `<c:mclDarkBlue><bg:mclLightGray>dark blue text on light gray background</bg></c>`
 
 HTML entities: see function `ReplaceHtmlEntities` in the `JPP.HtmlHint.pas` file.
+
+---
+
+### TJppLabel
+
+`TCustomLabel` descendant.  
+Additional properties: AnchoredControls, TagExt.
+
+---
+
+### TJppShadowLabel
+
+Based on `TJppLabel`.  
+Additional properties: shadow for enabled and disabled state, disabled caption color, border (color, size, style), padding.
+
+![TJppShadowLabel](./docs/img/TJppShadowLabel.gif)
 
 ---
 
