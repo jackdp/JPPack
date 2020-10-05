@@ -14,8 +14,8 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}Windows, ShellAPI,{$ENDIF}
-  Messages, SysUtils, Classes, {$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}
-  Controls, Graphics, StdCtrls, Buttons, GraphUtil, Dialogs, ActnList, Themes,
+  Messages, SysUtils, Classes, {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF}
+  Controls, Graphics, StdCtrls, {Buttons, GraphUtil, Dialogs,} ActnList, Themes,
   {$IFDEF FPC}LCLIntf, LCLType,{$ENDIF}
   JPP.Common, JPP.AnchoredControls;
 
@@ -65,8 +65,8 @@ type
     destructor Destroy; override;
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
   protected
-    procedure CmMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
-    procedure CmMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
+    procedure CMMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
+    procedure CMMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
     procedure Click; override;
     procedure SetEnabled(Value: Boolean); override;
     property Font;
@@ -169,7 +169,7 @@ type
 //  end;
 
 
-procedure SetJppLinkLabelFonts(lbl: TJppCustomLinkLabel; FontName: string = 'Segoe UI'; FontSize: integer = 8);
+procedure SetJppLinkLabelFonts(lbl: TJppCustomLinkLabel; FontName: string = 'Segoe UI'; FontSize: integer = 9);
 procedure SetJppLinkLabelColors(lbl: TJppCustomLinkLabel; clNormal, clHot, clDisabled, clVisitedNormal, clVisitedHot: TColor); overload;
 procedure SetJppLinkLabelColors(lbl: TJppCustomLinkLabel; Color: TColor); overload;
 
@@ -194,7 +194,7 @@ begin
   SetJppLinkLabelColors(lbl, Color, Color, Color, Color, Color);
 end;
 
-procedure SetJppLinkLabelFonts(lbl: TJppCustomLinkLabel; FontName: string = 'Segoe UI'; FontSize: integer = 8);
+procedure SetJppLinkLabelFonts(lbl: TJppCustomLinkLabel; FontName: string = 'Segoe UI'; FontSize: integer = 9);
 begin
   lbl.FontNormal.Name := FontName;
   lbl.FontNormal.Size := FontSize;
@@ -239,7 +239,7 @@ begin
   FFontNormal.Color := clBlue;
   FFontNormal.Style := [];
   Font.Assign(FFontNormal);
-  FFontNormal.OnChange := {$IFDEF FPC} @ {$ENDIF}FontNormalChange;
+  FFontNormal.OnChange := {$IFDEF FPC}@{$ENDIF}FontNormalChange;
 
   FFontHot.Color := clBlue;
   FFontHot.Style := [fsUnderline];
@@ -249,7 +249,7 @@ begin
 
   FFontVisitedNormal.Color := clPurple;
   FFontVisitedNormal.Style := FFontNormal.Style;
-  FFontVisitedNormal.OnChange := {$IFDEF FPC} @ {$ENDIF}FontVisitedChange;
+  FFontVisitedNormal.OnChange := {$IFDEF FPC}@{$ENDIF}FontVisitedChange;
 
   FFontVisitedHot.Color := FFontVisitedNormal.Color;
   FFontVisitedHot.Style := FFontHot.Style;
@@ -274,7 +274,7 @@ end;
 
 
   {$region ' ------------- Mouse Enter & Leave -------------- '}
-procedure TJppCustomLinkLabel.CmMouseEnter(var Msg: TMessage);
+procedure TJppCustomLinkLabel.CMMouseEnter(var Msg: TMessage);
 begin
   inherited;
 
@@ -290,7 +290,7 @@ begin
   end;
 end;
 
-procedure TJppCustomLinkLabel.CmMouseLeave(var Msg: TMessage);
+procedure TJppCustomLinkLabel.CMMouseLeave(var Msg: TMessage);
 begin
   inherited;
 
