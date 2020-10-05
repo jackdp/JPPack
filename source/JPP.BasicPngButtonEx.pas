@@ -16,6 +16,8 @@ unit JPP.BasicPngButtonEx;
 
 interface
 
+{$IFDEF MSWINDOWS}
+
 uses
   {$IFDEF MSWINDOWS}Windows, Messages,{$ENDIF}
   {$IFDEF FPC}LCLType, LCLIntf, LMessages,{$ENDIF}
@@ -25,7 +27,7 @@ uses
   {$IFDEF DCC}PngFunctions,{$ENDIF}
 
   LDPngFunctions,
-  JPL.Strings, JPL.Colors,
+  JPL.Strings, JPL.Colors, JPL.Rects,
   JPP.Types, JPP.Common, JPP.Common.Procs, JPP.Helpers, JPP.AnchoredControls, JPP.Gradient, JPP.Graphics
   ;
 
@@ -234,8 +236,13 @@ function DrawCtrlTextBiDiModeFlags(AControl: TControl; Flags: Longint): Longint;
 procedure SetJppBasicPngButtonExFonts(Button: TJppBasicPngButtonEx; FontName: string = 'Segoe UI'; FontSize: integer = 9);
 
 
+{$ENDIF} // MSWINDOWS
+
+
 implementation
 
+
+{$IFDEF MSWINDOWS}
 
 uses
   ActnList {$IFDEF DCC}, Themes, PngButtonFunctions, PngImageList{$ENDIF};
@@ -1055,7 +1062,8 @@ begin
         begin
           if bDefault and Enabled and (not bDown) and (not Focused) then Pen.Assign(Appearance.BorderWhenDefault)
           else Pen.Assign(dp.Pen);
-          JppFrame3D(Canvas, R, Pen.Color, Pen.Width);
+          //JppFrame3D(Canvas, R, Pen.Color, Pen.Width);
+          DrawRectEx(Canvas, R, True, True, True, True, True);
         end;
         {$endregion Frame}
 
@@ -1940,5 +1948,7 @@ end;
 {$endregion StyleHook}
 
 
+
+{$ENDIF} // MSWINDOWS
 
 end.

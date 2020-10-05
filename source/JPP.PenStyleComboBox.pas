@@ -19,7 +19,7 @@ uses
   SysUtils, Classes, Types, {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF}
   Controls, StdCtrls, Graphics, Dialogs, Buttons, Clipbrd, ExtCtrls,
   {$IFDEF FPC}LCLType, LCLIntf, LMessages,{$ENDIF}
-  JPL.Strings, JPL.Conversion,
+  JPL.Strings, JPL.Conversion, JPL.Rects,
   JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Graphics;
 
 

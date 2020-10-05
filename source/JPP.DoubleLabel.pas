@@ -18,7 +18,7 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  Messages, Classes, Graphics, Controls, StdCtrls, JPP.Common, JPP.AnchoredControls {$IFDEF FPC}, LCLType, LCLIntf, LMessages, Types{$ENDIF};
+  Messages, Classes, Graphics, Controls, StdCtrls, JPL.Rects, JPP.Common, JPP.AnchoredControls {$IFDEF FPC}, LCLType, LCLIntf, LMessages, Types{$ENDIF};
 
 type
 

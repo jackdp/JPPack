@@ -8,6 +8,7 @@
 
 {$UNDEF HAS_ADVANCED_TSIZE}
 {$UNDEF HAS_ADVANCED_TRECT}
+{$UNDEF HAS_ADVANCED_TPOINT}
 
 // --------------- Free Pascal -------------------
 
@@ -33,6 +34,7 @@
 
   {$DEFINE HAS_ADVANCED_TSIZE}
   {$DEFINE HAS_ADVANCED_TRECT}
+  {$DEFINE HAS_ADVANCED_TPOINT}
 
   // FPC 3.0.4 and UP
   {$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 30004)}
@@ -58,8 +60,7 @@
     {$DEFINE HAS_READ_WITH_OFFSET}
   {$IFEND}
 
-
-{$ENDIF}
+{$ENDIF} // FPC
 
 
 // --------------------- Delphi ----------------------
@@ -123,7 +124,7 @@
   {$IF CompilerVersion <= 23}
     {$DEFINE DELPHIXE2_OR_BELOW}
   {$IFEND}
-  
+
   {$IF CompilerVersion >= 23}
     {$DEFINE DELPHIXE2_OR_ABOVE}
     {$DEFINE HAS_SYSTEM_UITYPES}
@@ -142,6 +143,7 @@
   {$IFDEF DELPHIXE2_OR_ABOVE}
     {$DEFINE HAS_ADVANCED_TSIZE}
     {$DEFINE HAS_ADVANCED_TRECT}
+    {$DEFINE HAS_ADVANCED_TPOINT}
   {$ENDIF}
 
 

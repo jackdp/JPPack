@@ -16,7 +16,7 @@ uses
   Messages, SysUtils, Classes, Types, {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF}
   Controls, StdCtrls, Graphics, Dialogs, Buttons, Clipbrd, ExtCtrls,
   {$IFDEF FPC}LCLType, LCLIntf, LMessages,{$ENDIF}
-  JPL.Strings,
+  JPL.Strings, JPL.Rects,
   JPP.Common, JPP.Common.Procs, JPP.AnchoredControls;
 
 

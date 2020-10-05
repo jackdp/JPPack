@@ -25,7 +25,7 @@ uses
   {$IFDEF HAS_UNIT_SCOPE}Vcl.Imaging.pngimage,{$ELSE}pngimage,{$ENDIF}
   {$IFDEF DCC}PngFunctions,{$ENDIF}
   {$IFDEF FPC}LazPngFunctions, LCLType, LCLIntf, LMessages,{$ENDIF}
-  JPL.Colors, JPL.Strings,
+  JPL.Colors, JPL.Strings, JPL.Rects,
   JPP.Types, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Graphics, JPP.Gradient,
   JPP.PngButton.ColorMaps;
 

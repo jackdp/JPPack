@@ -18,7 +18,7 @@ uses
   SysUtils, Classes, Types, {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF}
   Controls, Forms, Graphics, StdCtrls, ExtCtrls, Dialogs, Clipbrd,
   {$IFDEF FPC}LCLType, LCLIntf, LMessages,{$ENDIF}
-  JPL.Strings, JPL.Conversion, JPL.Colors,
+  JPL.Strings, JPL.Conversion, JPL.Colors, JPL.Rects,
   JPP.Types, JPP.Graphics, JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.ColorControls.Common, JPP.BasicSpeedButton;
 
 
@@ -789,7 +789,7 @@ begin
   R := ClientRect;
   if FAppearance.TopColorValue.Visible or FAppearance.BottomColorValue.Visible then R.Width := FAppearance.ColorRect.Width;
 
-  InflateRectEx(R, FAppearance.ColorRect.Margins);
+  InflateRectWithMargins(R, FAppearance.ColorRect.Margins);
 
   with Canvas do
   begin
