@@ -1,7 +1,10 @@
 unit JPP.Common;
 
 {$I jpp.inc}
-{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{$IFDEF FPC}
+  {$mode delphi}
+  {$MODESWITCH ADVANCEDRECORDS}
+{$ENDIF}
 
 interface
 
@@ -15,54 +18,28 @@ uses
   JPL.Colors,
   JPP.Types, JPP.Gradient, JPP.Graphics;
 
+
+{$IFDEF FPC}
 type
-
-
-  {$IFDEF FPC}
   TVerticalAlignment = (taAlignTop, taAlignBottom, taVerticalCenter);
   TEllipsisPosition = (epNone, epPathEllipsis, epEndEllipsis, epWordEllipsis);
-  {$ENDIF}
+
+{$IFDEF UNIX}
+const
+  DT_PATH_ELLIPSIS = $4000;
+  DT_END_ELLIPSIS = $8000;
+  DT_MODIFYSTRING = $10000;
+  DT_RTLREADING = $20000;
+  DT_WORD_ELLIPSIS = $40000;
+{$ENDIF}
+
+{$ENDIF} // FPC
+
+
+type
 
   TJppFocusRectType = (frtSystem, frtCustom, frtNone);
   TJppTextAlignment = (talTopLeft, talTopCenter, talTopRight, talLeft, talCenter, talRight, talBottomLeft, talBottomCenter, talBottomRight);
-
-  {$IFDEF DELPHIXE_OR_BELOW}
-  TPointHelper = record helper for TPoint
-  public
-    constructor Create(P: TPoint); overload;
-    constructor Create(const X, Y: Integer); overload;
-    procedure Offset(const DX, DY: Integer); overload;
-    procedure Offset(const Point: TPoint); overload;
-  end;
-
-  TRectHelper = record helper for TRect
-  private
-    function GetWidth: Integer;
-    procedure SetWidth(const Value: Integer);
-    function GetHeight: Integer;
-    procedure SetHeight(const Value: Integer);
-  public
-    property Width: Integer read GetWidth write SetWidth;
-    property Height: Integer read GetHeight write SetHeight;
-
-    function Contains(const Pt: TPoint): Boolean; overload;
-    function Contains(const R: TRect): Boolean; overload;
-    procedure Offset(const DX, DY: Integer); overload;
-    procedure Offset(const Point: TPoint); overload;
-  end;
-
-
-  TSizeHelper = record helper for TSize
-  private
-    function GetWidth: integer;
-    procedure SetWidth(const Value: integer);
-    function GetHeight: integer;
-    procedure SetHeight(const Value: integer);
-  public
-    property Width: integer read GetWidth write SetWidth;
-    property Height: integer read GetHeight write SetHeight;
-  end;
-  {$ENDIF}
 
 
   {$IFDEF DELPHI2009}
@@ -77,6 +54,14 @@ type
     function Last: T; inline;
   end;
   {$ENDIF}
+
+  TJppShadowParamsRec = record
+    Color: TColor;
+    ShiftX: ShortInt;
+    ShiftY: ShortInt;
+    procedure Initialize(const AColor: TColor; const AShiftX, AShiftY: ShortInt);
+    procedure Clear;
+  end;
 
 
   {$region ' ------------ TJppPersistent ------------- '}
@@ -114,6 +99,8 @@ type
     destructor Destroy; override;
     procedure Assign(Margins: TJppMargins); reintroduce;
     procedure SetMargins(const xLeft, xRight, xTop, xBottom: integer);
+    procedure Initialize(const xLeft, xRight, xTop, xBottom: integer);
+    function IsZero: Boolean;
   published
     property Left: integer read FLeft write SetLeft default 0;
     property Right: integer read FRight write SetRight default 0;
@@ -121,6 +108,9 @@ type
     property Bottom: integer read FBottom write SetBottom default 0;
   end;
   {$endregion TJppMargins}
+
+
+  TJppPadding = class(TJppMargins);
 
 
   {$region ' --------- TJppTagExt ------------- '}
@@ -415,6 +405,7 @@ type
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
     procedure Assign(const Source: TJppTextShadowParams); reintroduce;
+    function AsShadowParamsRec: TJppShadowParamsRec;
   published
     property ShiftX: ShortInt read FShiftX write SetShiftX default 1;
     property ShiftY: ShortInt read FShiftY write SetShiftY default 1;
@@ -646,7 +637,7 @@ begin
   FPen := TPen.Create;
   FSpacing := 2;
   FFocusType := frtNone;
-  FPen.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
+  FPen.OnChange := PropsChanged;
 end;
 
 destructor TJppFocusRectParams.Destroy;
@@ -884,10 +875,10 @@ begin
   FOwner := AOwner;
 
   FGradient := TJppGradientEx.Create(AOwner);
-  FGradient.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
+  FGradient.OnChange := PropsChanged;
 
   FBorders := TJppBorders.Create(AOwner);
-  FBorders.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
+  FBorders.OnChange := PropsChanged;
 
   FColor := clBtnFace;
   FDrawGradient := True;
@@ -1029,13 +1020,13 @@ begin
   FOwner := AOwner;
 
   FLeft := TJppBorder.Create(AOwner);
-  FLeft.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
+  FLeft.OnChange := PropsChanged;
   FRight := TJppBorder.Create(AOwner);
-  FRight.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
+  FRight.OnChange := PropsChanged;
   FTop := TJppBorder.Create(AOwner);
-  FTop.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
+  FTop.OnChange := PropsChanged;
   FBottom := TJppBorder.Create(AOwner);
-  FBottom.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
+  FBottom.OnChange := PropsChanged;
 end;
 
 destructor TJppBorders.Destroy;
@@ -1093,8 +1084,6 @@ end;
 {$endregion TJppBorders}
 
 
-
-
 {$region ' ------------------------- TJppMargins ---------------------- '}
 
 constructor TJppMargins.Create(AOwner: TComponent);
@@ -1119,19 +1108,29 @@ begin
   FBottom := Margins.Bottom;
 end;
 
-procedure TJppMargins.SetLeft(const Value: integer);
+function TJppMargins.IsZero: Boolean;
 begin
-  if FLeft = Value then Exit;
-  FLeft := Value;
-  PropsChanged(Self);
+  Result := (FLeft = 0) and (FRight = 0) and (FTop = 0) and (FBottom = 0);
 end;
 
-procedure TJppMargins.SetMargins(const xLeft, xRight, xTop, xBottom: integer);
+procedure TJppMargins.Initialize(const xLeft, xRight, xTop, xBottom: integer);
 begin
   FLeft := xLeft;
   FRight := xRight;
   FTop := xTop;
   FBottom := xBottom;
+  PropsChanged(Self);
+end;
+
+procedure TJppMargins.SetMargins(const xLeft, xRight, xTop, xBottom: integer);
+begin
+  Initialize(xLeft, xRight, xTop, xBottom);
+end;
+
+procedure TJppMargins.SetLeft(const Value: integer);
+begin
+  if FLeft = Value then Exit;
+  FLeft := Value;
   PropsChanged(Self);
 end;
 
@@ -1175,6 +1174,17 @@ begin
   inherited;
 end;
 
+function TJppTextShadowParams.AsShadowParamsRec: TJppShadowParamsRec;
+begin
+  if not FEnabled then Result.Clear
+  else
+  begin
+    Result.Color := FColor;
+    Result.ShiftX := FShiftX;
+    Result.ShiftY := FShiftY;
+  end;
+end;
+
 procedure TJppTextShadowParams.Assign(const Source: TJppTextShadowParams);
 begin
   FShiftX := Source.ShiftX;
@@ -1214,104 +1224,6 @@ end;
 {$endregion TJppTextShadowParams}
 
 
-{$IFDEF DELPHIXE_OR_BELOW}
-
-// ---------------------- TPointHelper -------------------------
-
-constructor TPointHelper.Create(P: TPoint);
-begin
-  Self.X := P.X;
-  Self.Y := P.Y;
-end;
-
-constructor TPointHelper.Create(const X, Y: Integer);
-begin
-  Self.X := X;
-  Self.Y := Y;
-end;
-
-procedure TPointHelper.Offset(const DX, DY: Integer);
-begin
-  Inc(Self.X, DX);
-  Inc(Self.Y, DY);
-end;
-
-procedure TPointHelper.Offset(const Point: TPoint);
-begin
-  Self.Offset(Point.X, Point.Y);
-end;
-
-
-// ----------------------- TRectHelper ---------------------------
-
-function TRectHelper.GetHeight: Integer;
-begin
-  Result := Self.Bottom - Self.Top;
-end;
-
-procedure TRectHelper.SetHeight(const Value: Integer);
-begin
-  Self.Bottom := Self.Top + Value;
-end;
-
-function TRectHelper.GetWidth: Integer;
-begin
-  Result := Self.Right - Self.Left;
-end;
-
-procedure TRectHelper.SetWidth(const Value: Integer);
-begin
-  Self.Right := Self.Left + Value;
-end;
-
-function TRectHelper.Contains(const PT: TPoint): Boolean;
-begin
-  Result := PtInRect(Self, PT);
-end;
-
-function TRectHelper.Contains(const R: TRect): Boolean;
-begin
-  Result := (Self.Left <= R.Left) and (Self.Right >= R.Right) and (Self.Top <= R.Top) and (Self.Bottom >= R.Bottom);
-end;
-
-procedure TRectHelper.Offset(const DX, DY: Integer);
-begin
-  TopLeft.Offset(DX, DY);
-  BottomRight.Offset(DX, DY);
-end;
-
-procedure TRectHelper.Offset(const Point: TPoint);
-begin
-  TopLeft.Offset(Point);
-  BottomRight.Offset(Point);
-end;
-
-
-
-// ----------------------- TSizeHelper ----------------------------
-
-function TSizeHelper.GetWidth: integer;
-begin
-  Result := Self.cx;
-end;
-
-procedure TSizeHelper.SetWidth(const Value: integer);
-begin
-  Self.cx := Value;
-end;
-
-function TSizeHelper.GetHeight: integer;
-begin
-  Result := Self.cy;
-end;
-
-procedure TSizeHelper.SetHeight(const Value: integer);
-begin
-  Self.cy := Value;
-end;
-
-{$ENDIF} // DELPHIXE_OR_BELOW
-
 
 {$IFDEF DELPHI2009}
 function TList<T>.First: T;
@@ -1334,6 +1246,22 @@ end;
 
 
 
+
+{ TJppShadowParamsRec }
+
+procedure TJppShadowParamsRec.Clear;
+begin
+  Self.Color := clNone;
+  Self.ShiftX := 0;
+  Self.ShiftY := 0;
+end;
+
+procedure TJppShadowParamsRec.Initialize(const AColor: TColor; const AShiftX, AShiftY: ShortInt);
+begin
+  Self.Color := AColor;
+  Self.ShiftX := AShiftX;
+  Self.ShiftY := AShiftY;
+end;
 
 end.
 
