@@ -2,7 +2,7 @@
 
 {
   Jacek Pazera
-  http://www.pazera-software.com
+  https://www.pazera-software.com
   https://github.com/jackdp
 }
 
@@ -398,14 +398,12 @@ begin
   FOwner := AOwner;
 
   FCaptionShadow := TJppTextShadowParams.Create(AOwner);
-  FCaptionShadow.Enabled := True;
   FCaptionShadow.OnChange := PropsChanged;
 
   FDisabledCaptionColor := clBtnShadow;
 
   FDisabledCaptionShadow := TJppTextShadowParams.Create(AOwner);
   FDisabledCaptionShadow.Color := clBtnHighlight;
-  FDisabledCaptionShadow.Enabled := True;
   FDisabledCaptionShadow.OnChange := PropsChanged;
 
   FBorderColor := clBlack;
