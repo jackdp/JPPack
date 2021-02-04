@@ -9,15 +9,18 @@ unit JPP.DoubleLabel;
 
   Based on TJppDoubleLineLabel which is based on TPegtopLineLabel from Pegtop Common Components by Jens Gruschel (http://www.pegtop.net/delphi).
   More information in file JPP.DoubleLineLabel.pas
+
+  2021.01.14
+  Windows.DrawText
 }
 
 {$I jpp.inc}
-{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
 
 interface
 
 uses
-  {$IFDEF MSWINDOWS}Windows,{$ENDIF}
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF} SysUtils,
   Messages, Classes, Graphics, Controls, StdCtrls, JPL.Rects, JPP.Common, JPP.AnchoredControls {$IFDEF FPC}, LCLType, LCLIntf, LMessages, Types{$ENDIF};
 
 type
@@ -150,7 +153,7 @@ begin
   FRightCaption := 'RightCaption';
 
   FRightCaptionFont := TFont.Create;
-  FRightCaptionFont.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
+  FRightCaptionFont.OnChange := PropsChanged;
   FRightCaptionColor := clNone;
   FRightCaptionBorderColor := clNone;
 
@@ -293,7 +296,7 @@ begin
   RightCaptionRect.Left := LeftCaptionRect.Left + LeftCaptionRect.Width + FSpacing;
   RightCaptionRect.Top := RightCaptionTop;
   RightCaptionRect.Width := RightCaptionSize.cx;
-  RightCaptionRect.Bottom := RightCaptionTop + xRightCaptionHeight + 0;
+  RightCaptionRect.Bottom := RightCaptionTop + xRightCaptionHeight + 1;
 
   if not FAutoWidth then
   begin
@@ -329,7 +332,8 @@ begin
       TextFormat := TextFormat or DT_END_ELLIPSIS or DT_EXPANDTABS or DT_NOCLIP;
     end
     else TextFormat := DT_LEFT or DT_END_ELLIPSIS or DT_EXPANDTABS or DT_NOCLIP;
-    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(Canvas.Handle, PChar(Caption), Length(Caption), LeftCaptionRect, TextFormat);
+    //{$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(Canvas.Handle, PChar(Caption), Length(Caption), LeftCaptionRect, TextFormat);
+    DrawText(Canvas.Handle, PChar(Caption), Length(Caption), LeftCaptionRect, TextFormat);
   end;
 
   // ------------------ RightCaption text ------------------------
@@ -390,7 +394,8 @@ begin
     if not FShowAccelChar then dtFormat := dtFormat + DT_NOPREFIX;
 
     s := FullRightCaptionText;
-    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(Canvas.Handle, PChar(s), Length(s), RightCaptionRect, dtFormat);
+    //{$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(Canvas.Handle, PChar(s), Length(s), RightCaptionRect, dtFormat);
+    DrawText(Canvas.Handle, PChar(s), Length(s), RightCaptionRect, dtFormat);
 
   end; // with Canvas
 
