@@ -77,7 +77,7 @@ unit JPP.DoubleLineLabel;
 
 
 {$I jpp.inc}
-{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{$IFDEF FPC}{$mode delphi}{$ENDIF}
 
 interface
 
@@ -227,7 +227,7 @@ begin
   FLineSeparation := 2;
   FRightCaption := 'RightCaption';
   FRightCaptionFont := TFont.Create;
-  FRightCaptionFont.OnChange := {$IFDEF FPC}@{$ENDIF}PropsChanged;
+  FRightCaptionFont.OnChange := PropsChanged;
   //FRightCaptionFont.Assign(Font);
   LinePosDeltaY := 0;
   FRightCaptionColor := clNone;
@@ -369,11 +369,8 @@ begin
   // --------------------- Caption text ----------------------
   if Caption <> '' then
   begin
-//    Canvas.Brush.Style := bsSolid;
-//    Canvas.Brush.Color := clWhite;
-//    Canvas.FillRect(CaptionRect);
-//    Canvas.Brush.Style := bsClear;
-    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(
+    //{$IFDEF MSWINDOWS}Windows.{$ENDIF}
+    DrawText(
       Canvas.Handle, PChar(Caption), Length(Caption), CaptionRect, DT_LEFT or DT_END_ELLIPSIS or DT_EXPANDTABS or DT_NOCLIP
     );
   end;
@@ -425,7 +422,8 @@ begin
 
     RightCaptionRect.Top := RightCaptionRect.Top + FRightCaptionPosDeltaY;
 
-    {$IFDEF MSWINDOWS}Windows.{$ENDIF}DrawText(
+    //{$IFDEF MSWINDOWS}Windows.{$ENDIF}
+    DrawText(
       Canvas.Handle, PChar(FRightCaption), Length(FRightCaption), RightCaptionRect, DT_LEFT or DT_NOPREFIX or DT_EXPANDTABS or DT_NOCLIP
     );
 
