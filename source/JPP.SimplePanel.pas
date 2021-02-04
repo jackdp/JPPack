@@ -1,4 +1,4 @@
-unit JPP.SimplePanel;
+﻿unit JPP.SimplePanel;
 
 {
   Jacek Pazera
@@ -408,6 +408,7 @@ procedure TJppCustomSimplePanel.PropsChanged(Sender: TObject);
 begin
   if csLoading in ComponentState then Exit;
   Invalidate;
+  Self.Color := FAppearance.BackgroundColor;
 end;
 
 procedure TJppCustomSimplePanel.SetAnchoredControls(const Value: TJppAnchoredControls);
@@ -462,6 +463,11 @@ procedure TJppCustomSimplePanel.DrawBackground(ARect: TRect);
 var
   R: TRect;
 begin
+  // Fix controls color, when DoubleBuffered = True
+  // Gdy na panelu z włączonym DoubleBuffered umieszczone były kontrolki, to
+  // "pobierały" one kolor z właściwości Color panelu.
+  // To rozwiązuje problem koloru tła kontrolek, ale tylko gdy nie jest używany gradient.
+  Self.Color := FAppearance.BackgroundColor;
 
   {$IFDEF DCC}
   if ParentBackground then
