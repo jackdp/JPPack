@@ -35,6 +35,9 @@
     - [TJppEditEx](#tjppeditex)
     - [TJppMemo](#tjppmemo)
     - [TJppMemoEx](#tjppmemoex)
+    - [TJppCheckBox](#tjppcheckbox)
+    - [TJppRadioButton](#tjppradiobutton)
+    - [TJppDateTimePicker](#tjppdatetimepicker)
     - [TJppGPHatchStyleComboBox](#tjppgphatchstylecombobox)
     - [TJppBrushStyleComboBox](#tjppbrushstylecombobox)
     - [TJppPenStyleComboBox](#tjpppenstylecombobox)
@@ -248,7 +251,7 @@ Additional properties:
 
 ### TJppFlatComboBox
 
-Currently **only for Delphi**. 
+Currently **only for Delphi**.
 
 Highly customizable ComboBox based on the `TFlatComboBox`  
 https://github.com/jackdp/FlatStyle/blob/master/Source/TFlatComboBoxUnit.pas
@@ -537,10 +540,28 @@ Border drawing methods based on `TFlatMemo` from the **FlatStyle** package https
 
 ---
 
+### TJppCheckBox
+
+A standard `TCheckBox` with the `TagExt` and `AnchoredControls` support.
+
+---
+
+### TJppRadioButton
+
+A standard `TRadioButton` with the `TagExt` and `AnchoredControls` support.
+
+---
+
+### TJppDateTimePicker
+
+A standard `TDateTimePicker` with the `BoundLabel`, `TagExt` and `AnchoredControls` support.
+
+---
+
 ### TJppGPHatchStyleComboBox
 
 **Windows only**  
-Lazarus and Delphi X2 - Rio.
+Lazarus and Delphi X2 or newer.
 
 Highly customizable GDI+ hatch style selector with `BoundLabel` and `AnchoredControls`.
 
@@ -727,7 +748,7 @@ A non-visual component that allows you to store collection of strings with addit
 Before installing the **JPPack** package, you must first install the following packages:
 
 1. **JPLib** from https://github.com/jackdp/JPLib
-1. **PngComponents** from ~~https://bitbucket.org/uweraabe/pngcomponents~~ https://github.com/UweRaabe/PngComponents  
+2. **PngComponents** from https://github.com/UweRaabe/PngComponents  
 You can use *PngComponents* ver. 1.4.1 package from the [3rd-party](3rd-party) folder. I tested *JPPack* with this version and it looks like everything works OK.  
 2020.08.31 - Version from GitHub works well too.
 1. For Delphi XE2 - Sydney: **IGDIPlusMod** from https://github.com/jackdp/IGDIPlusMod
