@@ -10,7 +10,7 @@
 
   Tested on:
     Delphi 2009, 2010, XE, XE2, XE3, XE4, XE5, XE6, XE7, Rio
-    Lazarus 2.0.8 + FOC 3.0.4, Lazarus 2.0.10 + FPC 3.2.0
+    Lazarus 2.0.8 + FPC 3.0.4, Lazarus 2.0.10 + FPC 3.2.0
 
 
   ---------
@@ -52,8 +52,8 @@ interface
 uses
   {$IFDEF FPC}LCLType, LCLIntf, LMessages, LCLVersion,{$ENDIF}
   {$IFDEF DCC}Windows, Messages,{$ENDIF}
-  SysUtils, Classes, Controls, Graphics, ImgList, ExtCtrls, ActnList, Forms, Types,
-
+  SysUtils, Classes, Controls, Graphics, ImgList, ExtCtrls, ActnList, Forms, StdCtrls, Types,
+                                              JPL.Rects,
   {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}UITypes,{$ENDIF}{$ENDIF}
   JPP.Common, JPP.Common.Procs, JPP.Gradient, JPP.SimplePanel;
 
@@ -99,6 +99,10 @@ type
     FHideBottomBorderWhenCollapsed: Boolean;
     FImagePosDeltaYExpanded: ShortInt;
     FImagePosDeltaYCollapsed: ShortInt;
+    FRightCaption: string;
+    FRightCaptionVisible: Boolean;
+    FRightCaptionFont: TFont;
+    FRightCaptionEllipsis: TEllipsisPosition;
     procedure SetOnChange(const Value: TNotifyEvent);
     procedure SetBackgroundColor(const Value: TColor);
     procedure SetBackgroundColorTo(const Value: TColor);
@@ -124,13 +128,17 @@ type
     procedure SetHideBottomBorderWhenCollapsed(const Value: Boolean);
     procedure SetImagePosDeltaYExpanded(const Value: ShortInt);
     procedure SetImagePosDeltaYCollapsed(const Value: ShortInt);
+    procedure SetRightCaption(const Value: string);
+    procedure SetRightCaptionVisible(const Value: Boolean);
+    procedure SetRightCaptionFont(const Value: TFont);
+    procedure SetRightCaptionEllipsis(const Value: TEllipsisPosition);
   protected
     procedure PropsChanged(Sender: TObject);
     procedure DoChangeLink(Sender: TObject);
   public
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
-    procedure Assign(const Source: TJppFlipPanelHeader; bCopyCaptions: Boolean = False); reintroduce;
+    procedure Assign(const Source: TJppFlipPanelHeader; bCopyCaption: Boolean = False; bCopyRightCaption: Boolean = False); reintroduce;
   published
     property Height: SmallInt read FHeight write SetHeight default 22;
     property OnHeightChanged: TNotifyEvent read FOnHeightChanged write SetOnHeightChanged;
@@ -138,7 +146,7 @@ type
     property Caption: string read FCaption write SetCaption;
     property CaptionCollapsed: string read FCaptionCollapsed write SetCaptionCollapsed;
     property CaptionAlignment: TAlignment read FCaptionAlignment write SetCaptionAlignment default taLeftJustify;
-    property CaptionPosDeltaX: ShortInt read FCaptionPosDeltaX write SetCaptionPosDeltaX default 0;
+    property CaptionPosDeltaX: ShortInt read FCaptionPosDeltaX write SetCaptionPosDeltaX default 5;
     property CaptionPosDeltaY: ShortInt read FCaptionPosDeltaY write SetCaptionPosDeltaY default 0;
     property CaptionShadow: TJppTextShadowParams read FCaptionShadow write SetCaptionShadow;
     property CaptionHotShadow: TJppTextShadowParams read FCaptionHotShadow write SetCaptionHotShadow;
@@ -161,6 +169,11 @@ type
     property ImageMargin: ShortInt read FImageMargin write SetImageMargin default 5;
     property ImagePosDeltaYExpanded: ShortInt read FImagePosDeltaYExpanded write SetImagePosDeltaYExpanded default 0;
     property ImagePosDeltaYCollapsed: ShortInt read FImagePosDeltaYCollapsed write SetImagePosDeltaYCollapsed default 0;
+
+    property RightCaption: string read FRightCaption write SetRightCaption;
+    property RightCaptionVisible: Boolean read FRightCaptionVisible write SetRightCaptionVisible default True;
+    property RightCaptionFont: TFont read FRightCaptionFont write SetRightCaptionFont;
+    property RightCaptionEllipsis: TEllipsisPosition read FRightCaptionEllipsis write SetRightCaptionEllipsis default epEndEllipsis;
   end;
   {$endregion TJppFlipPanelHeader}
 
@@ -395,7 +408,9 @@ end;
 
 
 
-{$Region '                          TJppCustomFlipPanel                            '}
+{$Region '                               TJppCustomFlipPanel                                '}
+
+{$Region '               Create & Destroy               '}
 constructor TJppCustomFlipPanel.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
@@ -431,18 +446,23 @@ begin
   inherited CreateWnd;
   if not Collapsed then UpdateGroup;
 end;
+{$endregion Create & Destroy}
 
 procedure TJppCustomFlipPanel.Click;
 begin
-  if MouseOverHeader then Collapsed := not FCollapsed;
+  //if MouseOverHeader then Collapsed := not FCollapsed;
+  if FMouseInHeader then Collapsed := not FCollapsed;
   inherited Click;
   RedrawControl(False);
 end;
 
 procedure TJppCustomFlipPanel.AlignControls(AControl: TControl; var Rect: TRect);
 begin
-  Rect.Left := Rect.Left + ChildOffset;
-  Rect.Top := Rect.Top + FHeader.Height;
+  if Assigned(FHeader) then
+  begin
+    Rect.Left := Rect.Left + ChildOffset;
+    Rect.Top := Rect.Top + FHeader.Height;
+  end;
   inherited AlignControls(AControl, Rect);
 end;
 
@@ -594,6 +614,7 @@ procedure TJppCustomFlipPanel.OnHeaderHeightChanged(Sender: TObject);
 var
   bCollapsed: Boolean;
 begin
+  if not Assigned(FHeader) then Exit;
   bCollapsed := Collapsed;
   try
     Expand;
@@ -623,6 +644,7 @@ begin
   if not FCollapsed then ChangeHeight(FAHeight);
 end;
 
+{$Region '                Mouse: Down, Up, Move, Enter, Leave                 '}
 procedure TJppCustomFlipPanel.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   inherited MouseDown(Button, Shift, X, Y);
@@ -671,6 +693,7 @@ begin
     RedrawControl(False);
   end;
 end;
+{$endregion Mouse: Down, Up, Move, Enter, Leave}
 
 procedure TJppCustomFlipPanel.Paint;
 begin
@@ -678,14 +701,16 @@ begin
   DrawHeader;
 end;
 
+{$Region '                                DrawHeader                                 '}
 procedure TJppCustomFlipPanel.DrawHeader;
 var
   R: TRect;
   FIndex, dy: integer;
-  sCaption: string;
+  sCaption, sRightCaption: string;
   Flags: Cardinal;
   cl: TColor;
 begin
+  if not Assigned(FHeader) then Exit;
   //FHeaderRect := Rect(BevelWidth, BevelWidth, Width - BevelWidth, FHeader.Height + BevelWidth);
   FHeaderRect := Rect(0, 0, Width, FHeader.Height+2);
   //FHeaderRect.Height := FHeaderRect.Height + 2 * BevelWidth;
@@ -702,7 +727,12 @@ begin
     if FMouseInHeader then
     begin
       if FHeader.HotBackgroundColorTo <> clNone then JppGradientFill(Canvas, R, FHeader.HotBackgroundColor, FHeader.HotBackgroundColorTo, gtVertical, 128)
-      else cl := FHeader.HotBackgroundColor;
+      else
+      begin
+        cl := FHeader.HotBackgroundColor;
+        //if cl = FHeader.BackgroundColor then cl := clNone;
+      end;
+
     end
     else
     begin
@@ -754,10 +784,10 @@ begin
         BevelWidth + ((FHeader.Height - FHeader.Images.Height) div 2) + dy,
         FIndex
       );
-      R.Left := FHeader.Images.Width + FHeader.ImageMargin * 2 + BevelWidth;
+      R.Left := FHeader.Images.Width + FHeader.ImageMargin {* 2} + BevelWidth;
     end
     else
-      R.Left := FHeader.ImageMargin * 2 + BevelWidth;
+      R.Left := {FHeader.ImageMargin * 2 +} BevelWidth;
 
 
 
@@ -812,8 +842,40 @@ begin
           DrawText(Canvas.Handle, PChar(sCaption), Length(sCaption), R, Flags);
       end;
 
-      R.Top := R.Top - dy;
+      //R.Top := R.Top - dy;
 
+    end;
+
+
+
+    // ------------------ Right Caption -----------------------
+    // RightCaption is displayed properly only when HeaderCaption.CaptionAlignment = taLeftJustify !!!
+    sRightCaption := FHeader.RightCaption;
+    if (FHeader.RightCaptionVisible) and (sRightCaption <> '') then
+    begin
+      R := FHeaderRect;
+
+      if sCaption <> '' then
+      begin
+        Font.Assign(FHeader.Font);
+        R.Left := R.Left + Canvas.TextWidth(sCaption);
+        R.Left := R.Left + FHeader.CaptionPosDeltaX + 5; // 5 - space between Caption and RightCaption
+      end;
+
+      if Assigned(FHeader.Images) then R.Left := R.Left + FHeader.Images.Width + FHeader.ImageMargin;
+
+      R.Right := R.Right - 4; // 4 - right margin
+
+      Font.Assign(FHeader.RightCaptionFont);
+      Flags := 0;
+      case FHeader.RightCaptionEllipsis of
+        epPathEllipsis: Flags := DT_PATH_ELLIPSIS;
+        epEndEllipsis: Flags := DT_END_ELLIPSIS;
+        epWordEllipsis: Flags := DT_WORD_ELLIPSIS;
+      end;
+
+      Brush.Style := bsClear;
+      DrawText(Canvas.Handle, PChar(sRightCaption), Length(sRightCaption), R, Flags or DT_RIGHT or DT_SINGLELINE or DT_VCENTER);
     end;
 
 
@@ -829,6 +891,7 @@ begin
 
   end; // with Canvas
 end;
+{$endregion DrawHeader}
 
 procedure TJppCustomFlipPanel.Collapse;
 begin
@@ -839,8 +902,6 @@ procedure TJppCustomFlipPanel.Expand;
 begin
   SetCollapsed(False);
 end;
-
-
 
 procedure TJppCustomFlipPanel.UpdateGroup;
 var
@@ -971,8 +1032,9 @@ procedure TJppCustomFlipPanel.CheckChildVisibility;
       if (Controls[I] is TWinControl) and (TWinControl(Controls[I]).Visible) then
       begin
         FChildControlVisibility.AddObject(Controls[I].Name, Controls[I]);
-        if CollapseControlsOnHeader or (TWinControl(Controls[I]).Top > FHeader.Height) then
-          TWinControl(Controls[I]).Visible := False;
+        if Assigned(FHeader) then
+          if CollapseControlsOnHeader or (TWinControl(Controls[I]).Top > FHeader.Height) then
+            TWinControl(Controls[I]).Visible := False;
       end;
   end;
 
@@ -991,6 +1053,7 @@ procedure TJppCustomFlipPanel.CheckChildVisibility;
 
 begin
   if csDesigning in ComponentState then Exit;
+
   if Collapsed then GetChildVisibility
   else SetChildVisibility;
 end;
@@ -1004,7 +1067,7 @@ begin
   if AMode in [lapAutoAdjustWithoutHorizontalScrolling, lapAutoAdjustForDPI] then
   begin
     //FButtonHeight := round(FButtonHeight * AYProportion);
-    FHeader.Height := round(FHeader.Height * AYProportion);
+    if Assigned(FHeader) then FHeader.Height := round(FHeader.Height * AYProportion);
     FChildOffset := round(FChildOffset * AXProportion);
     FCWidth := round(FCWidth * AXProportion);
     FCHeight := round(FCHeight * AYProportion);
@@ -1018,7 +1081,8 @@ procedure TJppCustomFlipPanel.FixDesignFontsPPI(const ADesignTimePPI: Integer);
 begin
   inherited;
   //DoFixDesignFontPPI(FButtonFont, ADesignTimePPI);
-  DoFixDesignFontPPI(FHeader.Font, ADesignTimePPI);
+  if Assigned(FHeader) then
+    DoFixDesignFontPPI(FHeader.Font, ADesignTimePPI);
 end;
 {$ENDIF}
 
@@ -1028,7 +1092,8 @@ procedure TJppCustomFlipPanel.ScaleFontsPPI(
 begin
   inherited;
   //DoScaleFontPPI(FButtonFont, AToPPI, AProportion);
-  DoScaleFontPPI(FHeader.Font, AToPPI, AProportion);
+  if Assigned(FHeader) then
+    DoScaleFontPPI(FHeader.Font, AToPPI, AProportion);
 end;
 {$ENDIF}
 
@@ -1055,7 +1120,7 @@ begin
   if Assigned(AOwner) then FCaption := AOwner.Name;
   FCaptionCollapsed := '';
   FCaptionAlignment := taLeftJustify;
-  FCaptionPosDeltaX := 0;
+  FCaptionPosDeltaX := 5;
   FCaptionPosDeltaY := 0;
   FBackgroundColor := $00DFDFDF;
   FBackgroundColorTo := clNone;
@@ -1073,6 +1138,12 @@ begin
   FCaptionShadow.OnChange := PropsChanged;
   FCaptionHotShadow := TJppTextShadowParams.Create(AOwner);
   FCaptionHotShadow.OnChange := PropsChanged;
+
+  FRightCaption := '';
+  FRightCaptionVisible := True;
+  FRightCaptionFont := TFont.Create;
+  FRightCaptionFont.OnChange := PropsChanged;
+  FRightCaptionEllipsis := epEndEllipsis;
 end;
 
 destructor TJppFlipPanelHeader.Destroy;
@@ -1081,6 +1152,7 @@ begin
   FChangeLink.Free;
   FCaptionShadow.Free;
   FCaptionHotShadow.Free;
+  FRightCaptionFont.Free;
   inherited;
 end;
 
@@ -1089,11 +1161,11 @@ begin
   PropsChanged(Self);
 end;
 
-procedure TJppFlipPanelHeader.Assign(const Source: TJppFlipPanelHeader; bCopyCaptions: Boolean = False);
+procedure TJppFlipPanelHeader.Assign(const Source: TJppFlipPanelHeader; bCopyCaption: Boolean = False; bCopyRightCaption: Boolean = False);
 begin
   FHeight := Source.Height;
 
-  if bCopyCaptions then
+  if bCopyCaption then
   begin
     FCaption := Source.Caption;
     FCaptionCollapsed := Source.CaptionCollapsed;
@@ -1124,6 +1196,11 @@ begin
 
   FCaptionShadow.Assign(Source.CaptionShadow);
   FCaptionHotShadow.Assign(Source.CaptionHotShadow);
+
+  if bCopyRightCaption then FRightCaption := Source.RightCaption;
+  FRightCaptionVisible := Source.RightCaptionVisible;
+  FRightCaptionFont.Assign(Source.RightCaptionFont);
+  FRightCaptionEllipsis := Source.RightCaptionEllipsis;
 end;
 
 procedure TJppFlipPanelHeader.PropsChanged(Sender: TObject);
@@ -1296,6 +1373,36 @@ end;
 procedure TJppFlipPanelHeader.SetOnHeightChanged(const Value: TNotifyEvent);
 begin
   FOnHeightChanged := Value;
+end;
+
+procedure TJppFlipPanelHeader.SetRightCaption(const Value: string);
+begin
+  if FRightCaption = Value then Exit;
+  FRightCaption := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppFlipPanelHeader.SetRightCaptionEllipsis(const Value: TEllipsisPosition);
+begin
+  if FRightCaptionEllipsis = Value then Exit;
+  FRightCaptionEllipsis := Value;
+  PropsChanged(Self);
+end;
+
+procedure TJppFlipPanelHeader.SetRightCaptionFont(const Value: TFont);
+begin
+  if Assigned(FRightCaptionFont) and Assigned(Value) then
+  begin
+    FRightCaptionFont.Assign(Value);
+    PropsChanged(Self);
+  end;
+end;
+
+procedure TJppFlipPanelHeader.SetRightCaptionVisible(const Value: Boolean);
+begin
+  if FRightCaptionVisible = Value then Exit;
+  FRightCaptionVisible := Value;
+  PropsChanged(Self);
 end;
 
 {$endregion TJppFlipPanelHeader}
