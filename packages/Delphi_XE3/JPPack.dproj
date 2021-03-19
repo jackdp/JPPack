@@ -139,10 +139,14 @@
         <DCCReference Include="..\..\source\JPP.DoubleLineLabel.pas"/>
         <DCCReference Include="..\..\source\JPP.Edit.pas"/>
         <DCCReference Include="..\..\source\JPP.EditEx.pas"/>
+        <DCCReference Include="..\..\source\JPP.CheckBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.RadioButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.DateTimePicker.pas"/>
         <DCCReference Include="..\..\source\JPP.Flash.pas"/>
         <DCCReference Include="..\..\source\JPP.FormIniStorage.pas"/>
         <DCCReference Include="..\..\source\JPP.Gradient.pas"/>
         <DCCReference Include="..\..\source\JPP.Graphics.pas"/>
+        <DCCReference Include="..\..\source\JPP.Labels.pas"/>
         <DCCReference Include="..\..\source\JPP.LinkLabel.pas"/>
         <DCCReference Include="..\..\source\JPP.MemIniFile.pas"/>
         <DCCReference Include="..\..\source\JPP.Memo.pas"/>
@@ -185,7 +189,7 @@
                     <Source Name="MainSource">JPPack.dpk</Source>
                 </Source>
                 <VersionInfo>
-                    <VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+                    <VersionInfo Name="IncludeVerInfo">True</VersionInfo>
                     <VersionInfo Name="AutoIncBuild">False</VersionInfo>
                     <VersionInfo Name="MajorVer">1</VersionInfo>
                     <VersionInfo Name="MinorVer">0</VersionInfo>
@@ -219,6 +223,15 @@
                     <VersionInfoKeys Name="CFBundleAllowMixedLocalizations"/>
                     <VersionInfoKeys Name="CFBundleExecutable"/>
                 </VersionInfoKeys>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k170.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp170.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="E:\Program Files (x86)\FastReports\LibD17\dclfrx17.bpl">FastReport 4.0 Components</Excluded_Packages>
+                    <Excluded_Packages Name="E:\Program Files (x86)\FastReports\LibD17\dclfrxDB17.bpl">FastReport 4.0 DB Components</Excluded_Packages>
+                    <Excluded_Packages Name="E:\Program Files (x86)\FastReports\LibD17\dclfrxe17.bpl">FastReport 4.0 Exports</Excluded_Packages>
+                    <Excluded_Packages Name="E:\Program Files (x86)\FastReports\LibD17\dclfs17.bpl">FastScript 1.9 Components</Excluded_Packages>
+                    <Excluded_Packages Name="E:\Program Files (x86)\FastReports\LibD17\dclfsDB17.bpl">FastScript 1.9 DB Components</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <Platforms>
                 <Platform value="Win32">True</Platform>

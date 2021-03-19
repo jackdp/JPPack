@@ -13,7 +13,7 @@
         <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="37">
+    <Files Count="39">
       <Item1>
         <Filename Value="..\..\source\JPP.AnchoredControls.pas"/>
         <UnitName Value="JPP.AnchoredControls"/>
@@ -72,108 +72,119 @@
         <UnitName Value="JPP.LinkLabel"/>
       </Item14>
       <Item15>
-        <Filename Value="..\..\source\JPP.MemIniFile.pas"/>
-        <UnitName Value="JPP.MemIniFile"/>
-      </Item15>
-      <Item16>
         <Filename Value="..\..\source\JPP.StorageCtrl.pas"/>
         <UnitName Value="JPP.StorageCtrl"/>
-      </Item16>
-      <Item17>
+      </Item15>
+      <Item16>
         <Filename Value="..\..\source\JPP.StringStorageCtrl.pas"/>
         <UnitName Value="JPP.StringStorageCtrl"/>
-      </Item17>
-      <Item18>
+      </Item16>
+      <Item17>
         <Filename Value="..\..\source\JPP.PngCollection.pas"/>
         <UnitName Value="JPP.PngCollection"/>
-      </Item18>
-      <Item19>
+      </Item17>
+      <Item18>
         <Filename Value="..\..\source\JPP.Timer.pas"/>
         <UnitName Value="JPP.Timer"/>
-      </Item19>
-      <Item20>
+      </Item18>
+      <Item19>
         <Filename Value="..\..\source\JPP.Panel.pas"/>
         <UnitName Value="JPP.Panel"/>
-      </Item20>
-      <Item21>
+      </Item19>
+      <Item20>
         <Filename Value="..\..\source\LDPngFunctions.pas"/>
         <UnitName Value="LDPngFunctions"/>
-      </Item21>
-      <Item22>
+      </Item20>
+      <Item21>
         <Filename Value="..\..\source\JPP.ColorControls.Common.pas"/>
         <UnitName Value="JPP.ColorControls.Common"/>
-      </Item22>
-      <Item23>
+      </Item21>
+      <Item22>
         <Filename Value="..\..\source\JPP.ColorListBox.pas"/>
         <UnitName Value="JPP.ColorListBox"/>
-      </Item23>
-      <Item24>
+      </Item22>
+      <Item23>
         <Filename Value="..\..\source\JPP.ColorSwatch.pas"/>
         <UnitName Value="JPP.ColorSwatch"/>
-      </Item24>
-      <Item25>
+      </Item23>
+      <Item24>
         <Filename Value="..\..\source\JPP.Edit.pas"/>
         <UnitName Value="JPP.Edit"/>
-      </Item25>
-      <Item26>
+      </Item24>
+      <Item25>
         <Filename Value="..\..\source\JPP.SimplePanel.pas"/>
         <UnitName Value="JPP.SimplePanel"/>
-      </Item26>
-      <Item27>
+      </Item25>
+      <Item26>
         <Filename Value="..\..\source\JPP.Flash.pas"/>
         <UnitName Value="JPP.Flash"/>
-      </Item27>
-      <Item28>
+      </Item26>
+      <Item27>
         <Filename Value="..\..\source\JPP.PenStyleComboBox.pas"/>
         <UnitName Value="JPP.PenStyleComboBox"/>
-      </Item28>
-      <Item29>
+      </Item27>
+      <Item28>
         <Filename Value="..\..\source\JPP.GPHatchStyleComboBox.pas"/>
         <UnitName Value="JPP.GPHatchStyleComboBox"/>
-      </Item29>
-      <Item30>
+      </Item28>
+      <Item29>
         <Filename Value="..\..\source\JPP.ComboBox.pas"/>
         <UnitName Value="JPP.ComboBox"/>
-      </Item30>
-      <Item31>
+      </Item29>
+      <Item30>
         <Filename Value="..\..\source\JPP.Memo.pas"/>
         <UnitName Value="JPP.Memo"/>
-      </Item31>
-      <Item32>
+      </Item30>
+      <Item31>
         <Filename Value="..\..\source\JPP.ComboBoxEx.pas"/>
         <UnitName Value="JPP.ComboBoxEx"/>
-      </Item32>
-      <Item33>
+      </Item31>
+      <Item32>
         <Filename Value="..\..\source\JPP.ProgressBar.pas"/>
         <UnitName Value="JPP.ProgressBar"/>
-      </Item33>
-      <Item34>
+      </Item32>
+      <Item33>
         <Filename Value="..\..\source\JPP.FlipPanel.pas"/>
         <UnitName Value="JPP.FlipPanel"/>
-      </Item34>
-      <Item35>
+      </Item33>
+      <Item34>
         <Filename Value="..\..\source\JPP.Helpers.pas"/>
         <UnitName Value="JPP.Helpers"/>
-      </Item35>
-      <Item36>
+      </Item34>
+      <Item35>
         <Filename Value="..\..\source\JPP.BasicPngButtonEx.pas"/>
         <UnitName Value="JPP.BasicPngButtonEx"/>
-      </Item36>
-      <Item37>
+      </Item35>
+      <Item36>
         <Filename Value="..\..\source\JPP.Labels.pas"/>
         <UnitName Value="JPP.Labels"/>
+      </Item36>
+      <Item37>
+        <Filename Value="..\..\source\JPP.CheckBox.pas"/>
+        <UnitName Value="JPP.CheckBox"/>
       </Item37>
+      <Item38>
+        <Filename Value="..\..\source\JPP.RadioButton.pas"/>
+        <UnitName Value="JPP.RadioButton"/>
+      </Item38>
+      <Item39>
+        <Filename Value="..\..\source\JPP.DateTimePicker.pas"/>
+        <UnitName Value="JPP.DateTimePicker"/>
+      </Item39>
     </Files>
-    <RequiredPkgs Count="3">
+    <RequiredPkgs Count="4">
       <Item1>
-        <PackageName Value="LazIGDIPlus"/>
+        <PackageName Value="DateTimeCtrls"/>
       </Item1>
       <Item2>
-        <PackageName Value="jplib"/>
+        <PackageName Value="LazIGDIPlus"/>
       </Item2>
       <Item3>
-        <PackageName Value="LCLBase"/>
+        <PackageName Value="jplib"/>
       </Item3>
+      <Item4>
+        <PackageName Value="LCLBase"/>
+      </Item4>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>

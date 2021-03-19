@@ -21,7 +21,8 @@ uses
   JPP.BrushStyleComboBox, JPP.PenStyleComboBox,
   JPP.ProgressBar, JPP.HtmlHint,
   JPP.FlipPanel,
-  JPP.FlatComboBox
+  JPP.FlatComboBox,
+  JPP.CheckBox, JPP.RadioButton, JPP.DateTimePicker
   {$IFDEF USE_GDIPLUS_CONTROLS}
   , JPP.GPHatchStyleComboBox
   {$ENDIF}
@@ -51,9 +52,10 @@ begin
       TJppPngCollection,
       TJppDoubleLineLabel, TJppDoubleLabel,
       TJppEdit, TJppEditEx,
+      TJppCheckBox, TJppRadioButton,
       TJppComboBox, TJppComboBoxEx, TJppFlatComboBox,
       TJppMemo, TJppMemoEx,
-      TJppBrushStyleComboBox, TJppPenStyleComboBox,
+      TJppBrushStyleComboBox, TJppPenStyleComboBox, TJppDateTimePicker,
       TJppProgressBar, TJppHtmlHint,
       TJppFlipPanel
       {$IFDEF USE_GDIPLUS_CONTROLS}

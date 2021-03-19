@@ -121,10 +121,14 @@
         <DCCReference Include="..\..\source\JPP.DoubleLineLabel.pas"/>
         <DCCReference Include="..\..\source\JPP.Edit.pas"/>
         <DCCReference Include="..\..\source\JPP.EditEx.pas"/>
+        <DCCReference Include="..\..\source\JPP.CheckBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.RadioButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.DateTimePicker.pas"/>
         <DCCReference Include="..\..\source\JPP.Flash.pas"/>
         <DCCReference Include="..\..\source\JPP.FormIniStorage.pas"/>
         <DCCReference Include="..\..\source\JPP.Gradient.pas"/>
         <DCCReference Include="..\..\source\JPP.Graphics.pas"/>
+        <DCCReference Include="..\..\source\JPP.Labels.pas"/>
         <DCCReference Include="..\..\source\JPP.LinkLabel.pas"/>
         <DCCReference Include="..\..\source\JPP.MemIniFile.pas"/>
         <DCCReference Include="..\..\source\JPP.Memo.pas"/>

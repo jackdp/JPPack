@@ -24,14 +24,14 @@ type
   TVerticalAlignment = (taAlignTop, taAlignBottom, taVerticalCenter);
   TEllipsisPosition = (epNone, epPathEllipsis, epEndEllipsis, epWordEllipsis);
 
-{$IFDEF UNIX}
+{.$IFDEF UNIX}
 const
   DT_PATH_ELLIPSIS = $4000;
   DT_END_ELLIPSIS = $8000;
   DT_MODIFYSTRING = $10000;
   DT_RTLREADING = $20000;
   DT_WORD_ELLIPSIS = $40000;
-{$ENDIF}
+{.$ENDIF}
 
 {$ENDIF} // FPC
 
