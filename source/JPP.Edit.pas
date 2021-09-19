@@ -134,6 +134,7 @@ type
     procedure FlashBackground;
     procedure SetupInternalLabel;
     procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
+    procedure ApplyFontColor(const TextColor: TColor; Normal: Boolean = True; Hot: Boolean = True; Focused: Boolean = True; Disabled: Boolean = False);
   protected
     property BoundLabel: TJppControlBoundLabel read FBoundLabel;
     property BoundLabelPosition: TLabelPosition read FBoundLabelPosition write SetBoundLabelPosition default lpLeft;
@@ -367,6 +368,15 @@ begin
 
   if Color <> BgColor then Color := BgColor;
   if Font.Color <> TextColor then Font.Color := TextColor;
+end;
+
+procedure TJppCustomEdit.ApplyFontColor(const TextColor: TColor; Normal, Hot, Focused, Disabled: Boolean);
+begin
+  Font.Color := TextColor;
+  if Normal then FAppearance.NormalTextColor := TextColor;
+  if Hot then FAppearance.HotTextColor := TextColor;
+  if Focused then FAppearance.FocusedTextColor := TextColor;
+  if Disabled then FAppearance.DisabledTextColor := TextColor;
 end;
 
 procedure TJppCustomEdit.CMBiDiModeChanged(var Message: TMessage);
