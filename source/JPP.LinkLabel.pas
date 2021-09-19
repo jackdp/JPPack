@@ -24,6 +24,7 @@ type
   //TJppLinkLabelTagExt = class(TJppTagExt);
 
   TJppLinkLabelClickActionType = (catGoToURL, catExecuteAction);
+  TJppOnLinkLabelClickEx = procedure(const ACaption, AURL: string; var Handled: Boolean) of object;
 
 
   {$region ' ---------- TJppCustomLinkLabel ---------- '}
@@ -44,6 +45,7 @@ type
     FVisited: Boolean;
     FFontVisitedHot: TFont;
     FAnchoredControls: TJppAnchoredControls;
+    FOnClickEx: TJppOnLinkLabelClickEx;
 
     //class constructor Create;
     procedure SetTagExt(const Value: TJppTagExt);
@@ -64,6 +66,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
+    procedure AssignFontParams(Src: TJppCustomLinkLabel);
   protected
     procedure CMMouseEnter(var Msg: TMessage); message CM_MOUSEENTER;
     procedure CMMouseLeave(var Msg: TMessage); message CM_MOUSELEAVE;
@@ -88,6 +91,7 @@ type
     property CursorDisabled: TCursor read FCursorDisabled write SetCursorDisabled default crDefault;
     property Visited: Boolean read FVisited write SetVisited default False;
     property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
+    property OnClickEx: TJppOnLinkLabelClickEx read FOnClickEx write FOnClickEx;
   end;
   {$endregion TJppCustomLinkLabel}
 
@@ -309,12 +313,22 @@ end;
 
 
   {$region ' --------------- Click ------------------- '}
+
 procedure TJppCustomLinkLabel.Click;
+var
+  Handled: Boolean;
 begin
   inherited;
 
   if csDesigning in ComponentState then Exit;
   if not FEnabled then Exit;
+
+  if Assigned(FOnClickEx) then
+  begin
+    Handled := False;
+    FOnClickEx(Caption, URL, Handled);
+    if Handled then Exit;
+  end;
 
   if (FClickActionType = catGoToURL) and (FURL <> '') then
   begin
@@ -340,6 +354,16 @@ begin
 end;
   {$endregion Click}
 
+
+procedure TJppCustomLinkLabel.AssignFontParams(Src: TJppCustomLinkLabel);
+begin
+  Font.Assign(Src.Font);
+  FontDisabled.Assign(Src.FontDisabled);
+  FontHot.Assign(Src.FontHot);
+  FontNormal.Assign(Src.FontNormal);
+  FontVisitedHot.Assign(Src.FontVisitedHot);
+  FontVisitedNormal.Assign(Src.FontVisitedNormal);
+end;
 
 procedure TJppCustomLinkLabel.SetAnchoredControls(const Value: TJppAnchoredControls);
 begin
