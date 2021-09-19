@@ -1,0 +1,120 @@
+package JPPack;
+
+{$R *.res}
+{$R '..\DCR\JppBasicPanel.dcr'}
+{$R '..\DCR\JppBasicSpeedButton.dcr'}
+{$R '..\DCR\JppColorComboBox.dcr'}
+{$R '..\DCR\JppColorListBox.dcr'}
+{$R '..\DCR\JppFormIniStorage.dcr'}
+{$R '..\DCR\JppLinkLabel.dcr'}
+{$R '..\DCR\JppPanel.dcr'}
+{$R '..\DCR\JppTimer.dcr'}
+{$R '..\DCR\JppColorSwatch.dcr'}
+{$R '..\DCR\JppColorSwatchEx.dcr'}
+{$R '..\DCR\JppSimplePanel.dcr'}
+{$R '..\DCR\JppEdit.dcr'}
+{$R '..\DCR\JppEditEx.dcr'}
+{$R '..\DCR\JppMemo.dcr'}
+{$R '..\DCR\JppMemoEx.dcr'}
+{$R '..\DCR\JppPngCollection.dcr'}
+{$R '..\DCR\JppComboBox.dcr'}
+{$R '..\DCR\JppFlatComboBox.dcr'}
+{$R '..\DCR\JppComboBoxEx.dcr'}
+{$R '..\DCR\JppStdPanel.dcr'}
+{$R '..\DCR\JppDoubleLabel.dcr'}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE RELEASE}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'JPPack VCL Components'}
+{$LIBSUFFIX 'Alexandria'}
+{$IMPLICITBUILD ON}
+
+{$DEFINE USE_GDIPLUS_CONTROLS}
+{$IFDEF VER220}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
+{$IFDEF VER210}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
+{$IFDEF VER200}{$UNDEF USE_GDIPLUS_CONTROLS}{$ENDIF}
+
+requires
+  vcl,
+  rtl,
+  vclimg,
+  JPLib,
+  PngComponents
+  {$IFDEF USE_GDIPLUS_CONTROLS}, IGDIPlusMod {$ENDIF}
+  ;
+
+contains
+  JPP.AnchoredControls in '..\..\source\JPP.AnchoredControls.pas',
+  JPP.Helpers in '..\..\source\JPP.Helpers.pas',
+  JPP.BasicPanel in '..\..\source\JPP.BasicPanel.pas',
+  JPP.BasicPngButton in '..\..\source\JPP.BasicPngButton.pas',
+  JPP.BasicPngButtonEx in '..\..\source\JPP.BasicPngButtonEx.pas',
+  JPP.BasicSpeedButton in '..\..\source\JPP.BasicSpeedButton.pas',
+  JPP.BrushStyleComboBox in '..\..\source\JPP.BrushStyleComboBox.pas',
+  JPP.ColorComboBox in '..\..\source\JPP.ColorComboBox.pas',
+  JPP.ColorControls.Common in '..\..\source\JPP.ColorControls.Common.pas',
+  JPP.ColorListBox in '..\..\source\JPP.ColorListBox.pas',
+  JPP.ColorSwatch in '..\..\source\JPP.ColorSwatch.pas',
+  JPP.ComboBox in '..\..\source\JPP.ComboBox.pas',
+  JPP.ComboBoxEx in '..\..\source\JPP.ComboBoxEx.pas',
+  JPP.Common in '..\..\source\JPP.Common.pas',
+  JPP.Common.Procs in '..\..\source\JPP.Common.Procs.pas',
+  JPP.DoubleLabel in '..\..\source\JPP.DoubleLabel.pas',
+  JPP.DoubleLineLabel in '..\..\source\JPP.DoubleLineLabel.pas',
+  JPP.Edit in '..\..\source\JPP.Edit.pas',
+  JPP.EditEx in '..\..\source\JPP.EditEx.pas',
+  JPP.CheckBox in '..\..\source\JPP.CheckBox.pas',
+  JPP.RadioButton in '..\..\source\JPP.RadioButton.pas',
+  JPP.DateTimePicker in '..\..\source\JPP.DateTimePicker.pas',
+  JPP.Flash in '..\..\source\JPP.Flash.pas',
+  JPP.FormIniStorage in '..\..\source\JPP.FormIniStorage.pas',
+  JPP.Gradient in '..\..\source\JPP.Gradient.pas',
+  JPP.Graphics in '..\..\source\JPP.Graphics.pas',
+  JPP.Labels in '..\..\source\JPP.Labels.pas',
+  JPP.LinkLabel in '..\..\source\JPP.LinkLabel.pas',
+  //JPP.MemIniFile in '..\..\source\JPP.MemIniFile.pas', replaced by JPL.MemIniFile from JPLib
+  JPP.Memo in '..\..\source\JPP.Memo.pas',
+  JPP.MemoEx in '..\..\source\JPP.MemoEx.pas',
+  JPP.Panel in '..\..\source\JPP.Panel.pas',
+  JPP.PenStyleComboBox in '..\..\source\JPP.PenStyleComboBox.pas',
+  JPP.PngButton in '..\..\source\JPP.PngButton.pas',
+  JPP.PngButton.ColorMaps in '..\..\source\JPP.PngButton.ColorMaps.pas',
+  JPP.PngCollection in '..\..\source\JPP.PngCollection.pas',
+  JPP.SimplePanel in '..\..\source\JPP.SimplePanel.pas',
+  JPP.StdPanel in '..\..\source\JPP.StdPanel.pas',
+  JPP.StorageCtrl in '..\..\source\JPP.StorageCtrl.pas',
+  JPP.StringStorageCtrl in '..\..\source\JPP.StringStorageCtrl.pas',
+  JPP.Timer in '..\..\source\JPP.Timer.pas',
+  JPP.Types in '..\..\source\JPP.Types.pas',
+  JPP.ProgressBar in '..\..\source\JPP.ProgressBar.pas',
+  JPP.HtmlHint in '..\..\source\JPP.HtmlHint.pas',
+  JPP.FlipPanel in '..\..\source\JPP.FlipPanel.pas',
+  JPP.FlatComboBox in '..\..\source\JPP.FlatComboBox.pas',
+  {$IFDEF USE_GDIPLUS_CONTROLS}
+  JPP.GPHatchStyleComboBox in '..\..\source\JPP.GPHatchStyleComboBox.pas',
+  {$ENDIF}
+  LDPngFunctions in '..\..\source\LDPngFunctions.pas',
+  JPP.Register in '..\..\source\JPP.Register.pas';
+
+end.

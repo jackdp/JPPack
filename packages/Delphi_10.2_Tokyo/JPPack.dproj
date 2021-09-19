@@ -4,7 +4,7 @@
         <MainSource>JPPack.dpk</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Release</Config>
-        <TargetedPlatforms>3</TargetedPlatforms>
+        <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Package</AppType>
         <FrameworkType>VCL</FrameworkType>
         <ProjectVersion>18.4</ProjectVersion>
@@ -18,14 +18,15 @@
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
-        <Base_Win64>true</Base_Win64>
-        <CfgParent>Base</CfgParent>
-        <Base>true</Base>
-    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
         <Cfg_1>true</Cfg_1>
         <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win32)'!=''">
+        <Cfg_1_Win32>true</Cfg_1_Win32>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
@@ -55,20 +56,16 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UsePackage>vclimg;vcl;rtl;PngComponents;JPLib;$(DCC_UsePackage)</DCC_UsePackage>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <DCC_UsePackage>vclimg;vcl;rtl;PngComponents;JPLib;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
-        <BT_BuildType>Debug</BT_BuildType>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_UsePackage>vclimg;vcl;rtl;PngComponents;JPLib;IGDIPlusMod;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
         <DCC_DebugInformation>0</DCC_DebugInformation>
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
+        <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -87,34 +84,71 @@
         <DCCReference Include="..\DCR\JppLinkLabel.dcr"/>
         <DCCReference Include="..\DCR\JppPanel.dcr"/>
         <DCCReference Include="..\DCR\JppTimer.dcr"/>
+        <DCCReference Include="..\DCR\JppColorSwatch.dcr"/>
+        <DCCReference Include="..\DCR\JppColorSwatchEx.dcr"/>
+        <DCCReference Include="..\DCR\JppSimplePanel.dcr"/>
+        <DCCReference Include="..\DCR\JppEdit.dcr"/>
+        <DCCReference Include="..\DCR\JppEditEx.dcr"/>
+        <DCCReference Include="..\DCR\JppMemo.dcr"/>
+        <DCCReference Include="..\DCR\JppMemoEx.dcr"/>
+        <DCCReference Include="..\DCR\JppPngCollection.dcr"/>
+        <DCCReference Include="..\DCR\JppComboBox.dcr"/>
+        <DCCReference Include="..\DCR\JppFlatComboBox.dcr"/>
+        <DCCReference Include="..\DCR\JppComboBoxEx.dcr"/>
+        <DCCReference Include="..\DCR\JppStdPanel.dcr"/>
+        <DCCReference Include="..\DCR\JppDoubleLabel.dcr"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vclimg.dcp"/>
         <DCCReference Include="JPLib.dcp"/>
         <DCCReference Include="PngComponents.dcp"/>
-        <DCCReference Include="..\..\source\JPP.Types.pas"/>
-        <DCCReference Include="..\..\source\JPP.Common.pas"/>
-        <DCCReference Include="..\..\source\JPP.Common.Procs.pas"/>
-        <DCCReference Include="..\..\source\JPP.Graphics.pas"/>
-        <DCCReference Include="..\..\source\JPP.Gradient.pas"/>
-        <DCCReference Include="..\..\source\JPP.MemIniFile.pas"/>
-        <DCCReference Include="..\..\source\JPP.ColorControls.Common.pas"/>
-        <DCCReference Include="..\..\source\JPP.Panel.pas"/>
+        <DCCReference Include="IGDIPlusMod.dcp"/>
+        <DCCReference Include="..\..\source\JPP.AnchoredControls.pas"/>
+        <DCCReference Include="..\..\source\JPP.Helpers.pas"/>
         <DCCReference Include="..\..\source\JPP.BasicPanel.pas"/>
         <DCCReference Include="..\..\source\JPP.BasicPngButton.pas"/>
-        <DCCReference Include="..\..\source\JPP.PngButton.ColorMaps.pas"/>
-        <DCCReference Include="..\..\source\JPP.PngButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.BasicPngButtonEx.pas"/>
         <DCCReference Include="..\..\source\JPP.BasicSpeedButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.BrushStyleComboBox.pas"/>
         <DCCReference Include="..\..\source\JPP.ColorComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.ColorControls.Common.pas"/>
         <DCCReference Include="..\..\source\JPP.ColorListBox.pas"/>
-        <DCCReference Include="..\..\source\JPP.LinkLabel.pas"/>
-        <DCCReference Include="..\..\source\JPP.Timer.pas"/>
-        <DCCReference Include="..\..\source\JPP.StorageCtrl.pas"/>
-        <DCCReference Include="..\..\source\JPP.FormIniStorage.pas"/>
-        <DCCReference Include="..\..\source\JPP.StringStorageCtrl.pas"/>
-        <DCCReference Include="..\..\source\JPP.PngCollection.pas"/>
+        <DCCReference Include="..\..\source\JPP.ColorSwatch.pas"/>
+        <DCCReference Include="..\..\source\JPP.ComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.ComboBoxEx.pas"/>
+        <DCCReference Include="..\..\source\JPP.Common.pas"/>
+        <DCCReference Include="..\..\source\JPP.Common.Procs.pas"/>
         <DCCReference Include="..\..\source\JPP.DoubleLabel.pas"/>
         <DCCReference Include="..\..\source\JPP.DoubleLineLabel.pas"/>
+        <DCCReference Include="..\..\source\JPP.Edit.pas"/>
+        <DCCReference Include="..\..\source\JPP.EditEx.pas"/>
+        <DCCReference Include="..\..\source\JPP.CheckBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.RadioButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.DateTimePicker.pas"/>
+        <DCCReference Include="..\..\source\JPP.Flash.pas"/>
+        <DCCReference Include="..\..\source\JPP.FormIniStorage.pas"/>
+        <DCCReference Include="..\..\source\JPP.Gradient.pas"/>
+        <DCCReference Include="..\..\source\JPP.Graphics.pas"/>
+        <DCCReference Include="..\..\source\JPP.Labels.pas"/>
+        <DCCReference Include="..\..\source\JPP.LinkLabel.pas"/>
+        <DCCReference Include="..\..\source\JPP.Memo.pas"/>
+        <DCCReference Include="..\..\source\JPP.MemoEx.pas"/>
+        <DCCReference Include="..\..\source\JPP.Panel.pas"/>
+        <DCCReference Include="..\..\source\JPP.PenStyleComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.PngButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.PngButton.ColorMaps.pas"/>
+        <DCCReference Include="..\..\source\JPP.PngCollection.pas"/>
+        <DCCReference Include="..\..\source\JPP.SimplePanel.pas"/>
+        <DCCReference Include="..\..\source\JPP.StdPanel.pas"/>
+        <DCCReference Include="..\..\source\JPP.StorageCtrl.pas"/>
+        <DCCReference Include="..\..\source\JPP.StringStorageCtrl.pas"/>
+        <DCCReference Include="..\..\source\JPP.Timer.pas"/>
+        <DCCReference Include="..\..\source\JPP.Types.pas"/>
+        <DCCReference Include="..\..\source\JPP.ProgressBar.pas"/>
+        <DCCReference Include="..\..\source\JPP.HtmlHint.pas"/>
+        <DCCReference Include="..\..\source\JPP.FlipPanel.pas"/>
+        <DCCReference Include="..\..\source\JPP.FlatComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.GPHatchStyleComboBox.pas"/>
         <DCCReference Include="..\..\source\LDPngFunctions.pas"/>
         <DCCReference Include="..\..\source\JPP.Register.pas"/>
         <BuildConfiguration Include="Debug">
@@ -140,7 +174,6 @@
             </Delphi.Personality>
             <Platforms>
                 <Platform value="Win32">True</Platform>
-                <Platform value="Win64">True</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>

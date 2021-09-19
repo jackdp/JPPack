@@ -103,7 +103,6 @@
 			<DCCReference Include="..\..\source\JPP.Graphics.pas"/>
 			<DCCReference Include="..\..\source\JPP.Labels.pas"/>
 			<DCCReference Include="..\..\source\JPP.LinkLabel.pas"/>
-			<DCCReference Include="..\..\source\JPP.MemIniFile.pas"/>
 			<DCCReference Include="..\..\source\JPP.Memo.pas"/>
 			<DCCReference Include="..\..\source\JPP.MemoEx.pas"/>
 			<DCCReference Include="..\..\source\JPP.Panel.pas"/>
@@ -127,12 +126,12 @@
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
-			<BuildConfiguration Include="Release">
-				<Key>Cfg_1</Key>
-				<CfgParent>Base</CfgParent>
-			</BuildConfiguration>
 			<BuildConfiguration Include="Debug">
 				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_1</Key>
 				<CfgParent>Base</CfgParent>
 			</BuildConfiguration>
 		</ItemGroup>

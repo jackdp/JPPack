@@ -59,6 +59,7 @@
 			<DCCReference Include="..\DCR\JppMemoEx.dcr"/>
 			<DCCReference Include="..\DCR\JppPngCollection.dcr"/>
 			<DCCReference Include="..\DCR\JppComboBox.dcr"/>
+			<DCCReference Include="..\DCR\JppFlatComboBox.dcr"/>
 			<DCCReference Include="..\DCR\JppComboBoxEx.dcr"/>
 			<DCCReference Include="..\DCR\JppStdPanel.dcr"/>
 			<DCCReference Include="..\DCR\JppDoubleLabel.dcr"/>
@@ -69,8 +70,10 @@
 			<DCCReference Include="PngComponents.dcp"/>
 			<DCCReference Include="IGDIPlusMod.dcp"/>
 			<DCCReference Include="..\..\source\JPP.AnchoredControls.pas"/>
+			<DCCReference Include="..\..\source\JPP.Helpers.pas"/>
 			<DCCReference Include="..\..\source\JPP.BasicPanel.pas"/>
 			<DCCReference Include="..\..\source\JPP.BasicPngButton.pas"/>
+			<DCCReference Include="..\..\source\JPP.BasicPngButtonEx.pas"/>
 			<DCCReference Include="..\..\source\JPP.BasicSpeedButton.pas"/>
 			<DCCReference Include="..\..\source\JPP.BrushStyleComboBox.pas"/>
 			<DCCReference Include="..\..\source\JPP.ColorComboBox.pas"/>
@@ -85,11 +88,14 @@
 			<DCCReference Include="..\..\source\JPP.DoubleLineLabel.pas"/>
 			<DCCReference Include="..\..\source\JPP.Edit.pas"/>
 			<DCCReference Include="..\..\source\JPP.EditEx.pas"/>
+			<DCCReference Include="..\..\source\JPP.CheckBox.pas"/>
+			<DCCReference Include="..\..\source\JPP.RadioButton.pas"/>
+			<DCCReference Include="..\..\source\JPP.DateTimePicker.pas"/>
 			<DCCReference Include="..\..\source\JPP.Flash.pas"/>
 			<DCCReference Include="..\..\source\JPP.Gradient.pas"/>
 			<DCCReference Include="..\..\source\JPP.Graphics.pas"/>
+			<DCCReference Include="..\..\source\JPP.Labels.pas"/>
 			<DCCReference Include="..\..\source\JPP.LinkLabel.pas"/>
-			<DCCReference Include="..\..\source\JPP.MemIniFile.pas"/>
 			<DCCReference Include="..\..\source\JPP.Memo.pas"/>
 			<DCCReference Include="..\..\source\JPP.MemoEx.pas"/>
 			<DCCReference Include="..\..\source\JPP.Panel.pas"/>
@@ -105,6 +111,8 @@
 			<DCCReference Include="..\..\source\JPP.Types.pas"/>
 			<DCCReference Include="..\..\source\JPP.ProgressBar.pas"/>
 			<DCCReference Include="..\..\source\JPP.HtmlHint.pas"/>
+			<DCCReference Include="..\..\source\JPP.FlipPanel.pas"/>
+			<DCCReference Include="..\..\source\JPP.FlatComboBox.pas"/>
 			<DCCReference Include="..\..\source\JPP.GPHatchStyleComboBox.pas"/>
 			<DCCReference Include="..\..\source\LDPngFunctions.pas"/>
 			<DCCReference Include="..\..\source\JPP.Register.pas"/>
@@ -131,12 +139,12 @@
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
-			<BuildConfiguration Include="Release">
-				<Key>Cfg_1</Key>
-				<CfgParent>Base</CfgParent>
-			</BuildConfiguration>
 			<BuildConfiguration Include="Debug">
 				<Key>Cfg_2</Key>
+				<CfgParent>Base</CfgParent>
+			</BuildConfiguration>
+			<BuildConfiguration Include="Release">
+				<Key>Cfg_1</Key>
 				<CfgParent>Base</CfgParent>
 			</BuildConfiguration>
 		</ItemGroup>

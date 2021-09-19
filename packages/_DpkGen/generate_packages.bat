@@ -14,6 +14,7 @@ DpkGen -t %Template% -d %Desc% -o %BaseOutDir%_10.1_Berlin\%ShortDpkName% -s Ber
 DpkGen -t %Template% -d %Desc% -o %BaseOutDir%_10.2_Tokyo\%ShortDpkName% -s Tokyo
 DpkGen -t %Template% -d %Desc% -o %BaseOutDir%_10.3_Rio\%ShortDpkName% -s Rio
 DpkGen -t %Template% -d %Desc% -o %BaseOutDir%_10.4_Sydney\%ShortDpkName% -s Sydney
+DpkGen -t %Template% -d %Desc% -o %BaseOutDir%_11.0_Alexandria\%ShortDpkName% -s Alexandria
 
 
 StrRep.exe "..\Delphi_2009\%ShortDpkName%" "JPP.FormIniStorage" "//JPP.FormIniStorage" 0 true first
