@@ -21,10 +21,34 @@ uses
   {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF} Types,
   {$IFDEF FPC}LCLIntf, LCLType,{$ENDIF}
   JPL.Rects,
-  JPP.Common, JPP.Common.Procs, JPP.AnchoredControls;
+  JPP.Common, JPP.Common.Procs, JPP.AnchoredControls, JPP.Flash;
 
 
 type
+
+  TJppCustomLabel = class;
+
+  {$Region ' --- TJppFlashLabel --- '}
+  TJppFlashLabel = class(TJppFlashBase)
+  private
+    FLabel: TJppCustomLabel;
+    FTransparent: Boolean;
+    procedure SetTransparent(const Value: Boolean);
+  protected
+    procedure FlashColorChanged(Sender: TObject; const AColor: TColor);
+    procedure FlashFinished(Sender: TObject);
+    property Transparent: Boolean read FTransparent write SetTransparent;
+  public
+    constructor Create(ALabel: TJppCustomLabel);
+  published
+    property Enabled;
+    property FlashColor;
+    property FlashCount;
+    property FlashInterval;
+    property OnFlashFinished;
+  end;
+  {$endregion TJppFlashLabel}
+
 
   {$region '   TJppCustomLabel   '}
   TJppCustomLabel = class(TCustomLabel)
@@ -32,15 +56,18 @@ type
     {$IFDEF FPC}FEllipsisPosition: TEllipsisPosition;{$ENDIF}
     FTagExt: TJppTagExt;
     FAnchoredControls: TJppAnchoredControls;
+    FFlash: TJppFlashLabel;
     {$IFDEF FPC}procedure SetEllipsisPosition(AValue: TEllipsisPosition);{$ENDIF}
     procedure SetTagExt(const Value: TJppTagExt);
     procedure SetAnchoredControls(const Value: TJppAnchoredControls);
+    procedure SetFlash(const Value: TJppFlashLabel);
   protected
     procedure PropsChanged(Sender: TObject);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
+    procedure FlashBackground;
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   protected
@@ -49,6 +76,7 @@ type
     {$IFDEF FPC}
     property EllipsisPosition: TEllipsisPosition read FEllipsisPosition write SetEllipsisPosition default epNone;
     {$ENDIF}
+    property Flash: TJppFlashLabel read FFlash write SetFlash;
   end;
   {$endregion TJppCustomLabel}
 
@@ -101,6 +129,8 @@ type
     property OnMouseLeave;
     property OnStartDock;
     property OnStartDrag;
+
+    property Flash;
 
     property TagExt;
     property AnchoredControls;
@@ -250,14 +280,26 @@ begin
   {$IFDEF FPC}
   FEllipsisPosition := epNone;
   {$ENDIF}
+  FFlash := TJppFlashLabel.Create(Self);
 end;
 
 destructor TJppCustomLabel.Destroy;
 begin;
   FTagExt.Free;
   FAnchoredControls.Free;
+  FFlash.Free;
   inherited;
 end;
+
+procedure TJppCustomLabel.FlashBackground;
+begin
+  FFlash.OriginalColor := Color;
+  FFlash.Transparent := Transparent;
+  Transparent := False; // Transparent state is restored in the FlashFinished
+  FFlash.Flash;
+end;
+
+
 
 procedure TJppCustomLabel.PropsChanged(Sender: TObject);
 begin
@@ -274,6 +316,11 @@ begin
   inherited;
   if not (csDestroying in ComponentState) then
     if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppCustomLabel.SetFlash(const Value: TJppFlashLabel);
+begin
+  FFlash := Value;
 end;
 
 procedure TJppCustomLabel.Notification(AComponent: TComponent; Operation: TOperation);
@@ -537,5 +584,54 @@ end;
 {$endregion TJppShadowLabelAppearance}
 
 
+
+
+{$region ' -------------------- TJppFlashLabel ---------------------- '}
+
+constructor TJppFlashLabel.Create(ALabel: TJppCustomLabel);
+begin
+  inherited Create(ALabel);
+  FLabel := ALabel;
+  Enabled := True;
+  FlashCount := 3;
+  FlashInterval := 150;
+
+  OnFlashColorChanged := FlashColorChanged;
+  OnFlashFinished := FlashFinished;
+  FreeOnFlashFinished := False;
+
+  if FLabel is TJppCustomLabel then
+    with (FLabel as TJppCustomLabel) do
+    begin
+      OriginalColor := Color;
+      FTransparent := Transparent;
+    end;
+end;
+
+procedure TJppFlashLabel.FlashColorChanged(Sender: TObject; const AColor: TColor);
+begin
+  if FLabel is TJppCustomLabel then
+    with (FLabel as TJppCustomLabel) do
+    begin
+      Color := AColor;
+    end;
+end;
+
+procedure TJppFlashLabel.FlashFinished(Sender: TObject);
+begin
+  if FLabel is TJppCustomLabel then
+    with (FLabel as TJppCustomLabel) do
+    begin
+      Color := OriginalColor;
+      Transparent := FTransparent;
+    end;
+end;
+
+procedure TJppFlashLabel.SetTransparent(const Value: Boolean);
+begin
+  FTransparent := Value;
+end;
+
+{$endregion TJppFlashJppEdit}
 
 end.
