@@ -281,7 +281,7 @@ begin
   for i := Low(FontNameArray) to High(FontNameArray) do
   begin
     FontName := FontNameArray[i];
-    if Screen.Fonts.IndexOf(FontName) > 0 then
+    if Screen.Fonts.IndexOf(FontName) >= 0 then // DONE: tu powinno być chyba >= 0
     begin
       Result := FontName;
       Break;

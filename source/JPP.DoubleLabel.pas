@@ -1,4 +1,4 @@
-unit JPP.DoubleLabel;
+﻿unit JPP.DoubleLabel;
 
 {
   Jacek Pazera
@@ -296,7 +296,7 @@ begin
   RightCaptionRect.Left := LeftCaptionRect.Left + LeftCaptionRect.Width + FSpacing;
   RightCaptionRect.Top := RightCaptionTop;
   RightCaptionRect.Width := RightCaptionSize.cx;
-  RightCaptionRect.Bottom := RightCaptionTop + xRightCaptionHeight + 1;
+  RightCaptionRect.Bottom := RightCaptionTop + xRightCaptionHeight + 0;//1;
 
   if not FAutoWidth then
   begin
@@ -371,6 +371,7 @@ begin
         Pen.Style := psSolid;
         if Enabled then Pen.Color := FRightCaptionBorderColor
         else Pen.Color := FRightCaptionDiabledBorderColor;
+        RightCaptionRect.Top := RightCaptionRect.Top -1; // 2021.07.17 - bez tej poprawki dolna krawędź obramowania często jest niewidoczna
       end;
 
       Rectangle(RightCaptionRect);
