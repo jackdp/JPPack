@@ -747,7 +747,9 @@ end;
 function TJppCustomColorComboBox.GetSelectedColor: TColor;
 begin
   Result := FNoneColor;
+  {$IFDEF DCC}
   if HandleAllocated then
+  {$ENDIF}
     if ItemIndex <> -1 then Result := GetItemColor(ItemIndex);
 end;
 
