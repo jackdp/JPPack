@@ -135,6 +135,7 @@ begin
   inherited Create(AOwner);
   FTagExt := TJppTagExt.Create(Self);
   FAnchoredControls := TJppAnchoredControls.Create(Self);
+  {$IFDEF FPC}AutoSize := True;{$ENDIF}
 end;
 
 destructor TJppCustomCheckBox.Destroy;
