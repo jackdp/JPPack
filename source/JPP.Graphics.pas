@@ -1,14 +1,14 @@
 ﻿{ $ID: JPP.Graphics $ }
 {
   ------------------------------------------------------
-  Routines related to Bitmap and PNG processing.
+  Routines related to Bitmap and PNG processing and other
   ------------------------------------------------------
 }
 unit JPP.Graphics;
 
 
 {$I jpp.inc}
-{$IFDEF FPC} {$mode objfpc}{$H+} {$ENDIF}
+{$IFDEF FPC} {$mode delphi}{$H+} {$ENDIF}
 
 interface
 
@@ -18,7 +18,7 @@ uses
   {$IFDEF DCC}
     {$IFDEF HAS_UNIT_SCOPE}, Vcl.Imaging.pngimage{$ELSE}, pngimage{$ENDIF}
   {$ENDIF}
-  {$IFDEF FPC}, GraphType, LCLType, LCLIntf{$ENDIF}
+  {$IFDEF FPC}, GraphType, LCLType, LCLIntf, FpImage, intfGraphics, EasyLazFreeType, LazFreeTypeIntfDrawer{$ENDIF}
   ;
 
 
@@ -53,6 +53,22 @@ type
     gi10Percent, gi20Percent, gi30Percent, gi40Percent, gi50Percent,
     gi60Percent, gi70Percent, gi80Percent, gi90Percent, gi100Percent
   );
+
+  {$IFDEF MSWINDOWS}
+  TPixelConv = record
+  public
+    class procedure Init(Canvas: TCanvas); static;
+    class function ToPixelsX(const Millimeters: Single): Single; static;
+    class function ToPixelsY(const Millimeters: Single): Single; static;
+    class function InfoStr: string; static;
+    class var PixelsPerMillimeterX: Single;
+    class var PixelsPerMillimeterY: Single;
+    class var HorizontalRes: integer;
+    class var VerticalRes: integer;
+    class var HorizontalSize: integer;
+    class var VerticalSize: integer;
+  end;
+  {$ENDIF} // MSWINDOWS
 
 
 {$region '   INT - Bitmap Procs   '}
@@ -134,11 +150,140 @@ function GetIconCount(const FileName: string): Integer;
 function PixelFormatToStr(const pf: TPixelFormat): string;
 procedure GrayscaleRGB(var R, G, B: Byte; Amount: Byte = 255);
 
+procedure DrawCheckerboard(const Canvas: TCanvas; ColorSquare1, ColorSquare2: TColor; SquareSize: Byte = 16);
+
+{$IFDEF FPC}
+function GetTransparentPng(const PngWidth, PngHeight: integer): TPortableNetworkGraphic;
+procedure SetTransparentPng(const Png: TPortableNetworkGraphic);
+{$ENDIF}
+
+function StrToPenStyle(const PenStyleStr: string): TPenStyle;
+function PenStyleToStr(const PenStyle: TPenStyle): string;
+
+
+
 implementation
 
 uses
   JPP.Common.Procs;
 
+
+
+function PenStyleToStr(const PenStyle: TPenStyle): string;
+begin
+  case PenStyle of
+    psSolid: Result := 'Solid';
+    psDash: Result := 'Dash';
+    psDot: Result := 'Dot';
+    psDashDot: Result := 'DashDot';
+    psDashDotDot: Result := 'DashDotDot';
+  else
+    Result := 'Solid';
+  end;
+end;
+
+function StrToPenStyle(const PenStyleStr: string): TPenStyle;
+var
+  s: string;
+begin
+  s := Trim(LowerCase(PenStyleStr));
+  if s = 'solid' then Result := psSolid
+  else if s = 'dash' then Result := psDash
+  else if s = 'dot' then Result := psDot
+  else if s = 'dashdot' then Result := psDashDot
+  else if s = 'dashdotdot' then Result := psDashDotDot
+  else Result := psSolid;
+end;
+
+{$IFDEF FPC}
+// https://forum.lazarus.freepascal.org/index.php/topic,35424.msg234088.html#msg234088
+procedure SetTransparentPng(const Png: TPortableNetworkGraphic);
+var
+  img: TLazIntfImage;
+  drw: TIntfFreeTypeDrawer;
+begin
+  img := TLazIntfImage.Create(0, 0, [riqfRGB, riqfAlpha]);
+  try
+    img.SetSize(Png.Width, Png.Height);
+    drw := TIntfFreeTypeDrawer.Create(img);
+    try
+      drw.FillPixels(colTransparent);
+      Png.LoadFromIntfImage(img);
+    finally
+      drw.Free;
+    end;
+  finally
+    img.Free;
+  end;
+end;
+
+function GetTransparentPng(const PngWidth, PngHeight: integer): TPortableNetworkGraphic;
+begin
+  Result := TPortableNetworkGraphic.Create;
+  Result.SetSize(PngWidth, PngHeight);
+  SetTransparentPng(Result);
+end;
+{$ENDIF} // FPC
+
+procedure DrawCheckerboard(const Canvas: TCanvas; ColorSquare1, ColorSquare2: TColor; SquareSize: Byte = 16);
+var
+  cl: TColor;
+  xSize: SmallInt;
+  x, y, xw, xh: integer;
+  Bmp: TBitmap;
+  R, R2: TRect;
+  b, br: Boolean;
+begin
+  R := Canvas.ClipRect;
+  if (R.Width < 2) or (R.Height < 2) then Exit;
+
+  xSize := SquareSize;
+
+  Bmp := TBitmap.Create;
+  try
+
+    xw := R.Width;
+    xh := R.Height;
+    Bmp.SetSize(xw, xh);
+    br := False;
+
+    with Bmp.Canvas do
+    begin
+
+      Pen.Style := psClear;
+      Brush.Style := bsSolid;
+
+      for x := 0 to (xw div xSize) do
+      begin
+
+        br := not br;
+        b := br;
+
+
+        for y := 0 to (xh div xSize) do
+        begin
+          b := not b;
+          if b then cl := ColorSquare1 else cl := ColorSquare2;
+          Brush.Color := cl;
+
+          R2.Left := x * xSize;
+          R2.Top := y * xSize;
+          R2.Width := xSize;
+          R2.Height := xSize;
+
+          FillRect(R2);
+        end;
+
+      end; // for x
+
+    end; // with
+
+    Canvas.Draw(R.Left, R.Top, Bmp);
+
+  finally
+    Bmp.Free;
+  end;
+end;
 
 // from PngComponents - PngFunctions.pas
 procedure GrayscaleRGB(var R, G, B: Byte; Amount: Byte = 255);
@@ -158,7 +303,6 @@ begin
   *)
 end;
 
-
 function PixelFormatToStr(const pf: TPixelFormat): string;
 begin
   case pf of
@@ -175,17 +319,12 @@ begin
   end;
 end;
 
-
-
-
 {$IFDEF MSWINDOWS}
 function GetIconCount(const FileName: string): Integer;
 begin
   Result := ExtractIcon(hInstance, PChar(FileName), DWORD(-1));
 end;
 {$ENDIF}
-
-
 
 {$region '            PNG Procs                '}
 
@@ -668,7 +807,6 @@ end;
   {$endregion PngSetGamma}
 
 {$endregion PNG Procs}
-
 
 {$region '             Bitmap Procs                  '}
 procedure BitmapGrayscale(Bmp: TBitmap);
@@ -1231,6 +1369,60 @@ begin
   Result := True;
 end;
 {$endregion Bitmap Procs}
+
+
+{$region '                  TPixelConv                   '}
+
+{$IFDEF MSWINDOWS}
+class function TPixelConv.InfoStr: string;
+const
+  ENDL = #13#10;
+begin
+  Result :=
+    'Screen resolution in pixels: ' + IntToStr(HorizontalRes) + ' x ' + IntToStr(VerticalRes) + ENDL +
+    'Screen size in millimeters: ' + IntToStr(HorizontalSize) + ' x ' + IntToStr(VerticalSize) + ENDL +
+    ENDL +
+    'Horizontal parameters:' + ENDL +
+    '    1 mm = ' + FormatFloat('0.0000 pix', PixelsPerMillimeterX) + ENDL +
+    '    1 cm = ' + FormatFloat('0.0000 pix', PixelsPerMillimeterX * 10) + ENDL +
+    ENDL +
+    'Vertical parameters:' + ENDL +
+    '    1 mm = ' + FormatFloat('0.0000 pix', PixelsPerMillimeterY) + ENDL +
+    '    1 cm = ' + FormatFloat('0.0000 pix', PixelsPerMillimeterY * 10) + ENDL
+    ;
+end;
+
+class procedure TPixelConv.Init(Canvas: TCanvas);
+var
+  h: HDC;
+  xHorzRes, xVertRes, xHorzSize, xVertSize: integer;
+begin
+  h := Canvas.Handle;
+  xHorzRes := GetDeviceCaps(h, HORZRES); // screen width in pixels
+  xVertRes := GetDeviceCaps(h, VERTRES); // screen height in pixels
+  xHorzSize := GetDeviceCaps(h, HORZSIZE); // screen width in mm
+  xVertSize := GetDeviceCaps(h, VERTSIZE); // screen height in mm
+  PixelsPerMillimeterX := xHorzRes / xHorzSize;
+  PixelsPerMillimeterY := xVertRes / xVertSize;
+
+  HorizontalRes := xHorzRes;
+  VerticalRes := xVertRes;
+  HorizontalSize := xHorzSize;
+  VerticalSize := xVertSize;
+end;
+
+class function TPixelConv.ToPixelsX(const Millimeters: Single): Single;
+begin
+  Result := Millimeters * PixelsPerMillimeterX;
+end;
+
+class function TPixelConv.ToPixelsY(const Millimeters: Single): Single;
+begin
+  Result := Millimeters * PixelsPerMillimeterY;
+end;
+{$ENDIF} // MSWINDOWS
+
+{$endregion TPixelConv}
 
 
 
