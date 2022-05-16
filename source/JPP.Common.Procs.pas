@@ -22,7 +22,7 @@ function StrToAlignment(AlignmentStr: string; Default: TAlignment = taLeftJustif
 
 procedure MakeListFromStr(LineToParse: string; var List: TStringList; Separator: string = ',');
 function PadLeft(const Text: string; const PadToLen: integer; PaddingChar: Char = ' '): string;
-procedure SaveStringToFile(s: string; fName: string);
+procedure SaveStringToFile(const Content, FileName: string);
 
 procedure JppFrame3D(Canvas: TCanvas; var Rect: TRect; LeftColor, RightColor, TopColor, BottomColor: TColor; Width: Integer); overload;
 procedure JppFrame3D(Canvas: TCanvas; var Rect: TRect; Color: TColor; Width: integer); overload;
@@ -599,14 +599,14 @@ end;
 {$endregion Drawing procs}
 
 
-procedure SaveStringToFile(s: string; fName: string);
+procedure SaveStringToFile(const Content, FileName: string);
 var
   sl: TStringList;
 begin
   sl := TStringList.Create;
   try
-    sl.Text := s;
-    sl.SaveToFile(fName);
+    sl.Text := Content;
+    sl.SaveToFile(FileName);
   finally
     sl.Free;
   end;

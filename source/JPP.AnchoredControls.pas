@@ -3,7 +3,7 @@ unit JPP.AnchoredControls;
 {
   Jacek Pazera
   https://github.com/jackdp
-  http://www.pazera-software.com
+  https://www.pazera-software.com
 
   TODO: Block circular anchoring: A.B + B.C + C.A
 }

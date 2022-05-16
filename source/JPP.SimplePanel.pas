@@ -2,7 +2,7 @@
 
 {
   Jacek Pazera
-  http://www.pazera-software.com
+  https://www.pazera-software.com
   https://github.com/jackdp
 }
 

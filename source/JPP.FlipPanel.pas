@@ -758,11 +758,8 @@ begin
     if cl <> clNone then
     begin
       Pen.Color := cl;
-      //Brush.Style := bsClear;
-      //Rectangle(R);
       if Collapsed and FHeader.HideBottomBorderWhenCollapsed then DrawRectEx(Canvas, R, True, True, True, False)
       else DrawRectEx(Canvas, R, True, True, True, True);
-      //Brush.Style := bsSolid;
     end;
 
 
@@ -773,6 +770,8 @@ begin
 
     R := FHeaderRect;
 
+    // TODO: Lazarus: images are only displayed in design-time
+    // Temporary fix: set images and image indexes in the code
     if Assigned(FHeader.Images) then
     begin
       if Collapsed then dy := FHeader.ImagePosDeltaYCollapsed else dy := FHeader.ImagePosDeltaYExpanded;
@@ -849,7 +848,7 @@ begin
 
 
     // ------------------ Right Caption -----------------------
-    // RightCaption is displayed properly only when HeaderCaption.CaptionAlignment = taLeftJustify !!!
+    // TODO: RightCaption is displayed properly only when HeaderCaption.CaptionAlignment = taLeftJustify !!!
     sRightCaption := FHeader.RightCaption;
     if (FHeader.RightCaptionVisible) and (sRightCaption <> '') then
     begin
