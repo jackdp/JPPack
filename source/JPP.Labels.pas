@@ -134,6 +134,9 @@ type
 
     property TagExt;
     property AnchoredControls;
+    {$IFDEF FPC}
+    property BorderSpacing;
+    {$ENDIF}
   end;
   {$endregion TJppLabel}
 
@@ -260,6 +263,9 @@ type
     property TagExt;
     property AnchoredControls;
     property Appearance;
+    {$IFDEF FPC}
+    property BorderSpacing;
+    {$ENDIF}
   end;
   {$endregion TJppShadowLabel}
 

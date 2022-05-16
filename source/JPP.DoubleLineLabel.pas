@@ -209,6 +209,10 @@ type
     property RightCaptionDiabledBorderColor: TColor read FRightCaptionDiabledBorderColor write SetRightCaptionDiabledBorderColor default clNone;
 
     property AnchoredControls: TJppAnchoredControls read FAnchoredControls write SetAnchoredControls;
+
+    {$IFDEF FPC}
+    property BorderSpacing;
+    {$ENDIF}
   end;
 
 
