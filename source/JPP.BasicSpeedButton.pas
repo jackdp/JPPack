@@ -499,7 +499,7 @@ begin
 
       if FAutoWidth and (Align <> alClient) and (Align <> alTop) and (Align <> alBottom) then
       begin
-        xw := Width;
+        xw := Self.Width;
         Inc(ButtonWidth, Canvas.TextWidth(Caption));
         Inc(ButtonWidth, 2 * FAutoWidthMargin);
         if FMargin > 0 then Inc(ButtonWidth, FMargin);
@@ -508,8 +508,8 @@ begin
 
         if FAutoWidthRightJustify then
         begin
-          dw := Width - xw;
-          Self.Left := Left - dw;
+          dw := Self.Width - xw;
+          Self.Left := Self.Left - dw;
         end;
       end;
 
