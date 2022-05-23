@@ -14,6 +14,7 @@ uses
   JPP.BasicSpeedButton, JPP.ColorListBox, JPP.ComboBox, JPP.ComboBoxEx, JPP.ColorComboBox, JPP.ColorSwatch, JPP.SimplePanel,
   JPP.Edit, JPP.Memo, JPP.FlipPanel,
   JPP.BrushStyleComboBox, JPP.PenStyleComboBox, JPP.ProgressBar,
+  JPP.CheckBox, JPP.RadioButton, JPP.DateTimePicker,
   {$IFDEF USE_GDIPLUS_CONTROLS}
   JPP.GPHatchStyleComboBox,
   {$ENDIF}
@@ -51,6 +52,7 @@ begin
   RegisterComponents(JPPackPageName, [TJppBrushStyleComboBox, TJppPenStyleComboBox]);
   RegisterComponents(JPPackPageName, [TJppProgressBar]);
   RegisterComponents(JPPackPageName, [TJppFlipPanel]);
+  RegisterComponents(JPPackPageName, [TJppCheckBox, TJppRadioButton, TJppDateTimePicker]);
 
   {$IFDEF USE_GDIPLUS_CONTROLS}
   RegisterComponents(JPPackPageName, [TJppGPHatchStyleComboBox]);

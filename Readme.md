@@ -58,8 +58,8 @@ A collection of VCL/LCL components for Delphi 2009 - 11.0 Alexandria and Lazarus
 **JPPack** is a small collection of VCL components for [Delphi](https://www.embarcadero.com/products/delphi/starter/free-download) and LCL components for [Lazarus](https://www.lazarus-ide.org/) and [CodeTyphon](https://pilotlogic.com/).
 
 Supported Delphi versions: **2009**, **2010**, **XE**, **XE2**, **XE3**, **XE4**, **XE5**, **XE6**, **XE7**, **XE8**, **10.0 Seattle**, **10.1 Berlin**, **10.2 Tokyo**, **10.3 Rio**, **10.4 Sydney**, **11.0 Alexandria**.  
-**Lazarus**: Required FPC version ~~3.0.4~~ **3.2.0** or newer (tested on Lazarus 2.0.10 + FPC 3.2.0 and Lazarus 2.2.0 + FPC 3.2.2).
-**CodeTyphon**: Tested on CodeTyphon 7.10 with FPC 3.3.1
+**Lazarus**: Required FPC version ~~3.0.4~~ **3.2.0** or newer (tested on Lazarus 2.0.10 + FPC 3.2.0, Lazarus 2.2.0 + FPC 3.2.2 and Lazarus 2.2.2 + FPC 3.2.2).
+**CodeTyphon**: Tested on CodeTyphon 7.7 r2202141933 with FPC 3.3.1 r2202141933
 
 ![JPPack demo app main window](./docs/img/JPPack.png)
 

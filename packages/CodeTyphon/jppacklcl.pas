@@ -8,11 +8,11 @@ unit jppacklcl;
 interface
 
 uses
-  JPP.AnchoredControls, JPP.BasicPanel, JPP.BasicSpeedButton, JPP.BrushStyleComboBox, JPP.ColorComboBox, JPP.ColorControls.Common, 
-  JPP.ColorListBox, JPP.ColorSwatch, JPP.ComboBox, JPP.ComboBoxEx, JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel, 
-  JPP.Edit, JPP.Flash, JPP.Gradient, JPP.Graphics, JPP.LinkLabel, JPP.MemIniFile, JPP.Memo, JPP.Panel, JPP.PenStyleComboBox, 
-  JPP.PngCollection, JPP.SimplePanel, JPP.StorageCtrl, JPP.StringStorageCtrl, JPP.Timer, JPP.Types, LDPngFunctions, CTJPPackRegister, 
-  JPP.ProgressBar, JPP.GPHatchStyleComboBox, JPP.FlipPanel, JPP.Helpers, JPP.Labels, TyphonPackageIntf;
+  JPP.AnchoredControls, JPP.BasicPanel, JPP.BasicSpeedButton, JPP.BrushStyleComboBox, JPP.ColorComboBox, JPP.ColorControls.Common, JPP.ColorListBox, 
+  JPP.ColorSwatch, JPP.ComboBox, JPP.ComboBoxEx, JPP.Common, JPP.Common.Procs, JPP.DoubleLabel, JPP.DoubleLineLabel, JPP.Edit, JPP.Flash, 
+  JPP.Gradient, JPP.Graphics, JPP.LinkLabel, JPP.Memo, JPP.Panel, JPP.PenStyleComboBox, JPP.PngCollection, JPP.SimplePanel, JPP.StorageCtrl, 
+  JPP.StringStorageCtrl, JPP.Timer, JPP.Types, LDPngFunctions, CTJPPackRegister, JPP.ProgressBar, JPP.GPHatchStyleComboBox, JPP.FlipPanel, 
+  JPP.Helpers, JPP.Labels, JPP.CheckBox, JPP.RadioButton, JPP.DateTimePicker, TyphonPackageIntf;
 
 implementation
 

@@ -4,6 +4,7 @@
     <PathDelim Value="\"/>
     <Name Value="jppacklcl"/>
     <Type Value="RunAndDesignTime"/>
+    <HasRegisterProc Value="True"/>
     <CompilerOptions>
       <Version Value="11"/>
       <PathDelim Value="\"/>
@@ -91,10 +92,6 @@
         <UnitName Value="JPP.LinkLabel"/>
       </Item>
       <Item>
-        <Filename Value="..\..\source\JPP.MemIniFile.pas"/>
-        <UnitName Value="JPP.MemIniFile"/>
-      </Item>
-      <Item>
         <Filename Value="..\..\source\JPP.Memo.pas"/>
         <UnitName Value="JPP.Memo"/>
       </Item>
@@ -159,8 +156,26 @@
         <Filename Value="..\..\source\JPP.Labels.pas"/>
         <UnitName Value="JPP.Labels"/>
       </Item>
+      <Item>
+        <Filename Value="..\..\source\JPP.CheckBox.pas"/>
+        <UnitName Value="JPP.CheckBox"/>
+      </Item>
+      <Item>
+        <Filename Value="..\..\source\JPP.RadioButton.pas"/>
+        <UnitName Value="JPP.RadioButton"/>
+      </Item>
+      <Item>
+        <Filename Value="..\..\source\JPP.DateTimePicker.pas"/>
+        <UnitName Value="JPP.DateTimePicker"/>
+      </Item>
     </Files>
     <RequiredPkgs>
+      <Item>
+        <PackageName Value="lz_FreeType"/>
+      </Item>
+      <Item>
+        <PackageName Value="lz_DateTimeCtrls"/>
+      </Item>
       <Item>
         <PackageName Value="LazIGDIPlus"/>
       </Item>
