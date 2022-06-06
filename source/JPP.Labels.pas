@@ -200,7 +200,12 @@ type
     FAppearance: TJppShadowLabelAppearance;
     procedure SetAppearance(const Value: TJppShadowLabelAppearance);
   protected
-    procedure DoDrawText(var Rect: TRect; Flags: Longint); {$IFDEF DCC}override;{$ENDIF}
+    {$IFDEF DCC}
+    procedure DoDrawText(var Rect: TRect; Flags: Longint); override;
+    {$ELSE}
+    procedure DoDrawText(var Rect: TRect; Flags: Longint); {$IFDEF FPC322_OR_ABOVE}override;{$ENDIF}
+    {$ENDIF}
+    {$IFDEF DCC}procedure AdjustBounds; override;{$ENDIF}
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -376,6 +381,15 @@ begin
   inherited;
 end;
 
+{$IFDEF DCC}
+procedure TJppCustomShadowLabel.AdjustBounds;
+begin
+  inherited;
+  if AutoSize then
+    Width := Width + FAppearance.Padding.Left + FAppearance.Padding.Right;
+end;
+{$ENDIF}
+
 procedure TJppCustomShadowLabel.Paint;
 var
   Rect: TRect;
@@ -414,7 +428,7 @@ begin
   end;
 end;
 
-procedure TJppCustomShadowLabel.DoDrawText(var Rect: TRect; Flags: Integer);
+procedure TJppCustomShadowLabel.DoDrawText(var Rect: TRect; Flags: Longint);
 begin
   if Caption = '' then Exit;
 
