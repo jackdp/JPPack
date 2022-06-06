@@ -88,6 +88,7 @@ type
     procedure FlashBackground;
     procedure SetupInternalLabel;
     procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
+    procedure UpdateLabelPosition;
   protected
     property BoundLabel: TJppControlBoundLabel read FBoundLabel;
     property BoundLabelPosition: TLabelPosition read FBoundLabelPosition write SetBoundLabelPosition default lpLeft;
@@ -303,12 +304,17 @@ begin
       end;
 end;
 
-procedure TJppCustomComboBox.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+procedure TJppCustomComboBox.SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer);
 begin
   inherited;
   SetBoundLabelPosition(FBoundLabelPosition);
   if not (csDestroying in ComponentState) then
     if Assigned(FAnchoredControls) then FAnchoredControls.UpdateAllControlsPos;
+end;
+
+procedure TJppCustomComboBox.UpdateLabelPosition;
+begin
+  SetBoundLabelPosition(FBoundLabelPosition);
 end;
 
 procedure TJppCustomComboBox.SetColorDisabled(const Value: TColor);
@@ -447,6 +453,7 @@ begin
   FBoundLabel.FreeNotification(Self);
   FBoundLabel.OnAdjustBounds := AdjustLabelBounds;
   FBoundLabel.FocusControl := Self;
+  {$IFDEF FPC}FBoundLabel.OnChangeBounds := AdjustLabelBounds;{$ENDIF}
 end;
 
 {$IFDEF MSWINDOWS}

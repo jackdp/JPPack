@@ -492,12 +492,10 @@ end;
 
 procedure TJppCustomPenStyleComboBox.Change;
 var
-  s: string;
   bs: TPenStyle;
 begin
   if ItemIndex >= 0 then
   begin
-    s := Items[ItemIndex];
     if not TryGetItemPenStyle(ItemIndex, bs) then Exit;
     SetSelectedPenStyle(bs);
   end;
@@ -613,7 +611,7 @@ begin
     Rectangle(R);
 
 
-    // Brush style rect
+    // Pen style rect
     if not Enabled then cl := FAppearance.ColorDisabled
     else if bSelected then cl := FAppearance.ColorSelected
     else cl := FAppearance.Color;
@@ -674,6 +672,7 @@ begin
   FBoundLabel.FreeNotification(Self);
   FBoundLabel.OnAdjustBounds := AdjustLabelBounds;
   FBoundLabel.FocusControl := Self;
+  {$IFDEF FPC}FBoundLabel.OnChangeBounds := AdjustLabelBounds;{$ENDIF}
 end;
 
 procedure TJppCustomPenStyleComboBox.AdjustLabelBounds(Sender: TObject);

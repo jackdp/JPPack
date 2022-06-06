@@ -443,6 +443,7 @@ begin
   FBoundLabel.FreeNotification(Self);
   FBoundLabel.OnAdjustBounds := AdjustLabelBounds;
   FBoundLabel.FocusControl := Self;
+  {$IFDEF FPC}FBoundLabel.OnChangeBounds := AdjustLabelBounds;{$ENDIF}
 end;
 
 {$IFDEF MSWINDOWS}
