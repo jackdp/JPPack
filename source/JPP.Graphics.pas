@@ -54,22 +54,6 @@ type
     gi60Percent, gi70Percent, gi80Percent, gi90Percent, gi100Percent
   );
 
-  {$IFDEF MSWINDOWS}
-  TPixelConv = record
-  public
-    class procedure Init(Canvas: TCanvas); static;
-    class function ToPixelsX(const Millimeters: Single): Single; static;
-    class function ToPixelsY(const Millimeters: Single): Single; static;
-    class function InfoStr: string; static;
-    class var PixelsPerMillimeterX: Single;
-    class var PixelsPerMillimeterY: Single;
-    class var HorizontalRes: integer;
-    class var VerticalRes: integer;
-    class var HorizontalSize: integer;
-    class var VerticalSize: integer;
-  end;
-  {$ENDIF} // MSWINDOWS
-
 
 {$region '   INT - Bitmap Procs   '}
 procedure BitmapGrayscale(Bmp: TBitmap);
@@ -165,7 +149,7 @@ function PenStyleToStr(const PenStyle: TPenStyle): string;
 implementation
 
 uses
-  JPP.Common.Procs;
+  JPP.Common.Procs, JPL.Rects;
 
 
 
@@ -1369,60 +1353,6 @@ begin
   Result := True;
 end;
 {$endregion Bitmap Procs}
-
-
-{$region '                  TPixelConv                   '}
-
-{$IFDEF MSWINDOWS}
-class function TPixelConv.InfoStr: string;
-const
-  ENDL = #13#10;
-begin
-  Result :=
-    'Screen resolution in pixels: ' + IntToStr(HorizontalRes) + ' x ' + IntToStr(VerticalRes) + ENDL +
-    'Screen size in millimeters: ' + IntToStr(HorizontalSize) + ' x ' + IntToStr(VerticalSize) + ENDL +
-    ENDL +
-    'Horizontal parameters:' + ENDL +
-    '    1 mm = ' + FormatFloat('0.0000 pix', PixelsPerMillimeterX) + ENDL +
-    '    1 cm = ' + FormatFloat('0.0000 pix', PixelsPerMillimeterX * 10) + ENDL +
-    ENDL +
-    'Vertical parameters:' + ENDL +
-    '    1 mm = ' + FormatFloat('0.0000 pix', PixelsPerMillimeterY) + ENDL +
-    '    1 cm = ' + FormatFloat('0.0000 pix', PixelsPerMillimeterY * 10) + ENDL
-    ;
-end;
-
-class procedure TPixelConv.Init(Canvas: TCanvas);
-var
-  h: HDC;
-  xHorzRes, xVertRes, xHorzSize, xVertSize: integer;
-begin
-  h := Canvas.Handle;
-  xHorzRes := GetDeviceCaps(h, HORZRES); // screen width in pixels
-  xVertRes := GetDeviceCaps(h, VERTRES); // screen height in pixels
-  xHorzSize := GetDeviceCaps(h, HORZSIZE); // screen width in mm
-  xVertSize := GetDeviceCaps(h, VERTSIZE); // screen height in mm
-  PixelsPerMillimeterX := xHorzRes / xHorzSize;
-  PixelsPerMillimeterY := xVertRes / xVertSize;
-
-  HorizontalRes := xHorzRes;
-  VerticalRes := xVertRes;
-  HorizontalSize := xHorzSize;
-  VerticalSize := xVertSize;
-end;
-
-class function TPixelConv.ToPixelsX(const Millimeters: Single): Single;
-begin
-  Result := Millimeters * PixelsPerMillimeterX;
-end;
-
-class function TPixelConv.ToPixelsY(const Millimeters: Single): Single;
-begin
-  Result := Millimeters * PixelsPerMillimeterY;
-end;
-{$ENDIF} // MSWINDOWS
-
-{$endregion TPixelConv}
 
 
 
