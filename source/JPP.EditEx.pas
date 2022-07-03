@@ -57,6 +57,10 @@ type
     constructor Create(AOwner: TComponent);
     destructor Destroy; override;
     procedure Assign(Source: TJppCustomEditExAppearance); reintroduce;
+    procedure SetBackgroundColor(const AColor: TColor; SkipDisabledState: Boolean = True);
+    procedure SetTextColor(const AColor: TColor; SkipDisabledState: Boolean = True);
+    procedure SetBorderColor(const AColor: TColor; SkipDisabledState: Boolean = True);
+    procedure SetColors(const Background, Text, Border: TColor; SkipDisabledState: Boolean = True);
   published
     property NormalBgColor: TColor read FNormalBgColor write SetNormalBgColor default clWindow;
     property NormalTextColor: TColor read FNormalTextColor write SetNormalTextColor default clWindowText;
@@ -722,12 +726,64 @@ begin
   PropsChanged(Self);
 end;
 
+procedure TJppCustomEditExAppearance.SetBackgroundColor(const AColor: TColor; SkipDisabledState: Boolean = True);
+begin
+  FNormalBgColor := AColor;
+  FHotBgColor := AColor;
+  FFocusedBgColor := AColor;
+  if not SkipDisabledState then FDisabledBgColor := AColor;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomEditExAppearance.SetTextColor(const AColor: TColor; SkipDisabledState: Boolean = True);
+begin
+  FNormalTextColor := AColor;
+  FHotTextColor := AColor;
+  FFocusedTextColor := AColor;
+  if not SkipDisabledState then FDisabledTextColor := AColor;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomEditExAppearance.SetBorderColor(const AColor: TColor; SkipDisabledState: Boolean);
+begin
+  FNormalBorderColor := AColor;
+  FHotBorderColor := AColor;
+  FFocusedBorderColor := AColor;
+  if not SkipDisabledState then FDisabledBorderColor := AColor;
+  PropsChanged(Self);
+end;
+
+procedure TJppCustomEditExAppearance.SetColors(const Background, Text, Border: TColor; SkipDisabledState: Boolean = True);
+begin
+  FNormalBgColor := Background;
+  FNormalTextColor := Text;
+  FNormalBorderColor := Border;
+
+  FHotBgColor := Background;
+  FHotTextColor := Text;
+  FHotBorderColor := Border;
+
+  FFocusedBgColor := Background;
+  FFocusedTextColor := Text;
+  FFocusedBorderColor := Border;
+
+  if not SkipDisabledState then
+  begin
+    FDisabledBgColor := Background;
+    FDisabledTextColor := Text;
+    FDisabledBorderColor := Border;
+  end;
+
+  PropsChanged(Self);
+end;
+
 procedure TJppCustomEditExAppearance.SetNormalTextColor(const Value: TColor);
 begin
   if FNormalTextColor = Value then Exit;
   FNormalTextColor := Value;
   PropsChanged(Self);
 end;
+
 
 procedure TJppCustomEditExAppearance.SetDisabledBgColor(const Value: TColor);
 begin
