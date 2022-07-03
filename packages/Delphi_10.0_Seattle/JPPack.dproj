@@ -1,0 +1,200 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{7FF5F2D7-640E-420E-B6D2-32B736AA4EE1}</ProjectGuid>
+        <MainSource>JPPack.dpk</MainSource>
+        <Base>True</Base>
+        <Config Condition="'$(Config)'==''">Release</Config>
+        <TargetedPlatforms>3</TargetedPlatforms>
+        <AppType>Package</AppType>
+        <FrameworkType>VCL</FrameworkType>
+        <ProjectVersion>18.1</ProjectVersion>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Android' and '$(Base)'=='true') or '$(Base_Android)'!=''">
+        <Base_Android>true</Base_Android>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
+        <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Release' or '$(Cfg_1)'!=''">
+        <Cfg_1>true</Cfg_1>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
+        <Cfg_2>true</Cfg_2>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base)'!=''">
+        <DCC_F>false</DCC_F>
+        <DCC_N>false</DCC_N>
+        <DCC_ImageBase>00400000</DCC_ImageBase>
+        <DCC_Define>USE_GDIPLUS_CONTROLS;$(DCC_Define)</DCC_Define>
+        <GenDll>true</GenDll>
+        <VerInfo_Locale>1045</VerInfo_Locale>
+        <GenPackage>true</GenPackage>
+        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;$(DCC_Namespace)</DCC_Namespace>
+        <DllSuffix>Seattle</DllSuffix>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=;CFBundleName=</VerInfo_Keys>
+        <DCC_K>false</DCC_K>
+        <DCC_Description>JPPack VCL Components</DCC_Description>
+        <DCC_E>false</DCC_E>
+        <SanitizedProjectName>JPPack</SanitizedProjectName>
+        <DCC_S>false</DCC_S>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Android)'!=''">
+        <DCC_UsePackage>rtl;$(DCC_UsePackage)</DCC_UsePackage>
+        <BT_BuildType>Debug</BT_BuildType>
+        <VerInfo_Keys>package=com.embarcadero.$(MSBuildProjectName);label=$(MSBuildProjectName);versionCode=1;versionName=1.0.0;persistent=False;restoreAnyVersion=False;installLocation=auto;largeHeap=False;theme=TitleBar;hardwareAccelerated=true;apiKey=</VerInfo_Keys>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <DCC_UsePackage>rtl;vcl;vclimg;PngComponents;IGDIPlusMod;JPLib;$(DCC_UsePackage)</DCC_UsePackage>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <DCC_UsePackage>rtl;vcl;vclimg;PngComponents;IGDIPlusMod;JPLib;$(DCC_UsePackage)</DCC_UsePackage>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_DebugInformation>0</DCC_DebugInformation>
+        <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
+        <DCC_Optimize>false</DCC_Optimize>
+        <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
+    </PropertyGroup>
+    <ItemGroup>
+        <DelphiCompile Include="$(MainSource)">
+            <MainSource>MainSource</MainSource>
+        </DelphiCompile>
+        <DCCReference Include="..\DCR\JppBasicPanel.dcr"/>
+        <DCCReference Include="..\DCR\JppBasicSpeedButton.dcr"/>
+        <DCCReference Include="..\DCR\JppColorComboBox.dcr"/>
+        <DCCReference Include="..\DCR\JppColorListBox.dcr"/>
+        <DCCReference Include="..\DCR\JppFormIniStorage.dcr"/>
+        <DCCReference Include="..\DCR\JppLinkLabel.dcr"/>
+        <DCCReference Include="..\DCR\JppPanel.dcr"/>
+        <DCCReference Include="..\DCR\JppTimer.dcr"/>
+        <DCCReference Include="..\DCR\JppColorSwatch.dcr"/>
+        <DCCReference Include="..\DCR\JppColorSwatchEx.dcr"/>
+        <DCCReference Include="..\DCR\JppSimplePanel.dcr"/>
+        <DCCReference Include="..\DCR\JppEdit.dcr"/>
+        <DCCReference Include="..\DCR\JppEditEx.dcr"/>
+        <DCCReference Include="..\DCR\JppMemo.dcr"/>
+        <DCCReference Include="..\DCR\JppMemoEx.dcr"/>
+        <DCCReference Include="..\DCR\JppPngCollection.dcr"/>
+        <DCCReference Include="..\DCR\JppComboBox.dcr"/>
+        <DCCReference Include="..\DCR\JppFlatComboBox.dcr"/>
+        <DCCReference Include="..\DCR\JppComboBoxEx.dcr"/>
+        <DCCReference Include="..\DCR\JppStdPanel.dcr"/>
+        <DCCReference Include="..\DCR\JppDoubleLabel.dcr"/>
+        <DCCReference Include="vcl.dcp"/>
+        <DCCReference Include="rtl.dcp"/>
+        <DCCReference Include="vclimg.dcp"/>
+        <DCCReference Include="JPLib.dcp"/>
+        <DCCReference Include="PngComponents.dcp"/>
+        <DCCReference Include="IGDIPlusMod.dcp"/>
+        <DCCReference Include="..\..\source\JPP.AnchoredControls.pas"/>
+        <DCCReference Include="..\..\source\JPP.Helpers.pas"/>
+        <DCCReference Include="..\..\source\JPP.BasicPanel.pas"/>
+        <DCCReference Include="..\..\source\JPP.BasicPngButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.BasicPngButtonEx.pas"/>
+        <DCCReference Include="..\..\source\JPP.BasicSpeedButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.BrushStyleComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.ColorComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.ColorControls.Common.pas"/>
+        <DCCReference Include="..\..\source\JPP.ColorListBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.ColorSwatch.pas"/>
+        <DCCReference Include="..\..\source\JPP.ComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.ComboBoxEx.pas"/>
+        <DCCReference Include="..\..\source\JPP.Common.pas"/>
+        <DCCReference Include="..\..\source\JPP.Common.Procs.pas"/>
+        <DCCReference Include="..\..\source\JPP.DoubleLabel.pas"/>
+        <DCCReference Include="..\..\source\JPP.DoubleLineLabel.pas"/>
+        <DCCReference Include="..\..\source\JPP.Edit.pas"/>
+        <DCCReference Include="..\..\source\JPP.EditEx.pas"/>
+        <DCCReference Include="..\..\source\JPP.CheckBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.RadioButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.DateTimePicker.pas"/>
+        <DCCReference Include="..\..\source\JPP.Flash.pas"/>
+        <DCCReference Include="..\..\source\JPP.FormIniStorage.pas"/>
+        <DCCReference Include="..\..\source\JPP.Gradient.pas"/>
+        <DCCReference Include="..\..\source\JPP.Graphics.pas"/>
+        <DCCReference Include="..\..\source\JPP.Labels.pas"/>
+        <DCCReference Include="..\..\source\JPP.LinkLabel.pas"/>
+        <DCCReference Include="..\..\source\JPP.Memo.pas"/>
+        <DCCReference Include="..\..\source\JPP.MemoEx.pas"/>
+        <DCCReference Include="..\..\source\JPP.Panel.pas"/>
+        <DCCReference Include="..\..\source\JPP.PenStyleComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.PngButton.pas"/>
+        <DCCReference Include="..\..\source\JPP.PngButton.ColorMaps.pas"/>
+        <DCCReference Include="..\..\source\JPP.PngCollection.pas"/>
+        <DCCReference Include="..\..\source\JPP.SimplePanel.pas"/>
+        <DCCReference Include="..\..\source\JPP.StdPanel.pas"/>
+        <DCCReference Include="..\..\source\JPP.StorageCtrl.pas"/>
+        <DCCReference Include="..\..\source\JPP.StringStorageCtrl.pas"/>
+        <DCCReference Include="..\..\source\JPP.Timer.pas"/>
+        <DCCReference Include="..\..\source\JPP.Types.pas"/>
+        <DCCReference Include="..\..\source\JPP.ProgressBar.pas"/>
+        <DCCReference Include="..\..\source\JPP.HtmlHint.pas"/>
+        <DCCReference Include="..\..\source\JPP.FlipPanel.pas"/>
+        <DCCReference Include="..\..\source\JPP.FlatComboBox.pas"/>
+        <DCCReference Include="..\..\source\JPP.GPHatchStyleComboBox.pas"/>
+        <DCCReference Include="..\..\source\LDPngFunctions.pas"/>
+        <DCCReference Include="..\..\source\JPP.Register.pas"/>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Base">
+            <Key>Base</Key>
+        </BuildConfiguration>
+        <BuildConfiguration Include="Release">
+            <Key>Cfg_1</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Delphi.Personality.12</Borland.Personality>
+        <Borland.ProjectType>Package</Borland.ProjectType>
+        <BorlandProject>
+            <Delphi.Personality>
+                <Source>
+                    <Source Name="MainSource">JPPack.dpk</Source>
+                </Source>
+            </Delphi.Personality>
+            <Platforms>
+                <Platform value="Android">False</Platform>
+                <Platform value="iOSDevice32">False</Platform>
+                <Platform value="iOSSimulator">False</Platform>
+                <Platform value="Win32">True</Platform>
+                <Platform value="Win64">True</Platform>
+            </Platforms>
+        </BorlandProject>
+        <ProjectFileVersion>12</ProjectFileVersion>
+    </ProjectExtensions>
+    <Import Project="$(BDS)\Bin\CodeGear.Delphi.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Delphi.Targets')"/>
+    <Import Project="$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj" Condition="Exists('$(APPDATA)\Embarcadero\$(BDSAPPDATABASEDIR)\$(PRODUCTVERSION)\UserTools.proj')"/>
+</Project>
