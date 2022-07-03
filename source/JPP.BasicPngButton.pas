@@ -93,6 +93,9 @@ type
     destructor Destroy; override;
     procedure Assign(Source: TJppBasicPngButtonAppearance); reintroduce;
     procedure PropsChanged(Sender: TObject);
+    procedure SetFontName(const FontName: string);
+    procedure SetFontSize(const FontSize: integer);
+    procedure SetFontStyles(const FontStyle: TFontStyles);
   published
     property DefaultDrawing: Boolean read FDefaultDrawing write SetDefaultDrawing default False;
     property Normal: TJppBasicPngButtonStateParams read FNormal write SetNormal;
@@ -196,16 +199,8 @@ procedure SetJppBasicPngButtonFonts(Button: TJppBasicPngButton; FontName: string
 begin
   Button.Font.Name := FontName;
   Button.Font.Size := FontSize;
-  Button.Appearance.Normal.Font.Name := FontName;
-  Button.Appearance.Normal.Font.Size := FontSize;
-  Button.Appearance.Hot.Font.Name := FontName;
-  Button.Appearance.Hot.Font.Size := FontSize;
-  Button.Appearance.Down.Font.Name := FontName;
-  Button.Appearance.Down.Font.Size := FontSize;
-  Button.Appearance.Focused.Font.Name := FontName;
-  Button.Appearance.Focused.Font.Size := FontSize;
-  Button.Appearance.Disabled.Font.Name := FontName;
-  Button.Appearance.Disabled.Font.Size := FontSize;
+  Button.Appearance.SetFontName(FontName);
+  Button.Appearance.SetFontSize(FontSize);
 end;
 
 {$endregion}
@@ -486,6 +481,33 @@ begin
   Disabled.TransparentBackground := Source.Disabled.TransparentBackground;
   Disabled.TransparentFrame := Source.Disabled.TransparentFrame;
 
+end;
+
+procedure TJppBasicPngButtonAppearance.SetFontName(const FontName: string);
+begin
+  FNormal.Font.Name := FontName;
+  FHot.Font.Name := FontName;
+  FDown.Font.Name := FontName;
+  FFocused.Font.Name := FontName;
+  FDisabled.Font.Name := FontName;
+end;
+
+procedure TJppBasicPngButtonAppearance.SetFontSize(const FontSize: integer);
+begin
+  FNormal.Font.Size := FontSize;
+  FHot.Font.Size := FontSize;
+  FDown.Font.Size := FontSize;
+  FFocused.Font.Size := FontSize;
+  FDisabled.Font.Size := FontSize;
+end;
+
+procedure TJppBasicPngButtonAppearance.SetFontStyles(const FontStyle: TFontStyles);
+begin
+  FNormal.Font.Style := FontStyle;
+  FHot.Font.Style := FontStyle;
+  FDown.Font.Style := FontStyle;
+  FFocused.Font.Style := FontStyle;
+  FDisabled.Font.Style := FontStyle;
 end;
 
 procedure TJppBasicPngButtonAppearance.SetBorderWhenDefault(const Value: TPen);
