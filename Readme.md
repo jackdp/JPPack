@@ -1,5 +1,9 @@
 # JPPack
 
+![](https://tokei.rs/b1/github/jackdp/JPPack?category=code)
+![](https://tokei.rs/b1/github/jackdp/JPPack?category=files)
+![visitors](https://visitor-badge.glitch.me/badge?page_id=jackdp.jppack)
+
 A collection of VCL/LCL components for Delphi 2009 - 11.0 Alexandria and Lazarus
 
 * [JPPack](#jppack)
