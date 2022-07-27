@@ -120,6 +120,11 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+
+    function Add(const s: string): integer;
+    procedure AddStringArray(const Arr: TStringDynArray);
+    function AddInteger(const x: integer; Prefix: string = ''; Postfix: string = ''): integer;
+
     procedure FlashBackground;
     procedure SetupInternalLabel;
     procedure SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer); override;
@@ -326,7 +331,7 @@ begin
       end;
 end;
 
-procedure TJppCustomMemo.SetBounds(ALeft, ATop, AWidth, AHeight: Integer);
+procedure TJppCustomMemo.SetBounds(ALeft: Integer; ATop: Integer; AWidth: Integer; AHeight: Integer);
 begin
   inherited;
   SetBoundLabelPosition(FBoundLabelPosition);
@@ -513,6 +518,28 @@ begin
 end;
 {$ENDIF}
 
+function TJppCustomMemo.Add(const s: string): integer;
+begin
+  Result := Lines.Add(s);
+end;
+
+procedure TJppCustomMemo.AddStringArray(const Arr: TStringDynArray);
+var
+  i: integer;
+begin
+  Lines.BeginUpdate;
+  try
+    for i := 0 to Length(Arr) - 1 do
+      Lines.Add(Arr[i]);
+  finally
+    Lines.EndUpdate;
+  end;
+end;
+
+function TJppCustomMemo.AddInteger(const x: integer; Prefix: string = ''; Postfix: string = ''): integer;
+begin
+  Result := Lines.Add(Prefix + IntToStr(x) + Postfix);
+end;
 
 {$endregion TJppCustomMemo}
 
