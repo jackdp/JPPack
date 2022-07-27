@@ -7,10 +7,10 @@ interface
 
 uses
   {$IFDEF MSWINDOWS}Windows,{$ENDIF}
-  SysUtils, Classes, {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF}
+  SysUtils, Classes, Types, {$IFDEF DCC}{$IFDEF HAS_SYSTEM_UITYPES}System.UITypes,{$ENDIF}{$ENDIF}
   Forms, Controls, Graphics, StdCtrls,
   {$IFDEF FPC}LCLType, LCLIntf,{$ENDIF}
-  JPL.Rects, JPP.Common;
+  JPL.Strings, JPL.TStr, JPL.Rects, JPP.Common;
 
 
 function FontStylesToStr(FontStyles: TFontStyles): string;
@@ -22,7 +22,7 @@ function StrToAlignment(AlignmentStr: string; Default: TAlignment = taLeftJustif
 
 procedure MakeListFromStr(LineToParse: string; var List: TStringList; Separator: string = ',');
 function PadLeft(const Text: string; const PadToLen: integer; PaddingChar: Char = ' '): string;
-procedure SaveStringToFile(const Content, FileName: string);
+//procedure SaveStringToFile(const Content, FileName: string); // use SaveStringToFile from JPL.Strings (JPLib)
 
 procedure JppFrame3D(Canvas: TCanvas; var Rect: TRect; LeftColor, RightColor, TopColor, BottomColor: TColor; Width: Integer); overload;
 procedure JppFrame3D(Canvas: TCanvas; var Rect: TRect; Color: TColor; Width: integer); overload;
@@ -39,7 +39,10 @@ procedure DrawRectRightBorder(Canvas: TCanvas; Rect: TRect; Color: TColor; PenWi
 
 procedure DrawCenteredText(Canvas: TCanvas; Rect: TRect; const Text: string; DeltaX: integer = 0; DeltaY: integer = 0);
 
-function GetFontName(const FontNameArray: array of string): string;
+function GetFontName(const FontNamesArray: array of string): string; overload;
+function GetFontName(const CommaSeparatedFontNames: string): string; overload;
+procedure GetControlDefaultFontParams(out FontName: string; out FontSize: integer);
+procedure SetFontDefaultParams(AFont: TFont);
 
 procedure InflateRectWithMargins(var ARect: TRect; const Margins: TJppMargins);
 
@@ -273,20 +276,44 @@ begin
   DrawText(Canvas.Handle, PChar(Text), Length(Text), ARect, Flags);
 end;
 
-function GetFontName(const FontNameArray: array of string): string;
+function GetFontName(const FontNamesArray: array of string): string;
 var
   FontName: string;
   i: integer;
 begin
-  for i := Low(FontNameArray) to High(FontNameArray) do
+  for i := Low(FontNamesArray) to High(FontNamesArray) do
   begin
-    FontName := FontNameArray[i];
-    if Screen.Fonts.IndexOf(FontName) >= 0 then // DONE: tu powinno być chyba >= 0
+    FontName := FontNamesArray[i];
+    if Screen.Fonts.IndexOf(FontName) >= 0 then
     begin
       Result := FontName;
       Break;
     end;
   end;
+end;
+
+function GetFontName(const CommaSeparatedFontNames: string): string;
+var
+  Arr: TStringDynArray;
+begin
+  SplitStrToArrayEx(CommaSeparatedFontNames, Arr, ',');
+  Result := GetFontName(Arr);
+end;
+
+procedure GetControlDefaultFontParams(out FontName: string; out FontSize: integer);
+begin
+  FontName := GetFontName(['Segoe UI', 'Tahoma', 'MS Sans Serif']);
+  if FontName = 'Segoe UI' then FontSize := 9 else FontSize := 8;
+end;
+
+procedure SetFontDefaultParams(AFont: TFont);
+var
+  FontName: string;
+  FontSize: integer;
+begin
+  GetControlDefaultFontParams(FontName, FontSize);
+  AFont.Name := FontName;
+  AFont.Size := FontSize;
 end;
 
 
@@ -599,18 +626,18 @@ end;
 {$endregion Drawing procs}
 
 
-procedure SaveStringToFile(const Content, FileName: string);
-var
-  sl: TStringList;
-begin
-  sl := TStringList.Create;
-  try
-    sl.Text := Content;
-    sl.SaveToFile(FileName);
-  finally
-    sl.Free;
-  end;
-end;
+//procedure SaveStringToFile(const Content, FileName: string);
+//var
+//  sl: TStringList;
+//begin
+//  sl := TStringList.Create;
+//  try
+//    sl.Text := Content;
+//    sl.SaveToFile(FileName);
+//  finally
+//    sl.Free;
+//  end;
+//end;
 
 function PadLeft(const Text: string; const PadToLen: integer; PaddingChar: Char = ' '): string;
 begin
